@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Date Picker</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .custom-select2 + .select2-container .select2-search--dropdown {
+      }
+      .custom-select2 + .select2-container .select2-search__field {
+        height: 38px; /* Height of the Bootstrap input */
+        border: none !important;
+        padding: 0 !important;
+        outline: 5 !important;
+      }
+      .select2-container--open .select2-dropdown--below {
+        margin-top: -38px; /* Position the dropdown above the container */
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .datepicker-container-custom .form-control {
+        width: 100px; /* Adjust the width as needed */
+        /* You can use other Bootstrap width classes like col-* for more control */
+    }
+    </style>
+  </head>
+  <!-- <body>
+<div class="container mt-3">
+    <label for="day" class="mr-2">วัน:</label>
+    <select id="day" class="form-control d-inline-block w-auto mr-3"></select>
+
+    <label for="month" class="mr-2">เดือน:</label>
+    <select id="month" class="form-control d-inline-block w-auto mr-3"></select>
+
+    <label for="year" class="mr-2">ปี:</label>
+    <select id="year" class="form-control d-inline-block w-auto"></select>
+</div>
+<div class="container mt-3">
+    <div id="my-date-picker"></div>
+    <button id="submit">Submit</button>
+</div>
+<script src="datePickerLibrary.js"></script>
+<script>
+    initializeDatePicker('my-date-picker');
+    document.getElementById('submit').addEventListener('click', function() {
+        const dateValue = getDateValue('my-date-picker');
+        console.log('Selected Date:', dateValue);
+    });
+</script>
+
+<script>
+    $(".custom-select2").select2({
+        dropdownParent: $(".container"), // Use container as parent to control position
+        minimumResultsForSearch: -1, // Disable default search box
+    });
+    const dayInput = $('#day');
+    const monthInput = $('#month');
+    const yearInput = $('#year');
+
+    // Fill the day dropdown
+    function updateDays() {
+        const monthIndex = monthInput.val();
+        let days = 31;
+        if (monthIndex === "2") {
+            const year = parseInt(yearInput.val()) - 543;
+            if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+                days = 29;
+            } else {
+                days = 28;
+            }
+        } else if (["4", "6", "9", "11"].includes(monthIndex)) {
+            days = 30;
+        }
+        dayInput.empty();
+        for (let i = 1; i <= days; i++) {
+            dayInput.append(new Option(i, i));
+        }
+    }
+
+    // Thai months
+    const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+    months.forEach((month, index) => {
+        monthInput.append(new Option(month, index + 1));
+    });
+
+    // Fill the year dropdown, considering the Buddhist era
+    const currentYearGregorian = new Date().getFullYear();
+    const currentYearBuddhist = currentYearGregorian + 543;
+    for (let i = currentYearBuddhist; i >= currentYearBuddhist - 100; i--) {
+        yearInput.append(new Option(i, i));
+    }
+
+    // Initialize Select2 with the tags option
+    // put setTimeout to fix select2 focus bug
+    dayInput.select2({ tags: true }).on('select2:open', () => {
+        setTimeout(function() {
+            
+        document.querySelector('.select2-search__field').focus();
+
+        }, 50);
+    });
+    monthInput.select2({ tags: true }).on('select2:open', () => {
+        setTimeout(function() {
+        document.querySelector('.select2-search__field').focus();
+        }, 50);
+    });
+    yearInput.select2({ tags: true }).on('select2:open', () => {
+        setTimeout(function() {
+        document.querySelector('.select2-search__field').focus();
+        }, 50);
+    });
+
+
+    $(document).on('click', '.select2-container', function (e) {
+        if ($(this).hasClass('select2-container--open')) {
+            setTimeout(function() {
+                $('.select2-search__field').focus();
+            }, 0);
+        }
+    });
+
+    // Add event listeners to update the days when the month or year is changed
+    monthInput.on('change', updateDays);
+    yearInput.on('change', updateDays);
+    
+    updateDays();
+</script>
+</body> -->
+  <body>
+<!-- make div to position center  and middle -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>jQuery Datepicker</h1>
+        </div>
+    </div>
+    <div id="datepicker-container" class="datepicker"></div>
+
+    <div id="datepicker2" class="datepicker"></div>
+</div>
+    
+    <button id="submit-button">Submit</button>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
