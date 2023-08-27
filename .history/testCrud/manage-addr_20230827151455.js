@@ -83,23 +83,11 @@ class AddressDropdowns {
 
   populateDropdown(dropdown, data, valueKey, textKey) {
     dropdown.innerHTML = '';
-    
-    // Update the placeholder option based on dropdown id
-    const labels = {
-      provinceSelect: 'เลือกจังหวัด',
-      amphurSelect: 'เลือกอำเภอ',
-      tambonSelect: 'เลือกตำบล',
-      villageSelect: 'เลือกหมู่บ้าน'
-    };
-
-    const translatedLabel = labels[dropdown.id.split('-')[1]] || '';
-    
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
-    placeholderOption.textContent = translatedLabel;
+    placeholderOption.textContent = `Select ${dropdown.id.charAt(0).toUpperCase() + dropdown.id.slice(1)}`;
     dropdown.appendChild(placeholderOption);
 
-    // Populate the dropdown with translated options
     data.forEach(item => {
       const option = document.createElement('option');
       option.value = item[valueKey];
@@ -107,8 +95,7 @@ class AddressDropdowns {
       dropdown.appendChild(option);
     });
     this.updateHiddenInput();
-}
-
+  }
 
   updateHiddenInput() {
     const concatenatedAddressCode = this.getConcatenatedAddressCode();

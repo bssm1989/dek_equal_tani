@@ -17,7 +17,7 @@
 
             <div class="form-group">
                 <label for="addr1">Address 1:</label>
-                <div id="addr1"  class="address">
+                <div id="addr1"  class="address">>
                     <input type="hidden" id="addr1-addressCode" name="addr1-addressCode">
 
                     <div class="notification"></div>
@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <label for="addr2">Address 2:</label>
-                <div id="addr2"  class="address">
+                <div id="addr2"  class="address">>
                     <input type="hidden" id="addr2-addressCode" name="addr2-addressCode">
 
                     <div class="notification"></div>
@@ -36,7 +36,7 @@
 
             <div class="form-group">
                 <label for="addr3">Address 3:</label>
-                <div id="addr3"  class="address">
+                <div id="addr3"  class="address">>
                     <input type="hidden" id="addr3-addressCode" name="addr3-addressCode">
 
                     <div class="notification"></div>

@@ -19,6 +19,7 @@ class AddressDropdowns {
     container.appendChild(this.provinceSelect);
     container.appendChild(this.amphurSelect);
     container.appendChild(this.tambonSelect);
+    container.appendChild(this.villageSelect);
 
     this.provinceSelect.addEventListener('change', this.populateDropdowns.bind(this));
     this.amphurSelect.addEventListener('change', this.populateDropdowns.bind(this));
@@ -40,66 +41,28 @@ class AddressDropdowns {
     placeholderOption.value = '';
     placeholderOption.textContent = placeholder;
     dropdown.appendChild(placeholderOption);
-
-    // Update the labels based on the provided Thai translations
-    const labels = {
-      provinceSelect: 'เลือกจังหวัด',
-      amphurSelect: 'เลือกอำเภอ',
-      tambonSelect: 'เลือกตำบล',
-    };
-
-    const translatedLabel = labels[id] || '';
-
-    placeholderOption.textContent = translatedLabel;
     return dropdown;
   }
 
   populateDropdowns() {
+    debugger; // Add this debugger statement for debugging
     const selectedProvince = this.provinceSelect.value;
     const selectedAmphur = this.amphurSelect.value;
-  
-    // Check if the selected province or amphur has changed
-    const provinceChanged = selectedProvince !== this.selectedProvince;
-    const amphurChanged = selectedAmphur !== this.selectedAmphur;
-  
-    // Update the selected province and amphur
-    this.selectedProvince = selectedProvince;
-    this.selectedAmphur = selectedAmphur;
-  
-    if (provinceChanged) {
-      const filteredAmphurs = this.data.amphurs.filter(amphur => amphur.prvidgen === selectedProvince);
-      this.populateDropdown(this.amphurSelect, filteredAmphurs, 'ampidgen', 'ampnmegen');
-    }
-  
-    if (amphurChanged) {
-      const filteredTambons = this.data.tambons.filter(tambon => tambon.ampidgen === selectedProvince+selectedAmphur);
-      this.populateDropdown(this.tambonSelect, filteredTambons, 'tmbidgen', 'tmbnmegen');
-    }
-  
-    // Update the hidden input with the concatenated address code
-    this.updateHiddenInput();
+
+    const filteredAmphurs = this.data.amphurs.filter(amphur => amphur.prvidgen === selectedProvince);
+    const filteredTambons = this.data.tambons.filter(tambon => tambon.ampidgen === (selectedProvince + selectedAmphur));
+
+    this.populateDropdown(this.amphurSelect, filteredAmphurs, 'ampidgen', 'ampnmegen');
+    this.populateDropdown(this.tambonSelect, filteredTambons, 'tmbidgen', 'tmbnmegen');
   }
-  
 
   populateDropdown(dropdown, data, valueKey, textKey) {
     dropdown.innerHTML = '';
-    
-    // Update the placeholder option based on dropdown id
-    const labels = {
-      provinceSelect: 'เลือกจังหวัด',
-      amphurSelect: 'เลือกอำเภอ',
-      tambonSelect: 'เลือกตำบล',
-      villageSelect: 'เลือกหมู่บ้าน'
-    };
-
-    const translatedLabel = labels[dropdown.id.split('-')[1]] || '';
-    
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
-    placeholderOption.textContent = translatedLabel;
+    placeholderOption.textContent = `Select ${dropdown.id.charAt(0).toUpperCase() + dropdown.id.slice(1)}`;
     dropdown.appendChild(placeholderOption);
 
-    // Populate the dropdown with translated options
     data.forEach(item => {
       const option = document.createElement('option');
       option.value = item[valueKey];
@@ -107,8 +70,7 @@ class AddressDropdowns {
       dropdown.appendChild(option);
     });
     this.updateHiddenInput();
-}
-
+  }
 
   updateHiddenInput() {
     const concatenatedAddressCode = this.getConcatenatedAddressCode();

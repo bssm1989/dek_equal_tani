@@ -19,6 +19,7 @@ class AddressDropdowns {
     container.appendChild(this.provinceSelect);
     container.appendChild(this.amphurSelect);
     container.appendChild(this.tambonSelect);
+    container.appendChild(this.villageSelect);
 
     this.provinceSelect.addEventListener('change', this.populateDropdowns.bind(this));
     this.amphurSelect.addEventListener('change', this.populateDropdowns.bind(this));
@@ -40,17 +41,6 @@ class AddressDropdowns {
     placeholderOption.value = '';
     placeholderOption.textContent = placeholder;
     dropdown.appendChild(placeholderOption);
-
-    // Update the labels based on the provided Thai translations
-    const labels = {
-      provinceSelect: 'เลือกจังหวัด',
-      amphurSelect: 'เลือกอำเภอ',
-      tambonSelect: 'เลือกตำบล',
-    };
-
-    const translatedLabel = labels[id] || '';
-
-    placeholderOption.textContent = translatedLabel;
     return dropdown;
   }
 
@@ -72,7 +62,7 @@ class AddressDropdowns {
     }
   
     if (amphurChanged) {
-      const filteredTambons = this.data.tambons.filter(tambon => tambon.ampidgen === selectedProvince+selectedAmphur);
+      const filteredTambons = this.data.tambons.filter(tambon => tambon.ampidgen === selectedAmphur);
       this.populateDropdown(this.tambonSelect, filteredTambons, 'tmbidgen', 'tmbnmegen');
     }
   
@@ -83,23 +73,11 @@ class AddressDropdowns {
 
   populateDropdown(dropdown, data, valueKey, textKey) {
     dropdown.innerHTML = '';
-    
-    // Update the placeholder option based on dropdown id
-    const labels = {
-      provinceSelect: 'เลือกจังหวัด',
-      amphurSelect: 'เลือกอำเภอ',
-      tambonSelect: 'เลือกตำบล',
-      villageSelect: 'เลือกหมู่บ้าน'
-    };
-
-    const translatedLabel = labels[dropdown.id.split('-')[1]] || '';
-    
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
-    placeholderOption.textContent = translatedLabel;
+    placeholderOption.textContent = `Select ${dropdown.id.charAt(0).toUpperCase() + dropdown.id.slice(1)}`;
     dropdown.appendChild(placeholderOption);
 
-    // Populate the dropdown with translated options
     data.forEach(item => {
       const option = document.createElement('option');
       option.value = item[valueKey];
@@ -107,8 +85,7 @@ class AddressDropdowns {
       dropdown.appendChild(option);
     });
     this.updateHiddenInput();
-}
-
+  }
 
   updateHiddenInput() {
     const concatenatedAddressCode = this.getConcatenatedAddressCode();

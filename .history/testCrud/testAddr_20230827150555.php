@@ -17,8 +17,8 @@
 
             <div class="form-group">
                 <label for="addr1">Address 1:</label>
-                <div id="addr1"  class="address">
-                    <input type="hidden" id="addr1-addressCode" name="addr1-addressCode">
+                <div id="addr1">
+                    <input type="hidden" id="addr1addressCode" name="addr1addressCode">
 
                     <div class="notification"></div>
                 </div>
@@ -27,8 +27,8 @@
 
             <div class="form-group">
                 <label for="addr2">Address 2:</label>
-                <div id="addr2"  class="address">
-                    <input type="hidden" id="addr2-addressCode" name="addr2-addressCode">
+                <div id="addr2">
+                    <input type="hidden" id="addr2addressCode" name="addr2addressCode">
 
                     <div class="notification"></div>
                 </div>
@@ -36,7 +36,7 @@
 
             <div class="form-group">
                 <label for="addr3">Address 3:</label>
-                <div id="addr3"  class="address">
+                <div id="addr3">
                     <input type="hidden" id="addr3-addressCode" name="addr3-addressCode">
 
                     <div class="notification"></div>
@@ -73,16 +73,15 @@
             $('#editForm').validate({
                 rules: {
                     name: 'required',
-                    'addr1-addressCode': {
+                    addr1addressCode: {
                         required: true,
                         eightDigits: true
                     },
-                    'addr2-addressCode': {
+                    addr2addressCode: {
                         required: true,
                         eightDigits: true
                     }
                 },
-                ignore: [],
                 messages: {
                     name: 'Please enter your name',
                     'addr1-addressCode': {
@@ -96,14 +95,8 @@
                 },
                 errorPlacement: function(error, element) {
                     // Show the error message inside the corresponding notification div
+                    console.log(element);
                     element.closest('.notification').html(error);
-
-                    // Add red border to the address div
-                    element.closest('.address').css('border', '2px solid red');
-                },
-                success: function(label, element) {
-                    // Remove red border when validation succeeds
-                    $(element).closest('.address').css('border', 'none');
                 },
                 submitHandler: function(form) {
                     if ($('#editForm').valid()) {

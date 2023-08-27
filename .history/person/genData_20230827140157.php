@@ -28,7 +28,7 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $amphurs[] = array(
 
-            "ampidgen" => $row["prvidgen"].$row["ampidgen"],
+            "ampidgen" => $row["prvidgen"]+$row["ampidgen"],
             "tmbidgen" => $row["tmbidgen"],
             "tmbnmegen" => $row["tmbnmegen"]
 
