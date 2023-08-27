@@ -4,7 +4,8 @@ session_start();
 error_reporting (E_ALL ^ E_NOTICE);
 date_default_timezone_set('Asia/Bangkok');
 
-$conn = @mysqli_connect("localhost", "dsrd", "L;=9,vxo", "dek_equal_tani") or die(mysqli_connect_error());
+// $conn = @mysqli_connect("localhost", "dsrd", "L;=9,vxo", "dek_equal_tani") or die(mysqli_connect_error());
+$conn = @mysqli_connect("localhost", "root", "root", "dek_equal_tani") or die(mysqli_connect_error());
 mysqli_query($conn,"SET NAMES UTF8"); //in order to make Thai fonts visible
 
 mysqli_query($conn,"SET character_set_results='utf-8'");

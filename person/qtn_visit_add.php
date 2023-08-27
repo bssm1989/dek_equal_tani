@@ -226,7 +226,7 @@ schmethod	วิธีเดินทางหลักไปโรงเรี�
 schmethid	int	2	รหัสวิธีเดินทางหลัก	PK	
 schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก -->
 
-                <form name="frmScreening" id="frmScreening" method="post"  enctype="" onSubmit="" target="">
+                <form name="frmScreening" id="frmScreening" method="post" enctype="" onSubmit="" target="">
 
                     <!-- ... (previous HTML code) ... -->
 
@@ -259,7 +259,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     <!-- รหัสเพศ -->
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="gender">รหัสเพศ</label>
-                        <select class="form-control" name="gender" id="gender" required>
+                        <select class="form-control" name="gender_id" id="gender" required>
                             <!-- Populate options from $genderResult -->
                             <?php while ($row = mysqli_fetch_assoc($genderResult)) { ?>
                                 <option value="<?= $row['genid']; ?>"><?= $row['gennme']; ?></option>
@@ -269,8 +269,8 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
                     <!-- รหัสศาสนา -->
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="religion">รหัสศาสนา</label>
-                        <select class="form-control" name="religion" id="religion" required>
+                        <label for="religion_id">ศาสนา</label>
+                        <select class="form-control" name="religion_id" id="religion_id" required>
                             <!-- Populate options from $religResult -->
                             <?php while ($row = mysqli_fetch_assoc($religResult)) { ?>
                                 <option value="<?= $row['religid']; ?>"><?= $row['relignme']; ?></option>
@@ -280,27 +280,36 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
                     <!-- กรณีศาสนาอื่น ๆ -->
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="other_religion">กรณีศาสนาอื่น ๆ</label>
-                        <input type="text" class="form-control" name="other_religion" id="other_religion" placeholder="" value="<?= $other_religion; ?>">
+                        <label for="religion_other">กรณีศาสนาอื่น ๆ</label>
+                        <input type="text" class="form-control" name="religion_other" id="religion_other" placeholder="" value="<?= $other_religion; ?>">
                     </div>
 
                     <!-- ปีเดือนวันเกิด -->
-                    <div class="col-12 col-sm-4 mb-3">
+                    <!-- <div class="col-12 col-sm-4 mb-3">
                         <label for="birth_date">ปีเดือนวันเกิด</label>
                         <input type="text" class="form-control datepicker" name="birth_date" id="birth_date" placeholder="" value="<?= $birth_date; ?>" required>
 
-                    </div>
+                    </div> -->
 
-                    <!-- อายุ -->
+                    <!-- อายุ 	 -->
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="age">อายุ</label>
                         <input type="text" class="form-control" name="age" id="age" placeholder="" value="<?= $age; ?>" required>
                     </div>
-
+                    <!-- รหัสไปรษณีย์ postcode	int	5	รหัสไปรษณีย์-->
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="postcode">รหัสไปรษณีย์</label>
+                        <input type="text" class="form-control" name="postcode" id="postcode" placeholder="" value="<?= $postcode; ?>" required>
+                    </div>
                     <!-- ที่อยู่ปัจจุบัน บ้านเลขที่ -->
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="address">ที่อยู่ปัจจุบัน บ้านเลขที่</label>
                         <input type="text" class="form-control" name="address" id="address" placeholder="" value="<?= $address; ?>">
+                    </div>
+                    <!-- ถนน ซอย -->
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="street">ถนน ซอย</label>
+                        <input type="text" class="form-control" name="street" id="street" placeholder="" value="<?= $street; ?>">   
                     </div>
                     <!-- เบอร์โทรศัพท์ -->
                     <div class="col-12 col-sm-4 mb-3">
@@ -396,7 +405,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
 
 
-                    
+
                     <!-- รหัสครัวเรือน (กรณี กรอกข้อมูลครัวเรือนให้กลับมาอัปเดตที่นี่ด้วย) -->
                     <!-- <div class="col-12 col-sm-4 mb-3">
                         <label for="household_id">รหัสครัวเรือน</label>
@@ -410,8 +419,8 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                         </select>
                     </div>
 -->
-                   
-<!--  
+
+                    <!--  
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="village_id">หมู่บ้าน</label>
                         <select class="form-select" name="village_id" id="village_id" >
@@ -426,14 +435,14 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
                     <!-- ... (continue with the rest of your HTML code) ... -->
 
-                
+
 
             </div>
             <!--//app-card-body-->
 
             <hr>
-<!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
-           <input type="submit" class="mt-3 btn app-btn-primary" name="submit" value="บันทึก" />
+            <!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
+            <input type="submit" class="mt-3 btn app-btn-primary" name="submit" value="บันทึก" />
             <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
             <hr class="mb-4">
@@ -467,150 +476,182 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
 <script>
     $(document).ready(function() {
-    $("#frmScreening").validate({
-        rules: {
-            person_id: {
-                required: true,
-                digits: true
-            },
-            national_id: {
-                required: true,
-                maxlength: 13
-            },
-            title_id: "required",
-            name: "required",
-            surname: "required",
-            gender_id: "required",
-            religion_id: "required",
-            birth_date: {
-                required: true,
-                date: true
-            },
-            age: {
-                required: true,
-                digits: true
-            },
-            address: "required",
-            street: "required",
-            village_id: {
-                required: true,
-                maxlength: 2
-            },
-            place_id: {
-                required: true,
-                maxlength: 6
-            },
-            postcode: {
-                required: true,
-                digits: true,
-                maxlength: 5
-            },
-            phone_number: "required",
-            household_id: {
-                required: true,
-                digits: true
-            },
-            child_order: {
-                required: true,
-                digits: true
-            },
-            living_with: "required",
-            family_status: "required",
-            distance_km_m: {
-                required: true,
-                digits: true
-            },
-            distance_m: {
-                required: true,
-                digits: true
-            },
-            distance_hours: {
-                required: true,
-                digits: true
-            },
-            distance_minutes: {
-                required: true,
-                digits: true
-            },
-            fare_per_month: {
-                required: true,
-                digits: true
-            },
-            main_transportation_id: "required",
-            child_detail: {
-                required: true,
-                maxlength: 1000
-            },
-            display_form: "required"
-        },
-        messages: {
-            // Add custom error messages here
-        },
-        submitHandler: function(form) {
-            // Serialize form data into JSON format
-            var formData = $(form).serializeArray();
-            var jsonData = {};
-            $.each(formData, function(index, field) {
-                jsonData[field.name] = field.value;
-            });
+        var form = $('#frmScreening'); // Replace 'yourFormId' with the actual ID of your form
 
-            // Send data to the server for insertion
-            $.ajax({
-                type: "POST",
-                url: "person/insert_person.php",
-                data: jsonData,
-                dataType: "json",
-                success: function(response) {
-                    if (response.success) {
-                        // Show success message or perform any other actions
-                        alert(response.message);
-                    } else {
-                        // Show error message or perform error handling
-                        alert("Error: " + response.message);
-                    }
+                // Attach a submit event handler to the form
+                // Prevent the form from submitting
+
+                // Loop through each input element within the form
+                // Loop through each input and select element within the form
+                form.submit(function(event) {
+                    event.preventDefault(); // Prevent the form from submitting
+
+                    // Loop through each input element within the form
+                    form.find('input, select').each(function() {
+                        var element = $(this);
+                        var elementType = element.prop('tagName').toLowerCase(); // Get the tag name of the element
+                        var name = element.attr('name');
+                        var value = element.val();
+
+                        console.log('Type:', elementType, 'Name:', name, 'Value:', value);
+                    });
+                });
+           
+
+        $("#frmScreening").validate({
+            rules: {
+                person_id: {
+                    required: true,
+                    digits: true
                 },
-                error: function(xhr, status, error) {
-                    // Handle Ajax error
-                    console.error(error);
-                    alert("An error occurred while submitting the form.");
-                }
-            });
-        }
-    });
-});
-                
-    function sum_score() {
-        var sum =
-            Number(window.document.frmScreening.qtnvs1.value) +
-            Number(window.document.frmScreening.qtnvs2.value) +
-            Number(window.document.frmScreening.qtnvs3.value) +
-            Number(window.document.frmScreening.qtnvs4.value) +
-            Number(window.document.frmScreening.qtnvs5.value) +
-            Number(window.document.frmScreening.qtnvs6.value) +
-            Number(window.document.frmScreening.qtnvs7.value) +
-            Number(window.document.frmScreening.qtnvs8.value);
+                national_id: {
+                    required: true,
+                    maxlength: 13
+                },
+                title_id: "required",
+                name: "required",
+                surname: "required",
+                gender_id: "required",
+                religion_id: "required",
+                birth_date: {
+                    required: true,
+                    date: true
+                },
+                age: {
+                    required: true,
+                    digits: true
+                },
+                address: "required",
+                street: "required",
+                village_id: {
+                    required: true,
+                    maxlength: 2
+                },
+                place_id: {
+                    required: true,
+                    maxlength: 6
+                },
+                postcode: {
+                    required: true,
+                    digits: true,
+                    maxlength: 5
+                },
+                phone_number: "required",
+                household_id: {
+                    required: true,
+                    digits: true
+                },
+                child_order: {
+                    required: true,
+                    digits: true
+                },
+                living_with: "required",
+                family_status: "required",
+                distance_km_m: {
+                    required: true,
+                    digits: true
+                },
+                distance_m: {
+                    required: true,
+                    digits: true
+                },
+                distance_hours: {
+                    required: true,
+                    digits: true
+                },
+                distance_minutes: {
+                    required: true,
+                    digits: true
+                },
+                fare_per_month: {
+                    required: true,
+                    digits: true
+                },
+                main_transportation_id: "required",
+                child_detail: {
+                    required: true,
+                    maxlength: 1000
+                },
+                display_form: "required"
+            },
+            messages: {
+                // Add custom error messages here
+            },
+            submitHandler: function(form) {
+                // Serialize form data into JSON format
+                var formData = $(form).serializeArray();
+                var jsonData = {};
+                $.each(formData, function(index, field) {
+                    jsonData[field.name] = field.value;
+                });
 
-        var result = "";
-        if (sum >= 3) {
-            result = "มีภาวะเปราะบาง";
-        } else if (sum >= 1) {
-            result = "เริ่มเปราะบาง";
-        } else {
-            result = "ไม่มีความเปราะบาง";
-        }
-        window.document.frmScreening.qtnvs_sum.value = sum + " : " + result;
-    };
+                // Add the action parameter to indicate the action to be performed
+                jsonData['action'] = 'insert';
+
+                // Send data to the server for insertion
+                $.ajax({
+                    type: "POST",
+                    url: "person/insert_person.php",
+                    data: jsonData,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message or perform any other actions
+                            console.log(response.message);
+                        } else {
+                            // Show error message or perform error handling
+                            console.log("Error: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle Ajax error
+                        console.error(error);
+                        console.log("An error occurred while submitting the form.");
+                    }
+                });
+            }
+
+        });
+    });
+  
+                // Select the form element by its ID or class
+                
+
+                function sum_score() {
+                    var sum =
+                        Number(window.document.frmScreening.qtnvs1.value) +
+                        Number(window.document.frmScreening.qtnvs2.value) +
+                        Number(window.document.frmScreening.qtnvs3.value) +
+                        Number(window.document.frmScreening.qtnvs4.value) +
+                        Number(window.document.frmScreening.qtnvs5.value) +
+                        Number(window.document.frmScreening.qtnvs6.value) +
+                        Number(window.document.frmScreening.qtnvs7.value) +
+                        Number(window.document.frmScreening.qtnvs8.value);
+
+                    var result = "";
+                    if (sum >= 3) {
+                        result = "มีภาวะเปราะบาง";
+                    } else if (sum >= 1) {
+                        result = "เริ่มเปราะบาง";
+                    } else {
+                        result = "ไม่มีความเปราะบาง";
+                    }
+                    window.document.frmScreening.qtnvs_sum.value = sum + " : " + result;
+                };
 </script>
 
 <script language=Javascript>
     const currentYear = new Date().getFullYear();
     const buddhistYearOptions = [];
     for (let i = currentYear - 543; i >= currentYear - 2500; i--) {
-        buddhistYearOptions.push({ value: i.toString(), label: `${i + 543} (พ.ศ. ${i})` });
+        buddhistYearOptions.push({
+            value: i.toString(),
+            label: `${i + 543} (พ.ศ. ${i})`
+        });
     }
-     flatpickr(".datepicker", {
+    flatpickr(".datepicker", {
         dateFormat: "Y-m-d", // Change the date format as needed
-        "locale": "th",   
+        "locale": "th",
         onReady: function(selectedDates, dateStr, instance) {
             const yearDropdown = instance.yearElements[0]; // Updated selector
             yearDropdown.value = parseInt(yearDropdown.value) + 543;
@@ -631,7 +672,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
             // instance.input.value = formattedDate;
         },
         onYearChange: function(selectedDates, dateStr, instance) {
-    
+
             // if(instance.yearElements[0].value>2400){
             //     instance.yearElements[0].value=instance.yearElements[0].value-543;
             //     const yearDropdown = instance.yearElements[0]; // Updated selector
@@ -641,55 +682,56 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
             // yearDropdown.value = parseInt(yearDropdown.value) + 543;
 
             // }
-           
+
         },
         onMonthChange: function(selectedDates, dateStr, instance) {
-           
-           
-        //     if(instance.yearElements[0].value>2400){
-               
-        //         instance.yearElements[0].value=instance.yearElements[0].value-543;
-        //         const yearDropdown = instance.yearElements[0]; // Updated selector
-        //     yearDropdown.value = parseInt(yearDropdown.value)+543;
-        //     }else{
-        //                     const yearDropdown = instance.yearElements[0]; // Updated selector
-        //     yearDropdown.value = parseInt(yearDropdown.value) + 543;
-                
-        //         }
-        //
-    },
+
+
+            //     if(instance.yearElements[0].value>2400){
+
+            //         instance.yearElements[0].value=instance.yearElements[0].value-543;
+            //         const yearDropdown = instance.yearElements[0]; // Updated selector
+            //     yearDropdown.value = parseInt(yearDropdown.value)+543;
+            //     }else{
+            //                     const yearDropdown = instance.yearElements[0]; // Updated selector
+            //     yearDropdown.value = parseInt(yearDropdown.value) + 543;
+
+            //         }
+            //
+        },
         onDayCreate: function(selectedDates, dateStr, instance) {
-          
-            if(instance.yearElements[0].value>2400){
-                instance.currentYear=instance.yearElements[0].value-543;
-                instance.yearElements[0].value=instance.yearElements[0].value-543;
+
+            if (instance.yearElements[0].value > 2400) {
+                instance.currentYear = instance.yearElements[0].value - 543;
+                instance.yearElements[0].value = instance.yearElements[0].value - 543;
                 const yearDropdown = instance.yearElements[0]; // Updated selector
-            yearDropdown.value = parseInt(yearDropdown.value)+543;
-            }else{
+                yearDropdown.value = parseInt(yearDropdown.value) + 543;
+            } else {
                 const yearDropdown = instance.yearElements[0]; // Updated selector
-            yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                yearDropdown.value = parseInt(yearDropdown.value) + 543;
 
             }
             console.log(instance.currentYear);
-           
+
         },
 
         // Convert the selected Gregorian year to Buddhist year
 
-        
+
 
 
         onChange: function(selectedDates, dateStr, instance) {
             // Convert the selected Gregorian year to Buddhist year
             const selectedDate = selectedDates[0];
             const buddhistYear = selectedDate.getFullYear() + 543; // Add 543 to convert to Buddhist year
-            
+
             // Update the input value with the converted year
             const inputElement = instance.input;
             const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
             inputElement.value = formattedDate;
         }
     });
+
     function saveGuestionnaire() {
         var xmlhttp = Inint_AJAX();
         var Url = "./visit/qtn_visit_crud.php";
