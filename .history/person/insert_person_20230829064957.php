@@ -71,7 +71,6 @@ function insertData($table, $data, $conn)
 
         $sql = "INSERT INTO $table ($columns) VALUES ($values)";
         $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        
         $sql = str_replace($values, $valuesString, $sql);
 
         // echo "SQL Query3: $sql<br>";
@@ -125,37 +124,22 @@ function updateData($table, $data, $condition, $conn, $personid)
             $updateFields[] = "$key = :$key";
         }
         $updateFieldsString = implode(', ', $updateFields);
-        // $updateFieldsString = implode(', ', array_keys($data));
-        $values = ':' . implode(', :',array_keys($data));
-// var_dump($updateFields);
+
         $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
         $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        var_dump($valuesString);
-        $sql = str_replace($values, $valuesString, $sql);
-
-
-        // $updateFields = array();
-        // foreach ($data as $key => $value) {
-        //     $updateFields[] = "$key = :$key";
-        // }
-        // $updateFieldsString = implode(', ', $updateFields);
-
-        // $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        // $sql = str_replace($updateFieldsString, $valuesString, $sql);
-        // //str_replace personid
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($personid))) . '"';
-      
-
-
-
-
-        
+        $sql = str_replace($updateFieldsString, $valuesString, $sql);
+        //str_replace personid
+        $valuesString = '"' . implode('", "', array_map('addslashes', array_values($personid))) . '"';
+        $sql = str_replace($condition, $valuesString, $sql);
+            var_dump($valuesString);
         echo "SQL Query: $sql<br>";
 
         $stmt = $conn->prepare($sql);
 
         foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+        foreach ($personid as $key => $value) {
             $stmt->bindValue(":$key", $value);
         }
 

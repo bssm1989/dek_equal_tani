@@ -1,7 +1,7 @@
 <?php
 $perid = $_GET["perid"];
 //hello world
-// echo "<h1>perid = $perid</h1>";
+echo "<h1>perid = $perid</h1>";
 // Get hwrkid from page showing the list of hwork
 if ($perid) {
     // Construct your SQL query to fetch hwork details and related information
@@ -35,7 +35,7 @@ LEFT JOIN schmethod m ON c.schmethid = m.schmethid
 LEFT JOIN disptyp dt ON p.perid = dt.perid
 LEFT JOIN dispform df ON df.dispfrmid = dt.dispfrmid
 WHERE p.perid = $perid";
-    // echo $sql;
+    echo $sql;
     // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
@@ -76,7 +76,7 @@ WHERE p.perid = $perid";
         $display_form_id = $row["display_form_id"];
     }
     //value place_id
-    // echo "<h1>place_id = $place_id</h1>";
+    echo "<h1>place_id = $place_id</h1>";
 }
 
 // Query to fetch titname options for dropdown
@@ -245,8 +245,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 <form name="frmScreening" id="frmScreening" method="post" enctype="" onSubmit="" target="">
 
                     <!-- ... (previous HTML code) ... -->
-                    <!-- input perid hidden -->
-                    <input type="hidden" id="perid" name="perid" value="<?= $perid; ?>">
+
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="title_id">รหัสคำนำหน้าชื่อ</label>
                         <select class="form-select" name="title_id" id="title_id" required>
@@ -701,13 +700,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 });
 
                 // Add the action parameter to indicate the action to be performed
-                // debugger;
-                if ($('#perid').val()) {
-                    jsonData['action'] = 'update';
-                } else  {
-                    jsonData['action'] = 'insert';
-                }
-              
+                jsonData['action'] = 'insert';
 
                 // Send data to the server for insertion
                 $.ajax({

@@ -71,7 +71,6 @@ function insertData($table, $data, $conn)
 
         $sql = "INSERT INTO $table ($columns) VALUES ($values)";
         $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        
         $sql = str_replace($values, $valuesString, $sql);
 
         // echo "SQL Query3: $sql<br>";
@@ -117,62 +116,43 @@ function insertData($table, $data, $conn)
     // ... Your code after
 
 }
-function updateData($table, $data, $condition, $conn, $personid)
+function updateData($table, $data, $condition, $conn)
 {
     try {
         $updateFields = array();
         foreach ($data as $key => $value) {
             $updateFields[] = "$key = :$key";
         }
-        $updateFieldsString = implode(', ', $updateFields);
-        // $updateFieldsString = implode(', ', array_keys($data));
-        $values = ':' . implode(', :',array_keys($data));
-// var_dump($updateFields);
-        $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        var_dump($valuesString);
-        $sql = str_replace($values, $valuesString, $sql);
-
-
-        // $updateFields = array();
-        // foreach ($data as $key => $value) {
-        //     $updateFields[] = "$key = :$key";
-        // }
-        // $updateFieldsString = implode(', ', $updateFields);
-
-        // $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        // $sql = str_replace($updateFieldsString, $valuesString, $sql);
-        // //str_replace personid
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($personid))) . '"';
       
+        $updateFieldsString = implode(', ', $updateFields);
 
-
-
+        $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
 
         
-        echo "SQL Query: $sql<br>";
-
         $stmt = $conn->prepare($sql);
-
+  
         foreach ($data as $key => $value) {
             $stmt->bindValue(":$key", $value);
         }
 
+        echo "SQL Query: $stmt<br>";
+      var_dump($condition);
+        exit();
+
+
         if ($stmt->execute()) {
-            return true; 
+            return true;
         } else {
             echo "Update failed.<br>";
-            print_r($stmt->errorInfo()); 
+            print_r($stmt->errorInfo());
             return false;
         }
     } catch (PDOException $e) {
         echo "Error Message: " . $e->getMessage() . "<br>";
         exit();
-        return false; 
+        return false;
     }
 }
-
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -344,9 +324,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // }
 
         $updatePersonCondition = "perid = :perid";
-        $personid['perid'] = $peridToUpdate;
+        $personDataToUpdate['perid'] = $peridToUpdate;
         
-        $updatedPerson = updateData('person', $personDataToUpdate, $updatePersonCondition, $conn, $personid);
+        $updatedPerson = updateData('person', $personDataToUpdate, $updatePersonCondition, $conn);
 
         if ($updatedPerson) {
             // Update child data

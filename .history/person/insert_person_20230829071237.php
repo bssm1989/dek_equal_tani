@@ -129,7 +129,7 @@ function updateData($table, $data, $condition, $conn, $personid)
         $values = ':' . implode(', :',array_keys($data));
 // var_dump($updateFields);
         $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
+        $valuesString =implode('", "', array_map('addslashes', array_values($data))) . '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
         var_dump($valuesString);
         $sql = str_replace($values, $valuesString, $sql);
 

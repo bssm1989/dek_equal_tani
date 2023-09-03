@@ -1,9 +1,6 @@
 <?php
-$perid = $_GET["perid"];
-//hello world
-// echo "<h1>perid = $perid</h1>";
-// Get hwrkid from page showing the list of hwork
-if ($perid) {
+$hwrkid = $_GET["id"]; // Get hwrkid from page showing the list of hwork
+if ($hwrkid) {
     // Construct your SQL query to fetch hwork details and related information
     $sql = "SELECT p.perid AS person_id, p.pid AS national_id, p.titid AS title_id,
     t.titnme AS title_name, p.name, p.sname AS surname, p.genid AS gender_id,
@@ -12,16 +9,11 @@ if ($perid) {
     p.vllid AS village_id, v.vllnme AS village_name, p.plcid AS place_id,
     plc.plcnme AS place_name, p.postcode, p.pertel AS phone_number,
     p.hholdid AS household_id, c.chiord AS child_order, l.livewnme AS living_with,
-  l.livewid AS living_with_id,
-    f.famsttnme AS family_status,
-    f.famsttid AS family_status_id,
-     c.distschkm AS distance_km_m,
+    f.famsttnme AS family_status, c.distschkm AS distance_km_m,
     c.distschm AS distance_m, c.distschhrs AS distance_hours,
     c.distschmin AS distance_minutes, c.farepay AS fare_per_month,
     m.schmethid AS main_transportation_id, m.schmethnme AS main_transportation,
-    c.chidetail AS child_detail,
-     df.dispfrmnme AS display_form,
-     df.dispfrmid AS display_form_id
+    c.chidetail AS child_detail, df.dispfrmnme AS display_form
 FROM person p
 LEFT JOIN titname t ON p.titid = t.titid
 LEFT JOIN gender g ON p.genid = g.genid
@@ -34,9 +26,7 @@ LEFT JOIN famstt f ON c.famsttid = f.famsttid
 LEFT JOIN schmethod m ON c.schmethid = m.schmethid
 LEFT JOIN disptyp dt ON p.perid = dt.perid
 LEFT JOIN dispform df ON df.dispfrmid = dt.dispfrmid
-WHERE p.perid = $perid";
-    // echo $sql;
-    // Modify the condition based on your database structure
+WHERE p.perid = $perid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
         $perid = $row["person_id"];
@@ -44,7 +34,6 @@ WHERE p.perid = $perid";
         $title_id = $row["title_id"];
         $title_name = $row["title_name"];
         $name = $row["name"];
-        $surname = $row["surname"];
         $regional_id = $row["regional_id"];
         $regional_name = $row["regional_name"];
         $birth_date = $row["birth_date"];
@@ -60,10 +49,8 @@ WHERE p.perid = $perid";
         $household_id = $row["household_id"];
         $child_order = $row["child_order"];
         $living_with = $row["living_with"];
-        $living_with_id = $row["living_with_id"];
 
         $family_status = $row["family_status"];
-        $family_status_id = $row["family_status_id"];
         $distance_km_m = $row["distance_km_m"];
         $distance_m = $row["distance_m"];
         $distance_hours = $row["distance_hours"];
@@ -73,10 +60,7 @@ WHERE p.perid = $perid";
         $main_transportation = $row["main_transportation"];
         $child_detail = $row["child_detail"];
         $display_form = $row["display_form"];
-        $display_form_id = $row["display_form_id"];
     }
-    //value place_id
-    // echo "<h1>place_id = $place_id</h1>";
 }
 
 // Query to fetch titname options for dropdown
@@ -245,8 +229,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 <form name="frmScreening" id="frmScreening" method="post" enctype="" onSubmit="" target="">
 
                     <!-- ... (previous HTML code) ... -->
-                    <!-- input perid hidden -->
-                    <input type="hidden" id="perid" name="perid" value="<?= $perid; ?>">
+
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="title_id">รหัสคำนำหน้าชื่อ</label>
                         <select class="form-select" name="title_id" id="title_id" required>
@@ -302,11 +285,11 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     </div>
 
                     <!-- ปีเดือนวันเกิด -->
-                    <div class="col-12 col-sm-4 mb-3">
+                    <!-- <div class="col-12 col-sm-4 mb-3">
                         <label for="birth_date">ปีเดือนวันเกิด</label>
                         <input type="text" class="form-control datepicker" name="birth_date" id="birth_date" placeholder="" value="<?= $birth_date; ?>" required>
 
-                    </div>
+                    </div> -->
 
                     <!-- อายุ 	 -->
                     <div class="col-12 col-sm-4 mb-3">
@@ -334,8 +317,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     <div class="col-12 col-sm-4 mb-3">
 
                         <div id="addr1" class="address">
-                            <!-- get value from php place_id -->
-                            <input type="hidden" id="addr1-addressCode" name="place_id" value="<?= $place_id; ?>" />
+                            <input type="hidden" id="addr1-addressCode" name="plcid">
 
                             <div class="notification"></div>
                         </div>
@@ -418,13 +400,12 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="livew_id">นักเรียนอาศัยอยู่กับใคร</label>
                         <select class="form-control" name="livew_id" id="livew_id" required>
-                            <option value="">-- เลือกนักเรียนอาศัยอยู่กับใคร --</option>
+                            <option value="">เลือกนักเรียนอาศัยอยู่กับใคร</option>
                             <?php
                             while ($livewRow = mysqli_fetch_assoc($livewResult)) {
-                                $selected = ($living_with_id == $livewRow['livewid']) ? 'selected' : '';
+                                $selected = ($livew_id == $livewRow['livewid']) ? 'selected' : '';
                                 echo '<option value="' . $livewRow['livewid'] . '" ' . $selected . '>' . $livewRow['livewnme'] . '</option>';
                             }
-
                             ?>
                         </select>
                     </div>
@@ -434,35 +415,25 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                         <label for="family_status">รหัสสถานภาพครอบครัว</label>
                         <select class="form-control" name="family_status" id="family_status" required>
                             <option value="">-- เลือกสถานภาพครอบครัว --</option>
-                            <?php while ($row = mysqli_fetch_assoc($familyStatusResult)) {
-                                $selected = ($family_status_id == $row['famsttid']) ? 'selected' : '';
-                                echo '<option value="' . $row['famsttid'] . '" ' . $selected . '>' . $row['famsttnme'] . '</option>';
-                            } ?>
+                            <?php while ($row = mysqli_fetch_assoc($familyStatusResult)) { ?>
+                                <option value="<?= $row['famsttid']; ?>" <?= ($family_status === $row['famsttid']) ? 'selected' : ''; ?>>
+                                    <?= $row['famsttnme']; ?>
+                                </option>
+                            <?php } ?>
                         </select>
                     </div>
 
 
-                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่กิโลเมตร -->
+                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่กิโลเมตรกี่เมตร -->
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="distance_to_school_km">การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่กิโลเมตรกี่เมตร</label>
-                        <input type="text" class="form-control" name="distance_to_school_km" id="distance_to_school_km" placeholder="" value="<?= $distance_km_m; ?>" required>
-                    </div>
-                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่เมตร -->
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="distance_to_school_km">การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่เมตร</label>
-                        <input type="text" class="form-control" name="distance_to_school_m" id="distance_to_school_m" placeholder="" value="<?= $distance_m; ?>" required>
+                        <input type="text" class="form-control" name="distance_to_school_km" id="distance_to_school_km" placeholder="" value="<?= $distance_to_school_km; ?>" required>
                     </div>
 
-
-                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมง -->
+                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมงกี่นาที -->
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="travel_time_to_school">การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมง</label>
-                        <input type="text" class="form-control" name="travel_time_to_school_hour" id="travel_time_to_school" placeholder="" value="<?= $distance_hours; ?>" required>
-                    </div>
-                    <!-- การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่นาที-->
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="travel_time_to_school">การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่นาที</label>
-                        <input type="text" class="form-control" name="travel_time_to_school_minute" id="travel_time_to_school" placeholder="" value="<?= $distance_minutes; ?>" required>
+                        <label for="travel_time_to_school">การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมงกี่นาที</label>
+                        <input type="text" class="form-control" name="travel_time_to_school" id="travel_time_to_school" placeholder="" value="<?= $travel_time_to_school; ?>" required>
                     </div>
 
                     <!-- ค่าใช้จ่ายในการเดินทางไป-กลับกี่บาท/เดือน -->
@@ -488,22 +459,19 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     <!-- รายละเอียดเชิงคุณภาพ -->
                     <div class="col-12 mb-3">
                         <label for="quality_detail">รายละเอียดเชิงคุณภาพ</label>
-                        <textarea class="form-control" name="quality_detail" id="quality_detail" rows="4" required><?= $child_detail; ?></textarea>
+                        <textarea class="form-control" name="quality_detail" id="quality_detail" rows="4" required><?= $quality_detail; ?></textarea>
                     </div>
 
                     <!-- รหัสลักษณะความเหลื่อมล้ำ (Dropdown) -->
                     <div class="col-12 mb-3">
-                        <label for="dispform">ลักษณะความเหลื่อมล้ำ</label>
+                        <label for="dispform">รหัสลักษณะความเหลื่อมล้ำ</label>
                         <select class="form-control" name="dispform" id="dispform" required>
                             <option value="">เลือกรหัสลักษณะความเหลื่อมล้ำ</option>
-                            <?php while ($row = mysqli_fetch_assoc($dispformCodeResult)) {
-                                //disptypid	bigint		รหัสความเหลื่อมล้ำ	PK	
-                                // perid	bigint		รหัสบุคคล  รหัสเด็ก	FK	
-                                // dispfrmid	int	2	รหัสลักษณะความเหลื่อมล้ำ	FK	มีตารางย่อย
-                                $selected = ($display_form_id == $row['dispfrmid']) ? 'selected' : '';
-                                echo '<option value="' . $row['dispfrmid'] . '" ' . $selected . '>' . $row['dispfrmnme'] . '</option>';
-                            } ?> 
-
+                            <?php while ($row = mysqli_fetch_assoc($dispformCodeResult)) : ?>
+                                <option value="<?= $row['dispfrmid']; ?>" <?= ($dispform === $row['dispfrmid']) ? 'selected' : ''; ?>>
+                                    <?= $row['dispfrmnme']; ?>
+                                </option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
 
@@ -546,13 +514,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
             <hr>
             <!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
-            <?php if(!$perid){ ?>
-            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-            <?php }else{ ?>
-            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-            <!-- button cancle -->
-            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-            <?php } ?>
+            <input type="submit" class="mt-3 btn app-btn-primary" name="submit" value="บันทึก" />
             <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
             <hr class="mb-4">
@@ -610,10 +572,6 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
         $("#frmScreening").validate({
             rules: {
-                'addr1-addressCode': {
-                    required: true,
-                    eightDigits: true
-                },
                 person_id: {
                     required: true,
                     digits: true
@@ -628,7 +586,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 gender_id: "required",
                 religion_id: "required",
                 birth_date: {
-                    required: false,
+                    required: true,
                     date: true
                 },
                 age: {
@@ -641,10 +599,10 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     required: true,
                     maxlength: 2
                 },
-                // place_id: {
-                //     required: true,
-                //     maxlength: 6
-                // },
+                place_id: {
+                    required: true,
+                    maxlength: 6
+                },
                 postcode: {
                     required: true,
                     digits: true,
@@ -701,13 +659,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 });
 
                 // Add the action parameter to indicate the action to be performed
-                // debugger;
-                if ($('#perid').val()) {
-                    jsonData['action'] = 'update';
-                } else  {
-                    jsonData['action'] = 'insert';
-                }
-              
+                jsonData['action'] = 'insert';
 
                 // Send data to the server for insertion
                 $.ajax({
@@ -719,8 +671,6 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                         if (response.success) {
                             // Show success message or perform any other actions
                             console.log(response.message);
-                            // go to next page
-                            window.location.href = "?page=person";
                         } else {
                             // Show error message or perform error handling
                             console.log("Error: " + response.message);

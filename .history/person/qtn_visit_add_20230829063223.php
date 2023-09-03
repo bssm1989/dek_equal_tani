@@ -1,7 +1,7 @@
 <?php
 $perid = $_GET["perid"];
 //hello world
-// echo "<h1>perid = $perid</h1>";
+echo "<h1>perid = $perid</h1>";
 // Get hwrkid from page showing the list of hwork
 if ($perid) {
     // Construct your SQL query to fetch hwork details and related information
@@ -35,7 +35,7 @@ LEFT JOIN schmethod m ON c.schmethid = m.schmethid
 LEFT JOIN disptyp dt ON p.perid = dt.perid
 LEFT JOIN dispform df ON df.dispfrmid = dt.dispfrmid
 WHERE p.perid = $perid";
-    // echo $sql;
+    echo $sql;
     // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {

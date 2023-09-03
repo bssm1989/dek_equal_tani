@@ -31,9 +31,6 @@ p.hholdid AS household_id,
 c.chiord AS child_order,
 l.livewnme AS living_with,
 f.famsttnme AS family_status,
-
-
-
 c.distschkm AS distance_km_m,
 c.distschm AS distance_m,
 c.distschhrs AS distance_hours,
@@ -196,8 +193,6 @@ function getEducationLevel($edulev)
                             <th>รหัสวิธีเดินทางหลัก</th>
                             <th>รายละเอียดเชิงคุณภาพ</th>
                             <th>รหัสลักษณะความเหลื่อมล้ำ</th>
-                            <!-- button edit delete -->
-                            <th>แก้ไข</th>
 
                         </tr>
                     </thead>
@@ -226,7 +221,7 @@ function getEducationLevel($edulev)
                             $child_order = $row['child_order'];
                             $living_with = $row['living_with'];
                             $family_status = $row['family_status'];
-                            $distance_km_m = $row['distance_km']+"กม. "+$row['distance_m']+"ม.";
+                            $distance_km_m = $row['distance_km_m'];
                             $distance_hours = $row['distance_hours'];
                             $fare_per_month = $row['fare_per_month'];
                             $main_transportation_id = $row['main_transportation_id'];
@@ -268,14 +263,7 @@ function getEducationLevel($edulev)
                                 <td><?= $main_transportation_id ?></td>
                                 <td><?= $child_detail ?></td>
                                 <td><?= $display_form ?></td>
-                                <!-- button edit delete -->
-                                <td>
-                               
-                                    <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                    <a href="?page=<?= $_GET['page'] ?>&function=delete&perid=<?= $perid ?>" class="btn btn-danger text-white"><i class="fas fa-trash-alt"></i></a>
-                            
-                                </td>
-                                </tr>
+                            </tr>
                         <?php
                             $counter++;
                         }
@@ -302,12 +290,8 @@ function getEducationLevel($edulev)
 
         const dataTable = $('#myTableAll').DataTable({
             responsive: true,
-            columnDefs: [
-                {responsivePriority: 2, targets: 2 },
-                {responsivePriority: 3, targets: 3 },
-                {responsivePriority: 4, targets: 4 },
-                { responsivePriority: 2, targets: -1 }
-            ],
+            
+
 
         });
 

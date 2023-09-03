@@ -17,9 +17,9 @@ class AddressDropdowns {
       const tambonCode = addressCode.slice(4, 6);
 
       this.provinceSelected = provinceCode;
-      // this.populateDropdowns(); // This will populate the amphur dropdown based on the selected province
+      this.populateDropdowns(); // This will populate the amphur dropdown based on the selected province
       this.amphurSelected = amphurCode;
-      // this.populateDropdowns(); // This will populate the tambon dropdown based on the selected amphur
+      this.populateDropdowns(); // This will populate the tambon dropdown based on the selected amphur
       this.tambonSelected = tambonCode;
       // No need to populate the village dropdown on page load
     }
@@ -77,18 +77,7 @@ class AddressDropdowns {
     // Populate the province dropdown initially
     this.setInitialValuesFromHiddenInput();
     this.populateProvinceDropdown();
-    if(this.provinceSelected){
-      this.provinceSelect.value = this.provinceSelected;
-      this.populateDropdowns();
-    }
-    if(this.amphurSelected){
-      this.amphurSelect.value = this.amphurSelected;
-      this.populateDropdowns();
-    }
-    if(this.tambonSelected){
-      this.tambonSelect.value = this.tambonSelected;
-      this.populateDropdowns();
-    }
+    
   }
   populateProvinceDropdown() {
     this.populateDropdown(

@@ -81,14 +81,6 @@ class AddressDropdowns {
       this.provinceSelect.value = this.provinceSelected;
       this.populateDropdowns();
     }
-    if(this.amphurSelected){
-      this.amphurSelect.value = this.amphurSelected;
-      this.populateDropdowns();
-    }
-    if(this.tambonSelected){
-      this.tambonSelect.value = this.tambonSelected;
-      this.populateDropdowns();
-    }
   }
   populateProvinceDropdown() {
     this.populateDropdown(

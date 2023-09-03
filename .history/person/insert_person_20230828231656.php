@@ -66,15 +66,27 @@ function insertData($table, $data, $conn)
     // hholdid	bigint	2	รหัสครัวเรือน	FK	มีตารางย่อย
 
     try {
+
         $columns = implode(', ', array_keys($data));
         $values = ':' . implode(', :', array_keys($data));
+        if (isset($action) && $action === 'insert') {
 
-        $sql = "INSERT INTO $table ($columns) VALUES ($values)";
-        $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        
-        $sql = str_replace($values, $valuesString, $sql);
+            $sql = "INSERT INTO $table ($columns) VALUES ($values)";
+            $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
+       
 
-        // echo "SQL Query3: $sql<br>";
+        } else {
+
+            $sql = "UPDATE $table SET $columns = $values WHERE perid = :perid";
+            $valuesString = '"' . implode('", "', array_map('addslashea', array_values($data))) . '"';
+            $valuesString .= ', ' . $data['perid'];
+
+
+        }
+
+         $sql = str_replace($values, $valuesString, $sql);
+
+         echo "SQL Query3: $sql<br>";
 
         $stmt = $conn->prepare($sql);
         if ($stmt === false) {
@@ -117,69 +129,12 @@ function insertData($table, $data, $conn)
     // ... Your code after
 
 }
-function updateData($table, $data, $condition, $conn, $personid)
-{
-    try {
-        $updateFields = array();
-        foreach ($data as $key => $value) {
-            $updateFields[] = "$key = :$key";
-        }
-        $updateFieldsString = implode(', ', $updateFields);
-        // $updateFieldsString = implode(', ', array_keys($data));
-        $values = ':' . implode(', :',array_keys($data));
-// var_dump($updateFields);
-        $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        var_dump($valuesString);
-        $sql = str_replace($values, $valuesString, $sql);
-
-
-        // $updateFields = array();
-        // foreach ($data as $key => $value) {
-        //     $updateFields[] = "$key = :$key";
-        // }
-        // $updateFieldsString = implode(', ', $updateFields);
-
-        // $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        // $sql = str_replace($updateFieldsString, $valuesString, $sql);
-        // //str_replace personid
-        // $valuesString = '"' . implode('", "', array_map('addslashes', array_values($personid))) . '"';
-      
-
-
-
-
-        
-        echo "SQL Query: $sql<br>";
-
-        $stmt = $conn->prepare($sql);
-
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-
-        if ($stmt->execute()) {
-            return true; 
-        } else {
-            echo "Update failed.<br>";
-            print_r($stmt->errorInfo()); 
-            return false;
-        }
-    } catch (PDOException $e) {
-        echo "Error Message: " . $e->getMessage() . "<br>";
-        exit();
-        return false; 
-    }
-}
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = isset($_POST['action']) ? $_POST['action'] : '';
 
-    if ($action === 'insert') {
+    if ($action === 'insert' || $action === 'update') {
         // Insert data function
 
         foreach ($requiredFields as $field) {
@@ -213,8 +168,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $personData = array_filter($personData, function ($value) {
             return $value !== null;
         });
-
+        if ($action === 'update') {
+            $personData['perid'] = $_POST['perid'];
+            
+        }
         $personInsert = insertData('person', $personData, $conn);
+       
         if ($personInsert !== false && $personInsert !== null) {
             // child	ตารางข้อมูลเฉพาะเด็ก				
             // ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
@@ -308,114 +267,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Rest of your code...
 
-    } elseif ($action === 'update') {
-        $peridToUpdate = isset($_POST['perid']) ? $_POST['perid'] : '';
+    }
+    // elseif ($action === 'update') {
 
-        if (!empty($peridToUpdate)) {
-            $personDataToUpdate = array(
-                'pid' => $_POST['national_id'],
-                'titid' => $_POST['title_id'],
-                'name' => $_POST['name'],
-                'sname' => $_POST['surname'],
-                'genid' => $_POST['gender_id'],
-                'religid' => $_POST['religion_id'],
-                'religoth' => $_POST['religion_other'],
-                'brtdte' => $_POST['birth_date'],
-                'age' => $_POST['age'],
-                'adr' => $_POST['address'],
-                'soi' => $_POST['street'],
-                // 'vllid' => $_POST['village_id'],
-                'plcid' => $_POST['place_id'],
-                'postcode' => $_POST['postcode'],
-                'pertel' => $_POST['phone_number'],
-                'hholdid' => $_POST['household_id'],
-
-                // ... other fields to update
-            );
-        }
-
-        $personDataToUpdate = array_filter($personDataToUpdate, function ($value) {
-            return $value !== null;
-        });
-        // foreach ($personDataToUpdate as $key => $value) {
-        //     if ($value === '') {
-        //         $personDataToUpdate[$key] = null;
-        //     }
-        // }
-
-        $updatePersonCondition = "perid = :perid";
-        $personid['perid'] = $peridToUpdate;
-        
-        $updatedPerson = updateData('person', $personDataToUpdate, $updatePersonCondition, $conn, $personid);
-
-        if ($updatedPerson) {
-            // Update child data
-            $childDataToUpdate = array(
-                    'chiord' => $_POST['child_order'],
-                    'livewid' => $_POST['livew_id'],
-                    'famsttid' => $_POST['family_status'],
-                    'distschkm' => $_POST['distance_to_school_km'],
-                    'distschm' => $_POST['distance_to_school_m'],
-                    'distschhrs' => $_POST['travel_time_to_school_hours'],
-                    'distschmin' => $_POST['travel_time_to_school_minutes'],
-                    'farepay' => $_POST['fare_per_month'],
-                    'schmethid' => $_POST['main_transportation_id'],
-                    'chidetail' => $_POST['child_details'],
-    
-    
-                    // ... add more fields as needed
-             
-
-            );
-
-            // Convert fields with empty values to null for child data
-            foreach ($childDataToUpdate as $key => $value) {
-                if ($value === '') {
-                    $childDataToUpdate[$key] = null;
-                }
-            }
-
-            $updateChildCondition = "perid = :perid"; // Use the appropriate condition for updating child data
-            $childDataToUpdate['perid'] = $peridToUpdate;
-
-            $updatedChild = updateData('child', $childDataToUpdate, $updateChildCondition, $conn);
-
-            if ($updatedChild) {
-                // Update dispform data
-                $dispformDataToUpdate = array(
-                    'dispfrmid' => $_POST['dispform'],
-
-                    // ... other dispform fields to update
-                );
-
-                $updateDispformCondition = "perid = :perid"; // Use the appropriate condition for updating dispform data
-                $dispformDataToUpdate['perid'] = $peridToUpdate;
-
-                // Convert fields with empty values to null for dispform data
-                foreach ($dispformDataToUpdate as $key => $value) {
-                    if ($value === '') {
-                        $dispformDataToUpdate[$key] = null;
-                    }
-                }
-
-                $updatedDispform = updateData('disptyp', $dispformDataToUpdate, $updateDispformCondition, $conn);
-
-                if ($updatedDispform) {
-                    $response['success'] = true;
-                    $response['message'] = 'Data updated successfully.';
-                } else {
-                    $response['success'] = false;
-                    $response['message'] = 'Error updating dispform data.';
-                }
-            } else {
-                $response['success'] = false;
-                $response['message'] = 'Error updating child data.';
-            }
-        } else {
-            $response['success'] = false;
-            $response['message'] = 'Error updating person data.';
-        }
-    } else {
+    // }
+    else {
         $response['success'] = false;
         $response['message'] = 'Invalid action.';
     }
@@ -424,4 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response['message'] = 'Invalid request method.';
 }
 
+// Return JSON response
 echo json_encode($response);
+
+// Close database connection

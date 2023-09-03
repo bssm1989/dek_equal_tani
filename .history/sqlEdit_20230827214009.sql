@@ -1,0 +1,1 @@
+ALTER TABLE `person` CHANGE `adr` `adr` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'ที่อยู่ปัจจุบัน บ้านเลขที่';

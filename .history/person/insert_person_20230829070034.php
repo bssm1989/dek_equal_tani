@@ -71,7 +71,6 @@ function insertData($table, $data, $conn)
 
         $sql = "INSERT INTO $table ($columns) VALUES ($values)";
         $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        
         $sql = str_replace($values, $valuesString, $sql);
 
         // echo "SQL Query3: $sql<br>";
@@ -124,13 +123,11 @@ function updateData($table, $data, $condition, $conn, $personid)
         foreach ($data as $key => $value) {
             $updateFields[] = "$key = :$key";
         }
-        $updateFieldsString = implode(', ', $updateFields);
-        // $updateFieldsString = implode(', ', array_keys($data));
-        $values = ':' . implode(', :',array_keys($data));
-// var_dump($updateFields);
+        $updateFieldsString = implode(', ', array_keys($updateFields));
+        $values = ':' . implode(', :',array_keys($updateFields));
+var_dump($values);
         $sql = "UPDATE $table SET $updateFieldsString WHERE $condition";
         $valuesString = '"' . implode('", "', array_map('addslashes', array_values($data))) . '"';
-        var_dump($valuesString);
         $sql = str_replace($values, $valuesString, $sql);
 
 

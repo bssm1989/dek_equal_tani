@@ -31,9 +31,6 @@ p.hholdid AS household_id,
 c.chiord AS child_order,
 l.livewnme AS living_with,
 f.famsttnme AS family_status,
-
-
-
 c.distschkm AS distance_km_m,
 c.distschm AS distance_m,
 c.distschhrs AS distance_hours,
@@ -226,7 +223,7 @@ function getEducationLevel($edulev)
                             $child_order = $row['child_order'];
                             $living_with = $row['living_with'];
                             $family_status = $row['family_status'];
-                            $distance_km_m = $row['distance_km']+"กม. "+$row['distance_m']+"ม.";
+                            $distance_km_m = $row['distance_km_m'];
                             $distance_hours = $row['distance_hours'];
                             $fare_per_month = $row['fare_per_month'];
                             $main_transportation_id = $row['main_transportation_id'];
@@ -270,8 +267,13 @@ function getEducationLevel($edulev)
                                 <td><?= $display_form ?></td>
                                 <!-- button edit delete -->
                                 <td>
-                               
-                                    <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                <button type="button" class="btn btn-primary btn-xs dt-edit" style="margin-right:16px;">
+					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-danger btn-xs dt-delete">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+				</button>
+                                    <a href="?page=<?= $_GET['page'] ?>&function=edit&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                     <a href="?page=<?= $_GET['page'] ?>&function=delete&perid=<?= $perid ?>" class="btn btn-danger text-white"><i class="fas fa-trash-alt"></i></a>
                             
                                 </td>
