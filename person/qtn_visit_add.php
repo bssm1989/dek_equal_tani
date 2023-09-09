@@ -48,6 +48,9 @@ WHERE p.perid = $perid";
         $regional_id = $row["regional_id"];
         $regional_name = $row["regional_name"];
         $birth_date = $row["birth_date"];
+        //$birth_date is buddist year convert to christian year ex 25640101 to 20170101
+        $birth_date = date("Y-m-d", strtotime("-543 year", strtotime($birth_date)));
+
         $age = $row["age"];
         $address = $row["address"];
         $street = $row["street"];
@@ -305,6 +308,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="birth_date">ปีเดือนวันเกิด</label>
                         <input type="text" class="form-control datepicker" name="birth_date" id="birth_date" placeholder="" value="<?= $birth_date; ?>" required>
+                        <input type="text" class="form-control " name="birth_date" id="birth_date" placeholder="" value="<?= $birth_date; ?>" required>
 
                     </div>
 
@@ -502,7 +506,7 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                                 // dispfrmid	int	2	รหัสลักษณะความเหลื่อมล้ำ	FK	มีตารางย่อย
                                 $selected = ($display_form_id == $row['dispfrmid']) ? 'selected' : '';
                                 echo '<option value="' . $row['dispfrmid'] . '" ' . $selected . '>' . $row['dispfrmnme'] . '</option>';
-                            } ?> 
+                            } ?>
 
                         </select>
                     </div>
@@ -546,12 +550,12 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
 
             <hr>
             <!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
-            <?php if(!$perid){ ?>
-            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-            <?php }else{ ?>
-            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-            <!-- button cancle -->
-            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+            <?php if (!$perid) { ?>
+                <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+            <?php } else { ?>
+                <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                <!-- button cancle -->
+                <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
             <?php } ?>
             <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
@@ -693,46 +697,82 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
                 // Add custom error messages here
             },
             submitHandler: function(form) {
-                // Serialize form data into JSON format
-                var formData = $(form).serializeArray();
-                var jsonData = {};
-                $.each(formData, function(index, field) {
-                    jsonData[field.name] = field.value;
-                });
+    // Serialize form data into JSON format
+    var formData = $(form).serializeArray();
+    var jsonData = {};
+    $.each(formData, function(index, field) {
+        jsonData[field.name] = field.value;
+    });
 
-                // Add the action parameter to indicate the action to be performed
-                // debugger;
-                if ($('#perid').val()) {
-                    jsonData['action'] = 'update';
-                } else  {
-                    jsonData['action'] = 'insert';
+    // Determine the action based on whether perid is present or not
+    if ($('#perid').val()) {
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'อัปเดต',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                performAjaxRequest(jsonData);
+            }
+        });
+    } else {
+        performAjaxRequest(jsonData);
+    }
+
+    function performAjaxRequest(data) {
+        // Convert birth_date 2564-01-01 to 25640101
+        data['birth_date'] = data['birth_date'].replace(/-/g, "");
+
+        // Add the action parameter to indicate the action to be performed
+        data['action'] = data['perid'] ? 'update' : 'insert';
+
+        // Send data to the server for insertion or update
+        $.ajax({
+            type: "POST",
+            url: "person/insert_person.php",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    Swal.fire({
+                        title: 'สำเร็จ',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        // Go to next page
+                        window.location.href = "?page=person";
+                    });
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        title: 'ข้อผิดพลาด',
+                        text: "เกิดข้อผิดพลาด: " + response.message,
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง'
+                    });
                 }
-              
-
-                // Send data to the server for insertion
-                $.ajax({
-                    type: "POST",
-                    url: "person/insert_person.php",
-                    data: jsonData,
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.success) {
-                            // Show success message or perform any other actions
-                            console.log(response.message);
-                            // go to next page
-                            window.location.href = "?page=person";
-                        } else {
-                            // Show error message or perform error handling
-                            console.log("Error: " + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle Ajax error
-                        console.error(error);
-                        console.log("An error occurred while submitting the form.");
-                    }
+            },
+            error: function(xhr, status, error) {
+                // Handle Ajax error
+                console.error(error);
+                Swal.fire({
+                    title: 'ข้อผิดพลาด',
+                    text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
                 });
             }
+        });
+    }
+}
+
+
+
 
         });
     });
@@ -775,9 +815,32 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
     flatpickr(".datepicker", {
         dateFormat: "Y-m-d", // Change the date format as needed
         "locale": "th",
+        "yearinput": false,
+
         onReady: function(selectedDates, dateStr, instance) {
+            // const yearDropdown = instance.yearElements[0]; // Updated selector
+            //check if year >2400
+            const yearDropdown = instance.yearElements[0]; // Updated selector
+            // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+            const buddhistYear = parseInt(yearDropdown.value) + 543;
+            month2digit = instance.selectedDates[0].getMonth() + 1;
+            if (month2digit < 10) {
+                month2digit = "0" + month2digit;
+            }
+            day2digit = instance.selectedDates[0].getDate();
+            if (day2digit < 10) {
+                day2digit = "0" + day2digit;
+            }
+
+            const formattedDate = `${buddhistYear}-${month2digit}-${day2digit}`;
+            instance.input.value = formattedDate;
+
+            // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+        },
+        onselect: function(selectedDates, dateStr, instance) {
             const yearDropdown = instance.yearElements[0]; // Updated selector
             yearDropdown.value = parseInt(yearDropdown.value) + 543;
+            console.log(yearDropdown.value);
         },
         onOpen: function(selectedDates, dateStr, instance) {
             // const selectedDate = instance.latestSelectedDateObj; // Get the selected date object
@@ -790,9 +853,19 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
         onValueUpdate: function(selectedDates, dateStr, instance) {
             // debugger;
             // const selectedDate = selectedDates[0];
-            // const buddhistYear = selectedDate.getFullYear() + 543;
+            // if(selectedDate.getFullYear()>2400){
+            //     instance.currentYear = selectedDate.getFullYear() - 543;
+            //     instance.yearElements[0].value = selectedDate.getFullYear() - 543;
+            //     const yearDropdown = instance.yearElements[0]; // Updated selector
+
+            // const buddhistYear =instance.currentYear + 543;
             // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
-            // instance.input.value = formattedDate;
+            // // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+            // // instance.input.value = formattedDate;
+
+            // instance.input.value = formattedDate; 
+
+            // }// Set the input value to the formatted date
         },
         onYearChange: function(selectedDates, dateStr, instance) {
 
@@ -823,17 +896,53 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
             //
         },
         onDayCreate: function(selectedDates, dateStr, instance) {
+            if (dateStr.length < 10) {
+                //dateStr 25640909 cut to year 2564 month 09 day 09
+                dateStr = dateStr.substring(0, 4) + "-" + dateStr.substring(4, 6) + "-" + dateStr.substring(6, 8);
+                //check if year >2400
+                if (dateStr.substring(0, 4) > 2400) {
+                    //year >2400
+                    //change year to buddhist year
+                    instance.currentYear = dateStr.substring(0, 4) - 543;
+                    instance.yearElements[0].value = dateStr.substring(0, 4) - 543;
+                    const yearDropdown = instance.yearElements[0]; // Updated selector
+                    yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                    instance.selectedDates[0].setYear(dateStr.substring(0, 4) - 543);
+                    instance.selectedDates[0].setMonth(dateStr.substring(5, 7) - 1);
+                    instance.selectedDates[0].setDate(dateStr.substring(8, 10));
+                    //change input value to buddhist year
+                    instance.input.value = dateStr;
+                } else {
+                    //year <2400
+                    //change input value to buddhist year
+                    instance.input.value = dateStr;
+                }
 
-            if (instance.yearElements[0].value > 2400) {
-                instance.currentYear = instance.yearElements[0].value - 543;
-                instance.yearElements[0].value = instance.yearElements[0].value - 543;
-                const yearDropdown = instance.yearElements[0]; // Updated selector
-                yearDropdown.value = parseInt(yearDropdown.value) + 543;
             } else {
-                const yearDropdown = instance.yearElements[0]; // Updated selector
-                yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                if (instance.yearElements[0].value > 2400) {
+                    instance.currentYear = instance.yearElements[0].value - 543;
+                    instance.yearElements[0].value = instance.yearElements[0].value - 543;
+                    const yearDropdown = instance.yearElements[0]; // Updated selector
+                    yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                } else {
+                    //     const yearDropdown = instance.yearElements[0]; // Updated selector
+                    //    // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                    //     const buddhistYear = parseInt(yearDropdown.value) + 543;
+                    //     month2digit = instance.selectedDates[0].getMonth() + 1;
+                    //     if (month2digit < 10) {
+                    //         month2digit = "0" + month2digit;
+                    //     }   
+                    //     day2digit = instance.selectedDates[0].getDate();
+                    //     if (day2digit < 10) {
+                    //         day2digit = "0" + day2digit;
+                    //     }
 
+                    //     const formattedDate = `${buddhistYear}-${month2digit}-${day2digit}`;
+                    //     instance.input.value = formattedDate;
+
+                }
             }
+
             console.log(instance.currentYear);
 
         },
@@ -846,13 +955,42 @@ schmethnme	varchar	30	ชื่อวิธีเดินทางหลัก 
         onChange: function(selectedDates, dateStr, instance) {
             // Convert the selected Gregorian year to Buddhist year
             const selectedDate = selectedDates[0];
-            const buddhistYear = selectedDate.getFullYear() + 543; // Add 543 to convert to Buddhist year
+            if (selectedDate.getFullYear() > 2400) {
+                instance.currentYear = selectedDate.getFullYear() - 543;
+                instance.yearElements[0].value = selectedDate.getFullYear() - 543;
+                const yearDropdown = instance.yearElements[0]; // Updated selector
 
-            // Update the input value with the converted year
-            const inputElement = instance.input;
-            const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
-            inputElement.value = formattedDate;
-        }
+                const buddhistYear = instance.currentYear + 543; // Add 543 to convert to Buddhist year
+
+                // Update the input value with the converted year
+                const inputElement = instance.input;
+                //d-m-Y
+                month2digi = selectedDate.getMonth() + 1;
+                if (month2digi < 10) {
+                    month2digi = "0" + month2digi;
+                }
+                //yyyy-mm-dd
+                const formattedDate = `${buddhistYear}-${month2digi}-${selectedDate.getDate()}`;
+                // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+                inputElement.value = formattedDate;
+            } else {
+                const yearDropdown = instance.yearElements[0]; // Updated selector  
+                const buddhistYear = instance.currentYear + 543; // Add 543 to convert to Buddhist year
+                const inputElement = instance.input;
+                //d-m-Y ex 9-09-2564 month 2 digit
+                month2digi = selectedDate.getMonth() + 1;
+                if (month2digi < 10) {
+                    month2digi = "0" + month2digi;
+                }
+
+
+                const formattedDate = `${buddhistYear}-${month2digi}-${selectedDate.getDate()}`;
+                // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+                inputElement.value = formattedDate;
+                // Update the input value with the converted year
+            }
+        },
+
     });
 
     function saveGuestionnaire() {

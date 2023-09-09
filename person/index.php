@@ -170,7 +170,7 @@ function getEducationLevel($edulev)
 
 
                             <th>#</th>
-                            <th data-priority="2" >รหัสบุคคล</th>
+                            <th data-priority="2">รหัสบุคคล</th>
                             <th>เลขบัตรประชาชน</th>
                             <th>รหัสคำนำหน้าชื่อ</th>
                             <th>ชื่อ</th>
@@ -226,7 +226,7 @@ function getEducationLevel($edulev)
                             $child_order = $row['child_order'];
                             $living_with = $row['living_with'];
                             $family_status = $row['family_status'];
-                            $distance_km_m = $row['distance_km']+"กม. "+$row['distance_m']+"ม.";
+                            $distance_km_m = $row['distance_km'] + "กม. " + $row['distance_m'] + "ม.";
                             $distance_hours = $row['distance_hours'];
                             $fare_per_month = $row['fare_per_month'];
                             $main_transportation_id = $row['main_transportation_id'];
@@ -234,7 +234,7 @@ function getEducationLevel($edulev)
                             $display_form = $row['display_form'];
 
                         ?>
-                            <tr>
+                            <tr id="row_<?=$perid?>">
 
 
 
@@ -270,12 +270,17 @@ function getEducationLevel($edulev)
                                 <td><?= $display_form ?></td>
                                 <!-- button edit delete -->
                                 <td>
-                               
+
                                     <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                    <a href="?page=<?= $_GET['page'] ?>&function=delete&perid=<?= $perid ?>" class="btn btn-danger text-white"><i class="fas fa-trash-alt"></i></a>
-                            
+                                    <a href="javascript:void(0);" onclick="deletePerson(
+                        '<?= $perid ?>', 
+                        '<?= $name ?>', 
+                        '<?= $sname ?>'
+                    )" class="btn btn-danger text-white">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
-                                </tr>
+                            </tr>
                         <?php
                             $counter++;
                         }
@@ -295,6 +300,52 @@ function getEducationLevel($edulev)
 
 
 <!-- Rest of your HTML and PHP code as before -->
+<!-- delete person -->
+<script>
+    function deletePerson(id, name, lastName) {
+        Swal.fire({
+            title: "ลบข้อมูล",
+            text: `คุณต้องการลบข้อมูลของ ${name} ${lastName} ใช่หรือไม่?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "ใช่, ลบข้อมูล",
+            cancelButtonText: "ยกเลิก"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Call the delete function here
+                deletePersonData(id);
+            }
+        });
+    }
+
+    function deletePersonData(id) {
+        // Send an AJAX request to delete the person's data
+        $.ajax({
+            type: "POST",
+            url: "person/delete_person.php", // Replace with your delete script URL
+            data: {
+                id: id
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    $('#row_' + id).remove();
+                    // Remove the deleted row from the DataTable
+                    dataTable.row($(`tr[data-id="${id}"]`)).remove().draw();
+                    Swal.fire("ลบข้อมูลสำเร็จ", "ข้อมูลถูกลบแล้ว", "success");
+                } else {
+                    Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", "error");
+            }
+        });
+    }
+</script>
+
 <script language=Javascript>
     $(document).ready(function() {
         // Function to get distinct values from the dispform table
@@ -302,11 +353,22 @@ function getEducationLevel($edulev)
 
         const dataTable = $('#myTableAll').DataTable({
             responsive: true,
-            columnDefs: [
-                {responsivePriority: 2, targets: 2 },
-                {responsivePriority: 3, targets: 3 },
-                {responsivePriority: 4, targets: 4 },
-                { responsivePriority: 2, targets: -1 }
+            columnDefs: [{
+                    responsivePriority: 2,
+                    targets: 2
+                },
+                {
+                    responsivePriority: 3,
+                    targets: 3
+                },
+                {
+                    responsivePriority: 4,
+                    targets: 4
+                },
+                {
+                    responsivePriority: 2,
+                    targets: -1
+                }
             ],
 
         });

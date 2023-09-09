@@ -123,14 +123,14 @@
                                 require 'childs/index.php';
                             }
                             
-                        }else if(isset($_GET['page']) && $_GET['page'] == 'person'){
+                        }else if(isset($_GET['page']) && $_GET['page'] == '2.person2'){
                             if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                                require 'person/qtn_visit_add.php';
+                                require '2.person2/qtn_visit_add.php';
                             }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                                require 'person/qtn_visit_add.php';
+                                require '2.person2/qtn_visit_add.php';
                             }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                             }else{
-                                require 'person/index.php';
+                                require '2.person2/index.php';
                             }
                             
                         }else if(isset($_GET['page']) && $_GET['page'] == 'child'){
@@ -195,14 +195,14 @@
                             require 'helpeducation/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == 'historyeducation'){
+                    else if(isset($_GET['page']) && $_GET['page'] == '3.historyeducation'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require 'historyeducation/qtn_visit_add.php';
+                            require '3.historyeducation/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require 'historyeducation/qtn_visit_add.php';
+                            require '3.historyeducation/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require 'historyeducation/index.php';
+                            require '3.historyeducation/index.php';
                         }
                     }
                     else if(isset($_GET['page']) && $_GET['page'] == 'history_help_job'){
