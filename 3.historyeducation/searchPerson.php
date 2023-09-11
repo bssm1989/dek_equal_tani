@@ -5,8 +5,9 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-if (isset($_GET['term'])) {
-    $term = $_GET['term'];
+if (isset($_GET['query'])) {
+    
+    $term = $_GET['query'];
 // person	ตารางบุคคล				
     // ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
     // perid	bigint		รหัสบุคคล	PK	ลองดูว่าจะรันตัวเลขอย่างไร เช่น ปีเดือนวันเวลาวินาที หรือรันตัวเลขไปเรื่อยๆ
@@ -27,7 +28,16 @@ if (isset($_GET['term'])) {
     // pertel	varchar	30	เบอร์โทรศัพท์		
     // hholdid	bigint	2	รหัสครัวเรือน	FK	มีตารางย่อย
     // Query to fetch matching person names
-    $query = "SELECT perid, name, sname FROM person WHERE CONCAT(name, ' ', sname) LIKE '%$term%'";
+
+        // For the initial load, limit the results to 20
+        $query = "SELECT p.*
+                  FROM person p
+                  LEFT JOIN child c ON p.perid = c.perid
+                  LEFT JOIN hedu h ON p.perid = h.perid
+                  WHERE c.perid IS NOT NULL AND h.perid IS NULL
+                  AND CONCAT(p.name, ' ', p.sname) LIKE '%$term%'
+                  LIMIT 20";
+    
     $result = mysqli_query($conn, $query);
 
     $data = array();
