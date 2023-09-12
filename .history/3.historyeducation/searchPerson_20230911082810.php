@@ -6,9 +6,9 @@ if (!$conn) {
 }
 
 if (isset($_GET['query'])) {
-
+    
     $term = $_GET['query'];
-    // person	ตารางบุคคล				
+// person	ตารางบุคคล				
     // ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
     // perid	bigint		รหัสบุคคล	PK	ลองดูว่าจะรันตัวเลขอย่างไร เช่น ปีเดือนวันเวลาวินาที หรือรันตัวเลขไปเรื่อยๆ
     // pid	varchar	13	เลขบัตรประชาชน		
@@ -29,16 +29,15 @@ if (isset($_GET['query'])) {
     // hholdid	bigint	2	รหัสครัวเรือน	FK	มีตารางย่อย
     // Query to fetch matching person names
 
-    // For the initial load, limit the results to 20
-    $query = "SELECT p.*
+        // For the initial load, limit the results to 20
+        $query = "SELECT p.*
                   FROM person p
                   LEFT JOIN child c ON p.perid = c.perid
                   LEFT JOIN hedu h ON p.perid = h.perid
-                  WHERE c.perid IS NOT NULL AND h.perid IS NULL 
+                  WHERE c.perid IS NOT NULL AND h.perid IS NULL
                   AND CONCAT(p.name, ' ', p.sname) LIKE '%$term%'
-              
                   LIMIT 20";
-
+    
     $result = mysqli_query($conn, $query);
 
     $data = array();
@@ -53,3 +52,4 @@ if (isset($_GET['query'])) {
     // Return JSON response
     echo json_encode($data);
 }
+?>

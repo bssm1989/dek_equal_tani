@@ -65,7 +65,7 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                         <label for="eduid">บุคคล</label>
                         <!-- //div group -->
                         <div class="input-group">
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." />
+                            <input type="text" id="personSelect" name="perid" class="form-control" placeholder="Search for a person..." />
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
@@ -91,11 +91,6 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                         </select>
                     </div>
 
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="edusemester">ชั้นปี</label>
-                        <input type="text" class="form-control" name="edulev" id="edulev" value="<?php echo $edulev; ?>" required>
-                    </div>
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="edusemester">ปีการศึกษา</label>
                         <input type="text" class="form-control" name="edusemester" id="edusemester" value="<?php echo $edusemester; ?>" required>
@@ -180,7 +175,7 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                         enableInputFieldsAndButton(true);
                         $('#changePersonButton').on('click', function() {
                             // Enable input fields and hide the change button
-                            enableInputFieldsAndButton(true);
+                            enableInputFieldsAndButton(false);
                         });
                     </script>
 
@@ -199,7 +194,7 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                     <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                     <hr class="mb-4">
-                    <!-- <div class="row">
+                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="savofc">ผู้บันทึก</label>
                             <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
@@ -216,7 +211,7 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                             <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
                             <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
                         </div>
-                    </div> -->
+                    </div>
                 </form>
 
             </div>
@@ -258,12 +253,12 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                     required: true
                 },
                 //make rule form input heduid
-                // heduid: {
-                //     required: true,
-                //     number: true,
-                //     min: 1,
-                //     max: 9999999999
-                // },
+                heduid: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 9999999999
+                },
                 //make rule form input edudetail
                 edudetail: {
                     required: true,
@@ -275,11 +270,6 @@ edunme	varchar	50	ชื่อระดับการศึกษา		-->
                     number: true,
                     min: 0,
                     max: 4
-                },edulev: {
-                    required: true,
-                    number: true,
-                    min: 1,
-                    max: 10
                 },
                 //make rule form input edusemester
                 edusemester: {

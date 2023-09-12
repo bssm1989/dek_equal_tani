@@ -38,7 +38,7 @@ if (isset($_GET['query'])) {
                   AND CONCAT(p.name, ' ', p.sname) LIKE '%$term%'
               
                   LIMIT 20";
-
+echo $query;
     $result = mysqli_query($conn, $query);
 
     $data = array();
