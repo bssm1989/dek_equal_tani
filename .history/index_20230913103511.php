@@ -165,39 +165,40 @@
                         }
                         
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '6.1institute'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'institute'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '6.1institute/qtn_visit_add.php';
+                            require 'institute/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '6.1institute/qtn_visit_add.php';
+                            require 'institute/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '6.1institute/index.php';
+                            require 'institute/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '6.2inststay'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'inststay'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '6.2inststay/qtn_visit_add.php';
+                            require 'institute/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '6.2inststay/qtn_visit_add.php';
+                            require 'institute/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '6.2inststay/index.php';
+                            require 'inststay/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '5.helpeducation'){
-                     
+                    if(isset($_GET['page']) && $_GET['page'] == '5.helpeducation'){
+                        echo $_GET['page'];
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
+                            echo 'Add function is called';
                             require '5.helpeducation/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
+                            echo 'Update function is called';
                             require '5.helpeducation/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
-                        }else{
+                            echo 'Delete function is called';
                             require '5.helpeducation/index.php';
-                           
                         }
-
                     }
+                    
                     else if(isset($_GET['page']) && $_GET['page'] == '3.historyeducation'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
                             require '3.historyeducation/qtn_visit_add.php';
@@ -208,54 +209,54 @@
                             require '3.historyeducation/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '7history_help_job'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'history_help_job'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '7history_help_job/qtn_visit_add.php';
+                            require 'history_help_job/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '7history_help_job/qtn_visit_add.php';
+                            require 'history_help_job/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '7history_help_job/index.php';
+                            require 'history_help_job/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '8.htraining'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'htraining'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '8.htraining/qtn_visit_add.php';
+                            require 'htraining/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '8.htraining/qtn_visit_add.php';
+                            require 'htraining/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '8.htraining/index.php';
+                            require 'htraining/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '9.hfolowup'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'hfolowup'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '9.hfolowup/qtn_visit_add.php';
+                            require 'hfolowup/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '9.hfolowup/qtn_visit_add.php';
+                            require 'hfolowup/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '9.hfolowup/index.php';
+                            require 'hfolowup/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '10.activity'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'activity'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '10.activity/qtn_visit_add.php';
+                            require 'activity/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '10.activity/qtn_visit_add.php';
+                            require 'activity/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '10.activity/index.php';
+                            require 'activity/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '11.staff'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'staff'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '11.staff/index.php';
+                            require 'staff/index.php';
                         }
                     }
                     

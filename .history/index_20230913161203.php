@@ -238,24 +238,24 @@
                             require '9.hfolowup/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '10.activity'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'activity'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '10.activity/qtn_visit_add.php';
+                            require 'activity/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '10.activity/qtn_visit_add.php';
+                            require 'activity/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '10.activity/index.php';
+                            require 'activity/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '11.staff'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'staff'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '11.staff/index.php';
+                            require 'staff/index.php';
                         }
                     }
                     

@@ -248,14 +248,14 @@
                             require '10.activity/index.php';
                         }
                     }
-                    else if(isset($_GET['page']) && $_GET['page'] == '11.staff'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'staff'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '11.staff/qtn_visit_add.php';
+                            require 'staff/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '11.staff/index.php';
+                            require 'staff/index.php';
                         }
                     }
                     
