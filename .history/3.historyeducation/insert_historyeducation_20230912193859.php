@@ -55,13 +55,13 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //  echo "SQL Query: $sql<br>";
+                 echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 
                 if ($result) {
                     // echo "Inserted ID: " . mysqli_insert_id($conn) . "<br>";
-                    return true;// Return the inserted ID
+                    return mysqli_insert_id($conn); // Return the inserted ID
                 } else {
                     // echo "Query execution failed.<br>";
                     return false;
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'eduid'=> $_POST['eduid'],
             'edusemester'=> $_POST['edusemester'],
             'edugrade'=> $_POST['edugrade'],
-            // 'heduid'=> $_POST['heduid'],
+            'heduid'=> $_POST['heduid'],
             'edulev'=> $_POST['edulev'],
             'edudetail'=> $_POST['edudetail']
 
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
 
         $personInsert = insertData('hedu', $personData, $conn);
-        if ($personInsert) {
+        if ($dispformInsert !== false && $dispformInsert !== null) {
             $response['success'] = true;
             $response['message'] = 'Data inserted successfully.';
         } else {

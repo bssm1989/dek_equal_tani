@@ -225,7 +225,7 @@ $img = $_SESSION['user_profile'];
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo isset($_GET['page']) && $_GET['page'] == '4.works' ? 'active' : '' ?>" href="?page=4.works">
+                        <a class="nav-link <?php echo isset($_GET['page']) && $_GET['page'] == 'works' ? 'active' : '' ?>" href="?page=works">
                             <span class="nav-icon">
 
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-files" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

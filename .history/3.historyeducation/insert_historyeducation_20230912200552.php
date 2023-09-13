@@ -55,7 +55,7 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //  echo "SQL Query: $sql<br>";
+                 echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 
@@ -156,7 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
 
         $personInsert = insertData('hedu', $personData, $conn);
-        if ($personInsert) {
+        var_dump($personInsert);
+        if ($dispformInsert) {
             $response['success'] = true;
             $response['message'] = 'Data inserted successfully.';
         } else {

@@ -154,14 +154,14 @@
                             }
                             
                         }
-                    else if(isset($_GET['page']) && $_GET['page'] == '4.works'){
+                    else if(isset($_GET['page']) && $_GET['page'] == 'works'){
                         if(isset($_GET['page']) && $_GET['function'] == 'add'){
-                            require '4.works/qtn_visit_add.php';
+                            require 'works/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'update'){
-                            require '4.works/qtn_visit_add.php';
+                            require 'works/qtn_visit_add.php';
                         }else if(isset($_GET['page']) && $_GET['function'] == 'delete'){
                         }else{
-                            require '4.works/index.php';
+                            require 'works/index.php';
                         }
                         
                     }
