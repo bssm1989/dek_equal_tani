@@ -161,10 +161,9 @@ function getEducationLevel($edulev)
                                 . ',\'' . $row['name']
                                 . '\',\'' . $row['sname'] 
                                 . '\',\'hedu\',\'heduid\')"><i class="fas fa-trash-alt"></i></button>'; -->
-                                   <!-- make button delete -->
-                                   <!-- // delete onclick (id , name , lastname, table, fillId) -->
-                                   <button"  type="button" class="btn btn-danger" onclick="deletePerson2(<?= $hwrkid ?>,'<?= $name ?>','<?= $sname ?>','hwork','hwrkid')"><i class="fas fa-trash-alt"></i></button>
-
+                                    <a href="javascript:void(0);" class="btn btn-warning text-white">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                    
                                 </td>
                             </tr>

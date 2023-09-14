@@ -177,11 +177,11 @@ $results = mysqli_query($conn, $sql);
                 if (response.success) {
                     var childRow = $(`tr[data-id="${id}"]`).next('.child');
                 if (childRow.length) {
-                    childRow.remove();
+                    dataTable.row(childRow).remove().draw();
                 }
 
                 // Remove the deleted row from the DataTable
-              $(`tr[data-id="${id}"]`).remove();
+                dataTable.row($(`tr[data-id="${id}"]`)).remove().draw();
 
                 // Remove the HTML row
                 $(`tr[data-id="${id}"]`).remove();

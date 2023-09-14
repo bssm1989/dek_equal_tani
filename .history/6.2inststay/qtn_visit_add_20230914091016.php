@@ -182,7 +182,7 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "6.2inststay/searchPerson.php",
+                                    url: "3.historyeducation/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {

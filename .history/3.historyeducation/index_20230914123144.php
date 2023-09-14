@@ -7,8 +7,6 @@ $optid = $_SESSION['optid'];
 $sql = "SELECT
 h.perid,
 CONCAT(p.name, ' ', p.sname) AS person_fullname,
-p.name,
- p.sname,
 h.heduid,
 e.edulevnme,
 h.edusemester,
@@ -108,7 +106,7 @@ $results = mysqli_query($conn, $sql);
                             <?php
                             $counter = 1;
                             while ($row = mysqli_fetch_assoc($results)) {
-                                echo "<tr id='row_" . $row['perid'] . "' data-id='" . $row['perid'] . "'>";
+                                echo "<tr>";
                                 echo "<td>" . $counter . "</td>";
                                 echo "<td>" . $row['perid'] . "</td>";
                                 echo "<td>" . $row['person_fullname'] . "</td>";
@@ -119,13 +117,8 @@ $results = mysqli_query($conn, $sql);
                                 echo "<td>" . $row['edudetail'] . "</td>";
                                 echo '<td>';
                                 echo '<a href="?page=' . $_GET['page'] . '&function=add&perid=' . $row['perid'] . '" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>';
-                               // delete onclick (id , name , lastname, table, fillId)
-                                echo '<button type="button" class="btn btn-danger" onclick="deletePerson(' . $row['perid'] 
-                                . ',\'' . $row['name']
-                                . '\',\'' . $row['sname'] 
-                                . '\',\'hedu\',\'heduid\')"><i class="fas fa-trash-alt"></i></button>';
-
-                                 echo '</td>';
+                                echo '<a href="javascript:void(0);" onclick="deletePerson(\'' . $row['perid'] . '\', \'' . $row['person_fullname'] . '\', \'' . $row['sname'] . '\')" class="btn btn-danger text-white"><i class="fas fa-trash-alt"></i></a>';
+                                echo '</td>';
                                 echo "</tr>";
                                 $counter++;
                             }
@@ -143,7 +136,7 @@ $results = mysqli_query($conn, $sql);
     </div>
 </div>
 <script>
-    function deletePerson(id, name, lastName, table, fillId) {
+    function deletePerson(id, name, lastName) {
         Swal.fire({
             title: "ลบข้อมูล",
             text: `คุณต้องการลบข้อมูลของ ${name} ${lastName} ใช่หรือไม่?`,
@@ -156,35 +149,25 @@ $results = mysqli_query($conn, $sql);
         }).then((result) => {
             if (result.isConfirmed) {
                 // Call the delete function here
-                deletePersonData(id, table, fillId);
+                deletePersonData(id);
             }
         });
     }
 
-    function deletePersonData(id, table, fillId) {
+    function deletePersonData(id) {
         // Send an AJAX request to delete the person's data
         $.ajax({
             type: "POST",
             url: "3.historyeducation/delete_person.php", // Replace with your delete script URL
             data: {
-                id: id,
-                table: table,
-                fillId: fillId
-
+                id: id
             },
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    var childRow = $(`tr[data-id="${id}"]`).next('.child');
-                if (childRow.length) {
-                    childRow.remove();
-                }
-
-                // Remove the deleted row from the DataTable
-              $(`tr[data-id="${id}"]`).remove();
-
-                // Remove the HTML row
-                $(`tr[data-id="${id}"]`).remove();
+                    $('#row_' + id).remove();
+                    // Remove the deleted row from the DataTable
+                    dataTable.row($(`tr[data-id="${id}"]`)).remove().draw();
                     Swal.fire("ลบข้อมูลสำเร็จ", "ข้อมูลถูกลบแล้ว", "success");
                 } else {
                     Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");

@@ -175,16 +175,9 @@ $results = mysqli_query($conn, $sql);
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    var childRow = $(`tr[data-id="${id}"]`).next('.child');
-                if (childRow.length) {
-                    childRow.remove();
-                }
-
-                // Remove the deleted row from the DataTable
-              $(`tr[data-id="${id}"]`).remove();
-
-                // Remove the HTML row
-                $(`tr[data-id="${id}"]`).remove();
+                    $('#row_' + id).remove();
+                    // Remove the deleted row from the DataTable
+                    dataTable.row($(`tr[data-id="${id}"]`)).remove().draw();
                     Swal.fire("ลบข้อมูลสำเร็จ", "ข้อมูลถูกลบแล้ว", "success");
                 } else {
                     Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");

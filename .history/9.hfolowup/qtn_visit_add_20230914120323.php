@@ -1,40 +1,26 @@
 <?php
-$perid = $_GET["id"]; // Get perid from page showing the list of inststay
-if ($perid) {
-    // Construct your SQL query to fetch inststay details and related information
-    $sql = "SELECT i.perid, CONCAT(p.name, ' ', p.sname) AS person_fullname, i.instid, ins.instname,
-                   i.persince, t.staytypnme, i.helpmoney, i.helpobject, i.helpaccom, i.helpfood,
-                   i.helpfare, i.helpedu, i.helphealth, i.helppayment, i.needscholar
-            FROM inststay AS i
-            JOIN person AS p ON i.perid = p.perid
-            JOIN institute AS ins ON i.instid = ins.instid
-            JOIN inststaytyp AS t ON i.staytypid = t.staytypid
-            WHERE i.perid = $perid"; // Modify the condition based on your database structure
-    $result = mysqli_query($conn, $sql);
+$hflwid = $_GET["id"]; // Get hfolowup ID from page showing list of hfolowup
+if ($hflwid) {
+    // Construct your SQL query to fetch hfolowup details and related information
+    $sql = "SELECT hf.hflwid, hf.perid, hf.hflwdtestr, hf.hflwdteend, hf.hflwmeth, hf.hflwdetail,
+                   CONCAT(p.name, ' ', p.sname) AS participant_name
+            FROM hfolowup hf
+            JOIN person p ON hf.perid = p.perid
+            WHERE hf.hflwid = $hflwid"; // Modify the condition based on your database structure
+    $result = mysqli_query($connection, $sql);
     if ($row = mysqli_fetch_array($result)) {
-        $instid = $row['instid'];
-        $persince = $row['persince'];
-        $staytypid = $row['staytypid'];
-        $helpmoney = $row['helpmoney'];
-        $helpobject = $row['helpobject'];
-        $helpaccom = $row['helpaccom'];
-        $helpfood = $row['helpfood'];
-        $helpfare = $row['helpfare'];
-        $helpedu = $row['helpedu'];
-        $helphealth = $row['helphealth'];
-        $helppayment = $row['helppayment'];
-        $needscholar = $row['needscholar'];
+        $perid = $row['perid'];
+        $hflwdtestr = $row['hflwdtestr'];
+        $hflwdteend = $row['hflwdteend'];
+        $hflwmeth = $row['hflwmeth'];
+        $hflwdetail = $row['hflwdetail'];
     }
 }
-
-// Query to fetch staytyp options for dropdown
-$staytypQuery = "SELECT * FROM inststaytyp";
-$staytypResult = mysqli_query($conn, $staytypQuery);
 ?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">จัดการข้อมูลการพักในสถาบัน</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -47,46 +33,18 @@ $staytypResult = mysqli_query($conn, $staytypQuery);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลการพักในสถาบัน</b>
+                    <b>จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</b>
                 </h5>
 
-                <!-- รหัสบุคคล รหัสเด็ก
-• รหัสสถาบัน
-• นักเรียนรายนี้อยู่กับสถาบันตั้งแต่เดือนปี (พ.ศ.)
-• รหัสลักษณะที่พักอาศัยในสถาบัน  พักอาศัยในสถาบันแบบใด
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้เงินสด
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้สิ่งของ
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้ที่พักอาศัย
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้อาหาร
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้การเดินทาง
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านการศึกษา
-• สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านสุขภาพ
-• สถาบันมีรายจ่ายเฉลี่ยในการดูแลนักเรียนรายนี้
-• สถาบันมีความประสงค์รับเงินอุดหนุนจาก กสศ. และสามารถปฏิบัติ
-ตามเงื่อนไขการรับทุนส าหรับนักเรียนรายนี้หรือไม่
-inststaytyp	ลักษณะที่พักอาศัยในสถาบัน				
-ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
-staytypid	int	2	รหัสลักษณะที่พักอาศัยในสถาบัน	PK	
-staytypnme	varchar	30	ชื่อลักษณะที่พักอาศัยในสถาบัน		
-inststay	ข้อมูลการพักในสถาบัน				
-ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
-perid	bigint		รหัสบุคคล  รหัสเด็ก	PK FK	
-instid	int	2	รหัสสถาบัน	PK FK	
-persince	int	6	นักเรียนรายนี้อยู่กับสถาบันตั้งแต่เดือนปี (พ.ศ.)		เก็บ 6 หลัก เช่น 256602
-staytypid	int	2	รหัสลักษณะที่พักอาศัยในสถาบัน พักอาศัยในสถาบันแบบใด	FK	มีตารางย่อย
-helpmoney	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้เงินสด		1=yes, 0=no
-helpobject	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้สิ่งของ		1=yes, 0=no
-helpaccom	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้ที่พักอาศัย		1=yes, 0=no
-helpfood	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้อาหาร		1=yes, 0=no
-helpfare	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้การเดินทาง		1=yes, 0=no
-helpedu	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านการศึกษา		1=yes, 0=no
-helphealth	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านสุขภาพ		1=yes, 0=no
-helppayment	int	7	สถาบันมีรายจ่ายเฉลี่ยในการดูแลนักเรียนรายนี้		หน่วย:: บาท/คน/ปีการศึกษา
-needscholar	int	1	สถาบันมีความประสงค์รับเงินอุดหนุนจาก กสศ. และสามารถปฏิบัติตามเงื่อนไขการรับทุนสำหรับนักเรียนรายนี้หรือไม่		1=ต้องการ, 2=ไม่ต้องการ -->
-
+                <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
+• รหัสบุคคล รหัสเด็ก
+• วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน
+• วันที่ติดตาม/เยี่ยมเยียนเสร็จ
+• ติดตาม/เยี่ยมเยียนด้วยวิธีใด
+• รายละเอียดการติดตาม/เยี่ยมเยียน -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
 
-                    <div class="col-12 col-sm-4 mb-3">
+                <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
                         <!-- //div group -->
                         <div class="input-group">
@@ -101,73 +59,33 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             </div>
                             <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
                         </div>
-                    </div>
-
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="instid">รหัสสถาบัน</label>
-                        <input type="text" class="form-control" name="instid" id="instid" value="<?php echo $instid; ?>" required>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="persince">นักเรียนรายนี้อยู่กับสถาบันตั้งแต่เดือนปี (พ.ศ.)</label>
-                        <input type="text" class="form-control" name="persince" id="persince" value="<?php echo $persince; ?>" required>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="staytypid">รหัสลักษณะที่พักอาศัยในสถาบัน</label>
-                        <select class="form-select" name="staytypid" id="staytypid" required>
-                            <?php
-                            while ($staytypRow = mysqli_fetch_assoc($staytypResult)) {
-                                $selected = ($staytypRow['staytypid'] == $staytypid) ? "selected" : "";
-                                echo "<option value='{$staytypRow['staytypid']}' {$selected}>{$staytypRow['staytypnme']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpmoney">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้เงินสด</label>
-                        <input type="checkbox" class="form-check-input" name="helpmoney" id="helpmoney" value="1" <?php echo ($helpmoney == 1) ? "checked" : ""; ?>>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpobject">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้สิ่งของ</label>
-                        <input type="checkbox" class="form-check-input" name="helpobject" id="helpobject" value="1" <?php echo ($helpobject == 1) ? "checked" : ""; ?>>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpaccom">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้ที่พักอาศัย</label>
-                        <input type="checkbox" class="form-check-input" name="helpaccom" id="helpaccom" value="1" <?php echo ($helpaccom == 1) ? "checked" : ""; ?>>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpfood">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้อาหาร</label>
-                        <input type="checkbox" class="form-check-input" name="helpfood" id="helpfood" value="1" <?php echo ($helpfood == 1) ? "checked" : ""; ?>>
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpfare">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้การเดินทาง</label>
-                        <input type="checkbox" class="form-check-input" name="helpfare" id="helpfare" value="1" <?php echo ($helpfare == 1) ? "checked" : ""; ?>>
+                        <label for="hflwdtestr">วันที่เริ่มติดตาม/เยี่ยมเยียน</label>
+                        <input type="text" class="form-control" name="hflwdtestr" id="hflwdtestr" placeholder="วันที่เริ่มติดตาม/เยี่ยมเยียน" value="<?php echo $hflwdtestr; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="helpedu">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านการศึกษา</label>
-                        <input type="checkbox" class="form-check-input" name="helpedu" id="helpedu" value="1" <?php echo ($helpedu == 1) ? "checked" : ""; ?>>
+                        <label for="hflwdteend">วันที่ติดตาม/เยี่ยมเยียนเสร็จ</label>
+                        <input type="text" class="form-control" name="hflwdteend" id="hflwdteend" placeholder="วันที่ติดตาม/เยี่ยมเยียนเสร็จ" value="<?php echo $hflwdteend; ?>" required>
                     </div>
+
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="helphealth">สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านสุขภาพ</label>
-                        <input type="checkbox" class="form-check-input" name="helphealth" id="helphealth" value="1" <?php echo ($helphealth == 1) ? "checked" : ""; ?>>
+                        <label for="hflwmeth">ติดตาม/เยี่ยมเยียนด้วยวิธีใด</label>
+                        <!-- You can replace this input with a dropdown menu populated from a query -->
+                        <input type="text" class="form-control" name="hflwmeth" id="hflwmeth" placeholder="ติดตาม/เยี่ยมเยียนด้วยวิธีใด" value="<?php echo $hflwmeth; ?>" required>
                     </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="helppayment">สถาบันมีรายจ่ายเฉลี่ยในการดูแลนักเรียนรายนี้</label>
-                        <input type="number" class="form-control" name="helppayment" id="helppayment" value="<?php echo $helppayment; ?>">
+
+                    <div class="col-12 col-sm-12 mb-3">
+                        <label for="hflwdetail">รายละเอียดการติดตาม/เยี่ยมเยียน</label>
+                        <textarea class="form-control" name="hflwdetail" id="hflwdetail" placeholder="รายละเอียดการติดตาม/เยี่ยมเยียน" required><?php echo $hflwdetail; ?></textarea>
                     </div>
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="needscholar">สถาบันมีความประสงค์รับเงินอุดหนุนจาก กสศ. และสามารถปฏิบัติตามเงื่อนไขการรับทุนสำหรับนักเรียนรายนี้หรือไม่</label>
-                        <select class="form-select" name="needscholar" id="needscholar">
-                            <option value="1" <?php echo ($needscholar == 1) ? "selected" : ""; ?>>ต้องการ</option>
-                            <option value="2" <?php echo ($needscholar == 2) ? "selected" : ""; ?>>ไม่ต้องการ</option>
-                        </select>
-                    </div>
+
                     <script>
                         // Function to enable all input fields
                         function enableInputFieldsAndButton(setInput) {
                             $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#instid, #persince, #staytypid, #helpmoney, #helpobject, #helpaccom, #helpfood, #helpfare, #helpedu, #helphealth, #helppayment, #needscholar').prop('disabled', setInput);
+                            $('#htrndtestr, #htrndteend, #htrntit, #prvid, #htrndetail').prop('disabled', setInput);
                         }
 
                         // Initialize the dropdown menu
@@ -182,7 +100,7 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "6.2inststay/searchPerson.php",
+                                    url: "9.hfolowup/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {
@@ -227,8 +145,6 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             enableInputFieldsAndButton(true);
                         });
                     </script>
-                    <!--//app-card-body-->
-
                     <hr>
                     <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
                     <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>

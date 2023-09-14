@@ -12,7 +12,7 @@
 <!-- datatables JS -->
 <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
 <script>
-    function deletePerson2(id, name, lastName, table, fillId) {
+    function deletePerson(id, name, lastName, table, fillId) {
         Swal.fire({
             title: "ลบข้อมูล",
             text: `คุณต้องการลบข้อมูลของ ${name} ${lastName} ใช่หรือไม่?`,

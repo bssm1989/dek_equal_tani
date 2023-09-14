@@ -133,7 +133,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
+                                $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
                             }
 
                             // Initialize the dropdown menu

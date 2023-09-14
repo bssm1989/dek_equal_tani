@@ -33,12 +33,12 @@ if (isset($_GET['query'])) {
     $query = "SELECT p.*
                   FROM person p
                   LEFT JOIN child c ON p.perid = c.perid
-                  LEFT JOIN hhelpjob h ON p.perid = h.perid
+                  LEFT JOIN inststay h ON p.perid = h.perid
                   WHERE c.perid IS NOT NULL AND h.perid IS NULL 
                   AND CONCAT(p.name, ' ', p.sname) LIKE '%$term%'
               
                   LIMIT 20";
-
+    echo $query;
     $result = mysqli_query($conn, $query);
 
     $data = array();

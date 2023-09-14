@@ -167,7 +167,7 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                         // Function to enable all input fields
                         function enableInputFieldsAndButton(setInput) {
                             $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#instid, #persince, #staytypid, #helpmoney, #helpobject, #helpaccom, #helpfood, #helpfare, #helpedu, #helphealth, #helppayment, #needscholar').prop('disabled', setInput);
+                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
                         }
 
                         // Initialize the dropdown menu
@@ -182,7 +182,7 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "6.2inststay/searchPerson.php",
+                                    url: "3.historyeducation/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {

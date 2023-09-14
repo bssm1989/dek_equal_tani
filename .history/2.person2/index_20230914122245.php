@@ -226,7 +226,7 @@ function getEducationLevel($edulev)
                             $child_order = $row['child_order'];
                             $living_with = $row['living_with'];
                             $family_status = $row['family_status'];
-                            $distance_km_m = $row['distance_km'] . "กม. " . $row['distance_m'] . "ม.";
+                            $distance_km_m = $row['distance_km'] ."กม. " . $row['distance_m'] ."ม.";
                             $distance_hours = $row['distance_hours'];
                             $fare_per_month = $row['fare_per_month'];
                             $main_transportation_id = $row['main_transportation_id'];
@@ -234,7 +234,7 @@ function getEducationLevel($edulev)
                             $display_form = $row['display_form'];
 
                         ?>
-                            <tr id="row_<?= $perid ?>">
+                            <tr id="row_<?=$perid?>">
 
 
 

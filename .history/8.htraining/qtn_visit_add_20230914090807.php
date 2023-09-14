@@ -1,26 +1,28 @@
 <?php
-$hflwid = $_GET["id"]; // Get hfolowup ID from page showing list of hfolowup
-if ($hflwid) {
-    // Construct your SQL query to fetch hfolowup details and related information
-    $sql = "SELECT hf.hflwid, hf.perid, hf.hflwdtestr, hf.hflwdteend, hf.hflwmeth, hf.hflwdetail,
-                   CONCAT(p.name, ' ', p.sname) AS participant_name
-            FROM hfolowup hf
-            JOIN person p ON hf.perid = p.perid
-            WHERE hf.hflwid = $hflwid"; // Modify the condition based on your database structure
+$hhtrnid = $_GET["id"]; // Get hhtrnid from page showing the list of htraining
+if ($hhtrnid) {
+    // Construct your SQL query to fetch htraining details and related information
+    $sql = "SELECT ht.hhtrnid, ht.perid, ht.htrndtestr, ht.htrndteend, ht.htrntit, ht.prvid, ht.htrndetail,
+                   CONCAT(p.name, ' ', p.sname) AS participant_name, prv.prvnme AS training_province
+            FROM htraining ht
+            JOIN person p ON ht.perid = p.perid
+            JOIN prv ON ht.prvid = prv.prvid
+            WHERE ht.hhtrnid = $hhtrnid"; // Modify the condition based on your database structure
     $result = mysqli_query($connection, $sql);
     if ($row = mysqli_fetch_array($result)) {
         $perid = $row['perid'];
-        $hflwdtestr = $row['hflwdtestr'];
-        $hflwdteend = $row['hflwdteend'];
-        $hflwmeth = $row['hflwmeth'];
-        $hflwdetail = $row['hflwdetail'];
+        $htrndtestr = $row['htrndtestr'];
+        $htrndteend = $row['htrndteend'];
+        $htrntit = $row['htrntit'];
+        $prvid = $row['prvid'];
+        $htrndetail = $row['htrndetail'];
     }
 }
 ?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการอบรม</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -33,7 +35,7 @@ if ($hflwid) {
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</b>
+                    <b>จัดการข้อมูลประวัติการอบรม</b>
                 </h5>
 
                 <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
@@ -43,6 +45,7 @@ if ($hflwid) {
 • ติดตาม/เยี่ยมเยียนด้วยวิธีใด
 • รายละเอียดการติดตาม/เยี่ยมเยียน -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
+
 
                 <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
@@ -61,31 +64,35 @@ if ($hflwid) {
                         </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwdtestr">วันที่เริ่มติดตาม/เยี่ยมเยียน</label>
-                        <input type="text" class="form-control" name="hflwdtestr" id="hflwdtestr" placeholder="วันที่เริ่มติดตาม/เยี่ยมเยียน" value="<?php echo $hflwdtestr; ?>" required>
+                        <label for="htrndtestr">วันที่เริ่มอบรม</label>
+                        <input type="text" class="form-control" name="htrndtestr" id="htrndtestr" placeholder="วันที่เริ่มอบรม" value="<?php echo $htrndtestr; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwdteend">วันที่ติดตาม/เยี่ยมเยียนเสร็จ</label>
-                        <input type="text" class="form-control" name="hflwdteend" id="hflwdteend" placeholder="วันที่ติดตาม/เยี่ยมเยียนเสร็จ" value="<?php echo $hflwdteend; ?>" required>
+                        <label for="htrndteend">วันที่อบรมเสร็จ</label>
+                        <input type="text" class="form-control" name="htrndteend" id="htrndteend" placeholder="วันที่อบรมเสร็จ" value="<?php echo $htrndteend; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwmeth">ติดตาม/เยี่ยมเยียนด้วยวิธีใด</label>
+                        <label for="htrntit">เรื่องที่อบรม</label>
+                        <input type="text" class="form-control" name="htrntit" id="htrntit" placeholder="เรื่องที่อบรม" value="<?php echo $htrntit; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="prvid">จังหวัดที่อบรม</label>
                         <!-- You can replace this input with a dropdown menu populated from a query -->
-                        <input type="text" class="form-control" name="hflwmeth" id="hflwmeth" placeholder="ติดตาม/เยี่ยมเยียนด้วยวิธีใด" value="<?php echo $hflwmeth; ?>" required>
+                        <input type="text" class="form-control" name="prvid" id="prvid" placeholder="จังหวัดที่อบรม" value="<?php echo $prvid; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-12 mb-3">
-                        <label for="hflwdetail">รายละเอียดการติดตาม/เยี่ยมเยียน</label>
-                        <textarea class="form-control" name="hflwdetail" id="hflwdetail" placeholder="รายละเอียดการติดตาม/เยี่ยมเยียน" required><?php echo $hflwdetail; ?></textarea>
+                        <label for="htrndetail">รายละเอียดการอบรม</label>
+                        <textarea class="form-control" name="htrndetail" id="htrndetail" placeholder="รายละเอียดการอบรม" required><?php echo $htrndetail; ?></textarea>
                     </div>
-
                     <script>
                         // Function to enable all input fields
                         function enableInputFieldsAndButton(setInput) {
                             $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#hflwdtestr, #hflwdteend, #hflwmeth, #hflwdetail').prop('disabled', setInput);
+                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
                         }
 
                         // Initialize the dropdown menu
@@ -100,7 +107,7 @@ if ($hflwid) {
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "9.hfolowup/searchPerson.php",
+                                    url: "3.historyeducation/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {
@@ -145,36 +152,38 @@ if ($hflwid) {
                             enableInputFieldsAndButton(true);
                         });
                     </script>
-                    <hr>
-                    <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
-                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
-
-                    <hr class="mb-4">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label for="savofc">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="savdte">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
             <!--//app-card-body-->
+    
+            <hr>
+            <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
+            <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+
+            <hr class="mb-4">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="savofc">ผู้บันทึก</label>
+                    <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="savdte">วันที่บันทึก</label>
+                    <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
+                    <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
+                    <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                </div>
+            </div>
+            </form>
+
         </div>
-        <!--//app-card-->
+        <!--//app-card-body-->
     </div>
+    <!--//app-card-->
+</div>
 </div>
 <!--//row-->
 

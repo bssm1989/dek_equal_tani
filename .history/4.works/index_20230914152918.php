@@ -154,18 +154,19 @@ function getEducationLevel($edulev)
                                 <td>
 
                                     <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $hwrkid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                              
+                                    <!-- <a href="javascript:void(0);" onclick="deletePerson(
+                        '<?= $perid ?>', 
+                        '<?= $name ?>', 
+                        '<?= $sname ?>'
+                    )" class="btn btn-danger text-white"> -->
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
-                                    <!-- echo '<button type="button" class="btn btn-danger" onclick="deletePerson(' . $row['perid'] 
-                                . ',\'' . $row['name']
-                                . '\',\'' . $row['sname'] 
-                                . '\',\'hedu\',\'heduid\')"><i class="fas fa-trash-alt"></i></button>'; -->
-                                   <!-- make button delete -->
-                                   <!-- // delete onclick (id , name , lastname, table, fillId) -->
-                                   <button"  type="button" class="btn btn-danger" onclick="deletePerson2(<?= $hwrkid ?>,'<?= $name ?>','<?= $sname ?>','hwork','hwrkid')"><i class="fas fa-trash-alt"></i></button>
-
-                                   
+                                    <a href="javascript:void(0);" class="btn btn-warning text-white">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                    <!-- onclick="deletePerson(
+                        
+                    )" class="btn btn-danger text-white" -->
                                 </td>
                             </tr>
                         <?php
