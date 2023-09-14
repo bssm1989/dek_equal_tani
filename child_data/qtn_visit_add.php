@@ -475,7 +475,70 @@ if($qtn_visid){
 
                         </div>
                     </div>
+                    <script>
+                        // Function to enable all input fields
+                        function enableInputFieldsAndButton(setInput) {
+                            $('#personSelect').prop('disabled', setInput ? false : true);
+                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
+                        }
 
+                        // Initialize the dropdown menu
+                        $('#personSelect').on('click', function() {
+                            $('#personDropdown').toggle();
+                        });
+
+                        // Handle input changes
+                        $('#personSelect').on('input', function() {
+                            var searchQuery = $(this).val();
+                            console.log('Search query:', searchQuery);
+                            if (searchQuery.length >= 2) {
+                                // Make an AJAX call to fetch matching results
+                                $.ajax({
+                                    url: "3.historyeducation/searchPerson.php",
+                                    method: "GET",
+                                    dataType: "json",
+                                    data: {
+                                        query: searchQuery
+                                    },
+                                    success: function(data) {
+                                        // Clear previous results
+                                        $('#personDropdown').empty();
+
+                                        // Populate the dropdown with search results
+                                        data.forEach(function(result) {
+                                            var option = $('<div class="dropdown-item"></div>');
+                                            option.text(result.text); // Change this to the property you want to display
+                                            option.attr('data-value', result.id); // Change this to the property containing the person's ID
+                                            $('#personDropdown').append(option);
+
+                                            // Handle click event for each result
+                                            option.on('click', function() {
+                                                var selectedValue = $(this).attr('data-value');
+                                                var selectedText = $(this).text();
+                                                $('#personSelect').val(selectedText); // Set the selected text in the input field
+                                                $('#perid').val(selectedValue); // Set the selected ID in the hidden input
+                                                $('#personDropdown').hide();
+
+                                                // Enable input fields and show the change button
+                                                enableInputFieldsAndButton(false);
+                                            });
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Clear dropdown if the input is too short
+                                $('#personDropdown').empty();
+                            }
+                        });
+
+
+                        // Disable all input fields initially
+                        enableInputFieldsAndButton(true);
+                        $('#changePersonButton').on('click', function() {
+                            // Enable input fields and hide the change button
+                            enableInputFieldsAndButton(true);
+                        });
+                    </script>
                     <hr>
                     <button class="mt-3 btn app-btn-primary" type="button"
                         onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
