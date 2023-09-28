@@ -1,41 +1,46 @@
 <?php
-$hheduid = $_GET["id"]; // Get hheduid from page showing the list of hhelpedu
-if ($hheduid) {
-    // Construct your SQL query to fetch hhelpedu details and related information
-    $sql = "SELECT hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
-                   p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
-            FROM hhelpedu hh
-            LEFT JOIN person p ON hh.perid = p.perid
-            LEFT JOIN titname t ON p.titid = t.titid
-            LEFT JOIN const_plcnmegen c ON p.plcid = c.plcidgen
+$hwrkid = $_GET["perid"]; // Get hwrkid from page showing the list of hwork
+if ($hwrkid) {
+    // Construct your SQL query to fetch hwork details and related information
+    $sql = "SELECT h.hwrkid, p.perid as person_id, h.occid as occupation_id, h.wrknme as workplace_name,
+                   prv.prvnme as province_name, h.wrkpos as workplace_position, h.wrkstarty as start_year,
+                   h.wrkperiody as work_period_years, h.wrkperiodm as work_period_months,
+                   h.wrkendy as end_year, h.wrkendreas as end_reason, df.dispfrmnme as dispfrmnme,
+                   CONCAT(p.name, ' ', p.sname) AS person_fullname
+            FROM hwork h
+            LEFT JOIN person p ON h.perid = p.perid
+            LEFT JOIN prv ON h.prvid = prv.prvid
             LEFT JOIN disptyp dt ON p.perid = dt.perid
             LEFT JOIN dispform df ON dt.dispfrmid = df.dispfrmid
-            LEFT JOIN hedu ed ON p.perid = ed.perid
-            LEFT JOIN edulev el ON ed.edulev = el.eduid
-            WHERE hh.hheduid = $hheduid"; // Modify the condition based on your database structure
+            WHERE h.hwrkid = $hwrkid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
-        $perid = $row['perid'];
-        $eduid = $row['eduid'];
-        $hedulev = $row['hedulev'];
-        $hedusemester = $row['hedusemester'];
-        $hedufundtyp = $row['hedufundtyp'];
-        $hedumoney = $row['hedumoney'];
-        $hedudetail = $row['hedudetail'];
+        $person_id = $row['person_id'];
+        $occupation_id = $row['occupation_id'];
+        $workplace_name = $row['workplace_name'];
+        $province_name = $row['province_name'];
+        $workplace_position = $row['workplace_position'];
+        $start_year = $row['start_year'];
+        $work_period_years = $row['work_period_years'];
+        $work_period_months = $row['work_period_months'];
+        $end_year = $row['end_year'];
+        $end_reason = $row['end_reason'];
+        $person_fullname = $row['person_fullname'];
     }
 }
 
-// Query to fetch edu levels for dropdown
-$eduQuery = "SELECT * FROM edulev";
-$eduResult = mysqli_query($conn, $eduQuery);
-var_dump($eduResult);
-?>
+// Query to fetch occupation options for dropdown
+$occupationQuery = "SELECT * FROM occ";
+$occupationResult = mysqli_query($conn, $occupationQuery);
 
+// Query to fetch province options for dropdown
+$provinceQuery = "SELECT * FROM prv";
+$provinceResult = mysqli_query($conn, $provinceQuery);
+?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">จัดการข้อมูลประวัติการได้รับความ
-            ช่วยเหลือด้านการศึกษา</h4>
+        <h4 class="app-page-title mb-0">จัดการข้อมูลประวัติการประกอบอาชีพ</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -48,95 +53,90 @@ var_dump($eduResult);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการได้รับความ
-                        ช่วยเหลือด้านการศึกษา</b>
+                    <b>จัดการข้อมูลประวัติการประกอบอาชีพ</b>
                 </h5>
 
-                <!-- hhelpedu	ประวัติการได้รับความช่วยเหลือด้านการศึกษา				
-ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
-hheduid	bigint		รหัสประวัติการช่วยเหลือด้านการศึกษา	PK	
-perid	bigint		รหัสบุคคล  รหัสเด็ก	FK	
-eduid	int	2	ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ	FK	มีตารางย่อย
-hedulev	int	1	ชั้นปีที่ได้รับทุน		
-hedusemester	int	6	ปีการศึกษาที่ได้รับทุน		เก็บ 6 หลัก เช่น 256601
-hedufundtyp	int	1	เป็นทุนรายเดือนหรือปีหรือครั้งคราว		1=รายเดือน, 2=รายปี, 3=รายครั้งคราว
-hedumoney	int	6	จำนวนเงินที่ได้รับต่อครั้ง		หน่วย:: บาท/เดือน บาท/ปี บาท/ครั้ง
-hedudetail	varchar	200	รายละเอียดอื่น ๆ	
-รหัสประวัติการช่วยเหลือด้านการศึกษา
-• รหัสบุคคล รหัสเด็ก
-• ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ
-• ชั้นปีที่ได้รับทุน
-• ปีการศึกษาที่ได้รับทุน
-• เป็นทุนรายเดือนหรือปีหรือครั้งคราว
-• จ านวนเงินที่ได้รับต่อครั้ง
-• รายละเอียดอื่น ๆ	 -->
+                <!-- •• รหัสประวัติการประกอบอาชีพ
+	
+					
+//  -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
-
-
-                    <div class="col-12 col-sm-4 mb-3">
+                <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
                         <!-- //div group -->
                         <div class="input-group">
-                            <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
                         </div>
-                        <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
-                                    <!-- Dropdown items will be populated here -->
-                            </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+                        <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
+                            <!-- Dropdown items will be populated here -->
                         </div>
 
+                        <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
 
-                        <div class=" col-12 col-sm-4 mb-3">
-                            <label for="eduid">ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ</label>
-                            <select class="form-select" name="eduid" id="eduid" required>
+                    </div>
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="occid">รหัสอาชีพ</label>
+                            <select class="form-select" name="occid" id="occid" required>
                                 <?php
-                                while ($eduRow = mysqli_fetch_assoc($eduResult)) {
-
-                                    $selected = ($eduRow['eduid'] == $eduid) ? "selected" : "";
-                                    echo "<option value='{$eduRow['eduid']}' {$selected}>{$eduRow['edulevnme']}</option>";
+                                while ($occupationRow = mysqli_fetch_assoc($occupationResult)) {
+                                    $selected = ($occupationRow['occid'] == $occupation_id) ? "selected" : "";
+                                    echo "<option value='{$occupationRow['occid']}' {$selected}>{$occupationRow['occnme']}</option>";
                                 }
                                 ?>
                             </select>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="hedulev">ชั้นปีที่ได้รับทุน</label>
-                            <input type="text" class="form-control" name="hedulev" id="hedulev" placeholder="ชั้นปีที่ได้รับทุน" value="<?php echo $hedulev; ?>" required>
-                        </div>
-
-
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="hedusemester">ปีการศึกษาที่ได้รับทุน</label>
-                            <input type="text" class="form-control" name="hedusemester" id="hedusemester" placeholder="ปีการศึกษาที่ได้รับทุน" value="<?php echo $hedusemester; ?>" required>
-                        </div>
-
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="hedufundtyp">เป็นทุนรายเดือนหรือปีหรือครั้งคราว</label>
-                            <select class="form-select" name="hedufundtyp" id="hedufundtyp" required>
-                                <option value="1" <?php echo ($hedufundtyp == 1) ? "selected" : ""; ?>>รายเดือน</option>
-                                <option value="2" <?php echo ($hedufundtyp == 2) ? "selected" : ""; ?>>รายปี</option>
-                                <option value="3" <?php echo ($hedufundtyp == 3) ? "selected" : ""; ?>>รายครั้งคราว</option>
+                            <label for="prvid">จังหวัดที่ทำงาน</label>
+                            <select class="form-select" name="prvid" id="prvid" required>
+                                <?php
+                                while ($provinceRow = mysqli_fetch_assoc($provinceResult)) {
+                                    $selected = ($provinceRow['prvid'] == $province_id) ? "selected" : "";
+                                    echo "<option value='{$provinceRow['prvid']}' {$selected}>{$provinceRow['prvnme']}</option>";
+                                }
+                                ?>
                             </select>
                         </div>
-                      
+                        <!-- ชื่อสถานประกอบการ -->
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="hedumoney">จำนวนเงินที่ได้รับต่อครั้ง</label>
-                            <input type="text" class="form-control" name="hedumoney" id="hedumoney" placeholder="จำนวนเงินที่ได้รับต่อครั้ง" value="<?php echo $hedumoney; ?>" required>
+                            <label for="wrknme">ชื่อสถานประกอบการ</label>
+                            <input type="text" class="form-control" name="wrknme" id="wrknme" value="<?php echo $workplace_name; ?>" required>
                         </div>
 
-                        <div class="col-12">
-                            <label for="hedudetail">รายละเอียดอื่น ๆ</label>
-                            <textarea class="form-control" name="hedudetail" id="hedudetail" rows="4" placeholder="รายละเอียดอื่น ๆ"><?php echo $hedudetail; ?></textarea>
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="wrkstarty">ปีที่เริ่มประกอบอาชีพ</label>
+                            <input type="text" class="form-control" name="wrkstarty" id="wrkstarty" value="<?php echo $start_year; ?>" required>
+                        </div>
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="work_period_years">ทำงานเป็นระยะเวลากี่ปี</label>
+                            <input type="text" class="form-control" name="work_period_years" id="work_period_years" value="<?php echo $work_period_years; ?>" required>
+                        </div>
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="work_period_months">กี่เดือน</label>
+                            <input type="text" class="form-control" name="work_period_months" id="work_period_months" value="<?php echo $work_period_months; ?>" required>
+                        </div>
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="wrkendy">ปีที่ลาออก</label>
+                            <input type="text" class="form-control" name="wrkendy" id="wrkendy" value="<?php echo $end_year; ?>">
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="wrkendreas">เหตุผลที่ลาออก</label>
+                            <textarea class="form-control" name="wrkendreas" id="wrkendreas"><?php echo $end_reason; ?></textarea>
                         </div>
                         <script>
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $('#eduid, #hedulev, #hedusemester, #hedufundtyp, #hedumoney, #hedudetail').prop('disabled', setInput);
+                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', setInput);
                             }
 
                             // Initialize the dropdown menu
@@ -151,7 +151,7 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                                 if (searchQuery.length >= 2) {
                                     // Make an AJAX call to fetch matching results
                                     $.ajax({
-                                        url: "5.helpeducation/searchPerson.php",
+                                        url: "3.historyeducation/searchPerson.php",
                                         method: "GET",
                                         dataType: "json",
                                         data: {
@@ -196,6 +196,10 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                                 enableInputFieldsAndButton(true);
                             });
                         </script>
+
+                        <hr class="mb-4">
+
+
                         <!--//app-card-body-->
 
                         <hr>
@@ -234,12 +238,10 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
     $(document).ready(function() {
         <?php if ($perid) { ?>
             // Enable input fields and show the change button
-            enableInputFieldsAndButton(false);
-            console.log('<?= $perid ?>');
+            enableInputFieldsAndButton(true);
         <?php } else { ?>
             // Enable input fields and show the change button
-            enableInputFieldsAndButton(true);
-            console.log("No perid");
+            enableInputFieldsAndButton(false);
         <?php } ?>
     });
 </script>

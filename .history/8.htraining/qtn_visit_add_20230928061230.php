@@ -1,41 +1,28 @@
 <?php
-$hhjobid = $_GET["hhjobid"]; // Get hhjobid from page showing the list of hhelpjob
-echo "<h1>hhjobid: $hhjobid</h1>";
-if ($hhjobid) {
-    // Construct your SQL query to fetch hhelpjob details and related information
-    $sql = "SELECT hj.hhjobid, hj.perid, hj.hjobdte, hj.hjobmoney, hj.hjobobject, hj.hjobknowledge, hj.hjobtranfer, hj.hjobdetail,
-                   CONCAT(p.name, ' ', p.sname) AS participant_name
-            FROM hhelpjob hj
-            JOIN person p ON hj.perid = p.perid
-            WHERE hj.hhjobid = $hhjobid"; // Modify the condition based on your database structure
+$hhtrnid = $_GET["hhtrnid"]; // Get hhtrnid from page showing the list of htraining
+if ($hhtrnid) {
+    // Construct your SQL query to fetch htraining details and related information
+    $sql = "SELECT ht.hhtrnid, ht.perid, ht.htrndtestr, ht.htrndteend, ht.htrntit, ht.prvid, ht.htrndetail,
+                   CONCAT(p.name, ' ', p.sname) AS participant_name, prv.prvnme AS training_province
+            FROM htraining ht
+            JOIN person p ON ht.perid = p.perid
+            JOIN prv ON ht.prvid = prv.prvid
+            WHERE ht.hhtrnid = $hhtrnid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
-    if ($connection->error) {
-        echo "Error: " . $sql . "<br>" . $connection->error;
-    }
     if ($row = mysqli_fetch_array($result)) {
         $perid = $row['perid'];
-        $hjobdte = $row['hjobdte'];
-        $hjobmoney = $row['hjobmoney'];
-        $hjobobject = $row['hjobobject'];
-        $hjobknowledge = $row['hjobknowledge'];
-        $hjobtranfer = $row['hjobtranfer'];
-        $hjobdetail = $row['hjobdetail'];
-        $person_fullname=$row['participant_name'];
+        $htrndtestr = $row['htrndtestr'];
+        $htrndteend = $row['htrndteend'];
+        $htrntit = $row['htrntit'];
+        $prvid = $row['prvid'];
+        $htrndetail = $row['htrndetail'];
     }
-    var_dump($row);
-    echo  $sql;
 }
 ?>
 
-<!-- replace to dropdown
-and could you please provide me with the complete code for this?
-• ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์
-• ลักษณะการช่วยเหลือ:: ให้ความรู้
-• ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน
- Also, if you could continue your answer from before, that would be great. -->
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการช่วยเหลือด้านอาชีพ</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการอบรม</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -48,17 +35,15 @@ and could you please provide me with the complete code for this?
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการช่วยเหลือด้านอาชีพ</b>
+                    <b>จัดการข้อมูลประวัติการอบรม</b>
                 </h5>
 
-                <!-- รหัสประวัติการช่วยเหลือด้านอาชีพ
-• รหัสบุคคล  รหัสเด็ก
-• วันที่ให้ความช่วยเหลือ
-• ลักษณะการช่วยเหลือ:: ให้เงินสด
-• ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์
-• ลักษณะการช่วยเหลือ:: ให้ความรู้
-• ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน
-• รายละเอียดการช่วยเหลือ -->
+                <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
+• รหัสบุคคล รหัสเด็ก
+• วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน
+• วันที่ติดตาม/เยี่ยมเยียนเสร็จ
+• ติดตาม/เยี่ยมเยียนด้วยวิธีใด
+• รายละเอียดการติดตาม/เยี่ยมเยียน -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
 
 
@@ -67,7 +52,7 @@ and could you please provide me with the complete code for this?
                         <!-- //div group -->
                         <div class="input-group">
                             <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $person_fullname; ?>" required>
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
@@ -78,58 +63,36 @@ and could you please provide me with the complete code for this?
                             <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
                         </div>
 
-
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hjobdte">วันที่ให้ความช่วยเหลือ</label>
-                        <input type="text" class="form-control" name="hjobdte" id="hjobdte" placeholder="วันที่ให้ความช่วยเหลือ" value="<?php echo $hjobdte; ?>" required>
+                        <label for="htrndtestr">วันที่เริ่มอบรม</label>
+                        <input type="text" class="form-control" name="htrndtestr" id="htrndtestr" placeholder="วันที่เริ่มอบรม" value="<?php echo $htrndtestr; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hjobmoney">ลักษณะการช่วยเหลือ:: ให้เงินสด</label>
-                        <select class="form-control" name="hjobmoney" id="hjobmoney" required>
-                            <option value="1" <?php if ($hjobmoney == 1) echo "selected"; ?>>ให้เงินสด</option>
-                            <option value="0" <?php if ($hjobmoney == 0) echo "selected"; ?>>ไม่ให้เงินสด</option>
-                        </select>
+                        <label for="htrndteend">วันที่อบรมเสร็จ</label>
+                        <input type="text" class="form-control" name="htrndteend" id="htrndteend" placeholder="วันที่อบรมเสร็จ" value="<?php echo $htrndteend; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hjobobject">ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์</label>
-                        <select class="form-control" name="hjobobject" id="hjobobject" required>
-                            <option value="1" <?php if ($hjobobject == 1) echo "selected"; ?>>ให้สิ่งของ/อุปกรณ์</option>
-                            <option value="0" <?php if ($hjobobject == 0) echo "selected"; ?>>ไม่ให้สิ่งของ/อุปกรณ์</option>
-                        </select>
+                        <label for="htrntit">เรื่องที่อบรม</label>
+                        <input type="text" class="form-control" name="htrntit" id="htrntit" placeholder="เรื่องที่อบรม" value="<?php echo $htrntit; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hjobknowledge">ลักษณะการช่วยเหลือ:: ให้ความรู้</label>
-                        <select class="form-control" name="hjobknowledge" id="hjobknowledge" required>
-                            <option value="1" <?php if ($hjobknowledge == 1) echo "selected"; ?>>ให้ความรู้</option>
-                            <option value="0" <?php if ($hjobknowledge == 0) echo "selected"; ?>>ไม่ให้ความรู้</option>
-                        </select>
+                        <label for="prvid">จังหวัดที่อบรม</label>
+                        <!-- You can replace this input with a dropdown menu populated from a query -->
+                        <input type="text" class="form-control" name="prvid" id="prvid" placeholder="จังหวัดที่อบรม" value="<?php echo $prvid; ?>" required>
                     </div>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="hjobtranfer">ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน</label>
-                        <select class="form-control" name="hjobtranfer" id="hjobtranfer" required>
-                            <option value="1" <?php if ($hjobtranfer == 1) echo "selected"; ?>>ส่งต่อให้หน่วยงาน</option>
-                            <option value="0" <?php if ($hjobtranfer == 0) echo "selected"; ?>>ไม่ส่งต่อให้หน่วยงาน</option>
-                        </select>
-                    </div>
-
-                    <!-- ... (other input fields) ... -->
-
-
-                    <!-- ... (similar inputs for hjobobject, hjobknowledge, hjobtranfer) ... -->
 
                     <div class="col-12 col-sm-12 mb-3">
-                        <label for="hjobdetail">รายละเอียดการช่วยเหลือ</label>
-                        <textarea class="form-control" name="hjobdetail" id="hjobdetail" placeholder="รายละเอียดการช่วยเหลือ" required><?php echo $hjobdetail; ?></textarea>
+                        <label for="htrndetail">รายละเอียดการอบรม</label>
+                        <textarea class="form-control" name="htrndetail" id="htrndetail" placeholder="รายละเอียดการอบรม" required><?php echo $htrndetail; ?></textarea>
                     </div>
                     <script>
                         // Function to enable all input fields
                         function enableInputFieldsAndButton(setInput) {
                             $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#hjobdte, #hjobmoney, #hjobobject, #hjobknowledge, #hjobtranfer, #hjobdetail').prop('disabled', setInput);
+                            $('#htrndtestr, #htrndteend, #htrntit, #prvid, #htrndetail').prop('disabled', setInput);
                         }
 
                         // Initialize the dropdown menu
@@ -144,7 +107,7 @@ and could you please provide me with the complete code for this?
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "7.history_help_job/searchPerson.php",
+                                    url: "8.htraining/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {
@@ -190,7 +153,7 @@ and could you please provide me with the complete code for this?
                         });
                     </script>
             <!--//app-card-body-->
-       
+    
             <hr>
             <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
             <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
@@ -226,21 +189,20 @@ and could you please provide me with the complete code for this?
 
 <script>
      $(document).ready(function() {
-        console.log("document ready");
         <?php if ($hhjobid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log("enableInputFieldsAndButton(f);");
-         
+            console.log("enableInputFieldsAndButton(false);");
+   
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);
-            console.log("enableInputFieldsAndButton(false);");
-     
+            console.log("enableInputFieldsAndButton(true);");
+         
         <?php } ?>
      });
 </script>
-<script language=Javascript>
+<script>
     function sum_score() {
         var sum =
             Number(window.document.frmScreening.qtnvs1.value) +

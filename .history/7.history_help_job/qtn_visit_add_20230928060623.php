@@ -20,7 +20,6 @@ if ($hhjobid) {
         $hjobknowledge = $row['hjobknowledge'];
         $hjobtranfer = $row['hjobtranfer'];
         $hjobdetail = $row['hjobdetail'];
-        $person_fullname=$row['participant_name'];
     }
     var_dump($row);
     echo  $sql;

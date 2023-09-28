@@ -20,7 +20,6 @@ if ($hhjobid) {
         $hjobknowledge = $row['hjobknowledge'];
         $hjobtranfer = $row['hjobtranfer'];
         $hjobdetail = $row['hjobdetail'];
-        $person_fullname=$row['participant_name'];
     }
     var_dump($row);
     echo  $sql;
@@ -67,7 +66,7 @@ and could you please provide me with the complete code for this?
                         <!-- //div group -->
                         <div class="input-group">
                             <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $person_fullname; ?>" required>
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>

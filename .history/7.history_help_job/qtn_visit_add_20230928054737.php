@@ -8,10 +8,7 @@ if ($hhjobid) {
             FROM hhelpjob hj
             JOIN person p ON hj.perid = p.perid
             WHERE hj.hhjobid = $hhjobid"; // Modify the condition based on your database structure
-    $result = mysqli_query($conn, $sql);
-    if ($connection->error) {
-        echo "Error: " . $sql . "<br>" . $connection->error;
-    }
+    $result = mysqli_query($connection, $sql);
     if ($row = mysqli_fetch_array($result)) {
         $perid = $row['perid'];
         $hjobdte = $row['hjobdte'];
@@ -20,10 +17,7 @@ if ($hhjobid) {
         $hjobknowledge = $row['hjobknowledge'];
         $hjobtranfer = $row['hjobtranfer'];
         $hjobdetail = $row['hjobdetail'];
-        $person_fullname=$row['participant_name'];
     }
-    var_dump($row);
-    echo  $sql;
 }
 ?>
 
@@ -67,7 +61,7 @@ and could you please provide me with the complete code for this?
                         <!-- //div group -->
                         <div class="input-group">
                             <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $person_fullname; ?>" required>
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
