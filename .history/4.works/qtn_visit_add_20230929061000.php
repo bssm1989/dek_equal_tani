@@ -216,19 +216,19 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
                             </div>
                         </div>
                 </form>
@@ -242,11 +242,10 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 <!--//row-->
 <script>
     $(document).ready(function() {
-        <?php if ($hwrkid) { ?>
+        <?php if ($perid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log($hwrkid);
-            console.log("Has perid");
+            console.log('<?= $perid ?>');
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);

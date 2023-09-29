@@ -242,11 +242,10 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 <!--//row-->
 <script>
     $(document).ready(function() {
-        <?php if ($hwrkid) { ?>
+        <?php if ($perid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log($hwrkid);
-            console.log("Has perid");
+            console.log('<?= $perid ?>');
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);

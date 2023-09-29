@@ -203,32 +203,26 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                         <!--//app-card-body-->
 
                         <hr>
-                        <?php if (!$perid) { ?>
-                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-                    <?php } else { ?>
-                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-                        <!-- button cancle -->
-                        <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-                    <?php } ?>
-                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
+                        <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" >
+                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
                             </div>
                         </div>
                 </form>
@@ -242,11 +236,10 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 <!--//row-->
 <script>
     $(document).ready(function() {
-        <?php if ($hwrkid) { ?>
+        <?php if ($perid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log($hwrkid);
-            console.log("Has perid");
+            console.log('<?= $perid ?>');
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);

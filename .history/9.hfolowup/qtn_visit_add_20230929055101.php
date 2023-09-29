@@ -1,5 +1,5 @@
 <?php
-$hflwid = $_GET["hflwid"]; // Get hfolowup ID from page showing list of hfolowup
+$hflwid = $_GET["id"]; // Get hfolowup ID from page showing list of hfolowup
 if ($hflwid) {
     // Construct your SQL query to fetch hfolowup details and related information
     $sql = "SELECT hf.hflwid, hf.perid, hf.hflwdtestr, hf.hflwdteend, hf.hflwmeth, hf.hflwdetail,
@@ -7,7 +7,7 @@ if ($hflwid) {
             FROM hfolowup hf
             JOIN person p ON hf.perid = p.perid
             WHERE hf.hflwid = $hflwid"; // Modify the condition based on your database structure
-    $result = mysqli_query($conn, $sql);
+    $result = mysqli_query($connection, $sql);
     if ($row = mysqli_fetch_array($result)) {
         $perid = $row['perid'];
         $hflwdtestr = $row['hflwdtestr'];
@@ -181,7 +181,7 @@ if ($hflwid) {
 <script>
      $(document).ready(function() {
         console.log("document ready");
-        <?php if ($hflwid) { ?>
+        <?php if ($hhjobid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
             console.log("enableInputFieldsAndButton(f);");

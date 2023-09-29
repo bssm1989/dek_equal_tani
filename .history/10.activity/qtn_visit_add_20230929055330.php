@@ -1,27 +1,42 @@
 <?php
-$hflwid = $_GET["hflwid"]; // Get hfolowup ID from page showing list of hfolowup
-if ($hflwid) {
-    // Construct your SQL query to fetch hfolowup details and related information
-    $sql = "SELECT hf.hflwid, hf.perid, hf.hflwdtestr, hf.hflwdteend, hf.hflwmeth, hf.hflwdetail,
-                   CONCAT(p.name, ' ', p.sname) AS participant_name
-            FROM hfolowup hf
-            JOIN person p ON hf.perid = p.perid
-            WHERE hf.hflwid = $hflwid"; // Modify the condition based on your database structure
+$actid = $_GET["actid"]; // Get activity ID from page showing list of activities
+if ($actid) {
+    // Construct your SQL query to fetch activity details and related information
+    $sql = "SELECT
+                a.actid,
+                a.actnme,
+                a.acttypid,
+                a.actdtestr,
+                a.actdteend,
+                a.actplc,
+                cv.vllnmegen AS place_village,
+                a.actattdno,
+                a.actdetail
+            FROM
+                activity a
+            JOIN
+                acttyp at ON a.acttypid = at.acttypid
+            JOIN
+                const_vllnmegen cv ON a.plcid = cv.plcid
+            WHERE
+                a.actid = $actid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
-        $perid = $row['perid'];
-        $hflwdtestr = $row['hflwdtestr'];
-        $hflwdteend = $row['hflwdteend'];
-        $hflwmeth = $row['hflwmeth'];
-        $hflwdetail = $row['hflwdetail'];
-        $participant_name = $row['participant_name'];
+        $actnme = $row['actnme'];
+        $acttypid = $row['acttypid'];
+        $actdtestr = $row['actdtestr'];
+        $actdteend = $row['actdteend'];
+        $actplc = $row['actplc'];
+        $place_village = $row['place_village'];
+        $actattdno = $row['actattdno'];
+        $actdetail = $row['actdetail'];
     }
 }
 ?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลกิจกรรม</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -34,59 +49,73 @@ if ($hflwid) {
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</b>
+                    <b>จัดการข้อมูลกิจกรรม</b>
                 </h5>
 
-                <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
-• รหัสบุคคล รหัสเด็ก
-• วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน
-• วันที่ติดตาม/เยี่ยมเยียนเสร็จ
-• ติดตาม/เยี่ยมเยียนด้วยวิธีใด
-• รายละเอียดการติดตาม/เยี่ยมเยียน -->
+                <!-- • รหัสกิจกรรม
+• ชื่อกิจกรรม
+• รหัสประเภทกิจกรรม
+• วันที่เริ่มจัดกิจกรรม
+• วันที่จัดกิจกรรมเสร็จ
+• สถานที่จัดกิจกรรม
+• จังหวัดอ าเภอต าบล ที่จัดกิจกรรม
+• จ านวนผู้เข้าร่วมกิจกรรม
+• รายละเอียดการจัดกิจกรรม -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
+                    <div class="row">
+                        <div class="col-12 col-sm-12">
+                            <p class="shadow-sm p-2 mb-3 bg-success text-white rounded">ข้อมูลทั่วไป</p>
+                        </div>
+                    </div>
 
-                <div class="col-12 col-sm-4 mb-3">
-                        <label for="eduid">บุคคล</label>
-                        <!-- //div group -->
-                        <div class="input-group">
-                            <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล"  value="<?php echo $participant_name; ?>" required>
-                                                        <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
-                            </div>
-                        </div>
-                        <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
-                                    <!-- Dropdown items will be populated here -->
-                            </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
-                        </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwdtestr">วันที่เริ่มติดตาม/เยี่ยมเยียน</label>
-                        <input type="text" class="form-control" name="hflwdtestr" id="hflwdtestr" placeholder="วันที่เริ่มติดตาม/เยี่ยมเยียน" value="<?php echo $hflwdtestr; ?>" required>
+                        <label for="actnme">ชื่อกิจกรรม</label>
+                        <input type="text" class="form-control" name="actnme" id="actnme" placeholder="ชื่อกิจกรรม" value="<?php echo $actnme; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwdteend">วันที่ติดตาม/เยี่ยมเยียนเสร็จ</label>
-                        <input type="text" class="form-control" name="hflwdteend" id="hflwdteend" placeholder="วันที่ติดตาม/เยี่ยมเยียนเสร็จ" value="<?php echo $hflwdteend; ?>" required>
-                    </div>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="hflwmeth">ติดตาม/เยี่ยมเยียนด้วยวิธีใด</label>
+                        <label for="acttypid">รหัสประเภทกิจกรรม</label>
                         <!-- You can replace this input with a dropdown menu populated from a query -->
-                        <input type="text" class="form-control" name="hflwmeth" id="hflwmeth" placeholder="ติดตาม/เยี่ยมเยียนด้วยวิธีใด" value="<?php echo $hflwmeth; ?>" required>
+                        <input type="text" class="form-control" name="acttypid" id="acttypid" placeholder="รหัสประเภทกิจกรรม" value="<?php echo $acttypid; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdtestr">วันที่เริ่มจัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="actdtestr" id="actdtestr" placeholder="วันที่เริ่มจัดกิจกรรม" value="<?php echo $actdtestr; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdteend">วันที่จัดกิจกรรมเสร็จ</label>
+                        <input type="text" class="form-control" name="actdteend" id="actdteend" placeholder="วันที่จัดกิจกรรมเสร็จ" value="<?php echo $actdteend; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actplc">สถานที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="actplc" id="actplc" placeholder="สถานที่จัดกิจกรรม" value="<?php echo $actplc; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="place_village">จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $place_village; ?>" required>
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actattdno">จำนวนผู้เข้าร่วมกิจกรรม</label>
+                        <input type="text" class="form-control" name="actattdno" id="actattdno" placeholder="จำนวนผู้เข้าร่วมกิจกรรม" value="<?php echo $actattdno; ?>" required>
                     </div>
 
                     <div class="col-12 col-sm-12 mb-3">
-                        <label for="hflwdetail">รายละเอียดการติดตาม/เยี่ยมเยียน</label>
-                        <textarea class="form-control" name="hflwdetail" id="hflwdetail" placeholder="รายละเอียดการติดตาม/เยี่ยมเยียน" required><?php echo $hflwdetail; ?></textarea>
-                    </div>
+                        <label for="actdetail">รายละเอียดการจัดกิจกรรม</label>
+                        <textarea class="form-control" name="actdetail" id="actdetail" placeholder="รายละเอียดการจัดกิจกรรม" required><?php echo $actdetail; ?></textarea>
+                        
 
+                    </div>
                     <script>
                         // Function to enable all input fields
                         function enableInputFieldsAndButton(setInput) {
                             $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#hflwdtestr, #hflwdteend, #hflwmeth, #hflwdetail').prop('disabled', setInput);
+                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
                         }
 
                         // Initialize the dropdown menu
@@ -101,7 +130,7 @@ if ($hflwid) {
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "9.hfolowup/searchPerson.php",
+                                    url: "3.historyeducation/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {
@@ -181,7 +210,7 @@ if ($hflwid) {
 <script>
      $(document).ready(function() {
         console.log("document ready");
-        <?php if ($hflwid) { ?>
+        <?php if ($actid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
             console.log("enableInputFieldsAndButton(f);");
