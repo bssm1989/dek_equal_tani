@@ -1,47 +1,41 @@
 <?php
-$hwrkid = $_GET["perid"]; // Get hwrkid from page showing the list of hwork
-if ($hwrkid) {
-    // Construct your SQL query to fetch hwork details and related information
-    $sql = "SELECT h.hwrkid, p.perid as person_id, h.occid as occupation_id, h.wrknme as workplace_name,
-                   prv.prvnme as province_name, h.wrkpos as workplace_position, h.wrkstarty as start_year,
-                   h.wrkperiody as work_period_years, h.wrkperiodm as work_period_months,
-                   h.wrkendy as end_year, h.wrkendreas as end_reason, df.dispfrmnme as dispfrmnme,
-                   CONCAT(p.name, ' ', p.sname) AS person_fullname
-            FROM hwork h
-            LEFT JOIN person p ON h.perid = p.perid
-            LEFT JOIN prv ON h.prvid = prv.prvid
-            LEFT JOIN disptyp dt ON p.perid = dt.perid
-            LEFT JOIN dispform df ON dt.dispfrmid = df.dispfrmid
-            WHERE h.hwrkid = $hwrkid"; // Modify the condition based on your database structure
+$hhjobid = $_GET["hhjobid"]; // Get hhjobid from page showing the list of hhelpjob
+echo "<h1>hhjobid: $hhjobid</h1>";
+if ($hhjobid) {
+    // Construct your SQL query to fetch hhelpjob details and related information
+    $sql = "SELECT hj.hhjobid, hj.perid, hj.hjobdte, hj.hjobmoney, hj.hjobobject, hj.hjobknowledge, hj.hjobtranfer, hj.hjobdetail,
+                   CONCAT(p.name, ' ', p.sname) AS participant_name
+            FROM hhelpjob hj
+            JOIN person p ON hj.perid = p.perid
+            WHERE hj.hhjobid = $hhjobid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
-    if ($row = mysqli_fetch_array($result)) {
-        $person_id = $row['person_id'];
-        $occupation_id = $row['occupation_id'];
-        $workplace_name = $row['workplace_name'];
-        $province_name = $row['province_name'];
-        $workplace_position = $row['workplace_position'];
-        $start_year = $row['start_year'];
-        $work_period_years = $row['work_period_years'];
-        $work_period_months = $row['work_period_months'];
-        $end_year = $row['end_year'];
-        $end_reason = $row['end_reason'];
-        $person_fullname = $row['person_fullname'];
-        $hwrkid = $row['hwrkid'];
+    if ($connection->error) {
+        echo "Error: " . $sql . "<br>" . $connection->error;
     }
+    if ($row = mysqli_fetch_array($result)) {
+        $perid = $row['perid'];
+        $hjobdte = $row['hjobdte'];
+        $hjobmoney = $row['hjobmoney'];
+        $hjobobject = $row['hjobobject'];
+        $hjobknowledge = $row['hjobknowledge'];
+        $hjobtranfer = $row['hjobtranfer'];
+        $hjobdetail = $row['hjobdetail'];
+        $person_fullname = $row['participant_name'];
+    }
+    var_dump($row);
+    echo  $sql;
 }
-
-// Query to fetch occupation options for dropdown
-$occupationQuery = "SELECT * FROM occ";
-$occupationResult = mysqli_query($conn, $occupationQuery);
-
-// Query to fetch province options for dropdown
-$provinceQuery = "SELECT * FROM prv";
-$provinceResult = mysqli_query($conn, $provinceQuery);
 ?>
 
+<!-- replace to dropdown
+and could you please provide me with the complete code for this?
+• ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์
+• ลักษณะการช่วยเหลือ:: ให้ความรู้
+• ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน
+ Also, if you could continue your answer from before, that would be great. -->
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">จัดการข้อมูลประวัติการประกอบอาชีพ</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการช่วยเหลือด้านอาชีพ</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -54,20 +48,26 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการประกอบอาชีพ</b>
+                    <b>จัดการข้อมูลประวัติการช่วยเหลือด้านอาชีพ</b>
                 </h5>
 
-                <!-- •• รหัสประวัติการประกอบอาชีพ
-	
-					
-//  -->
+                <!-- รหัสประวัติการช่วยเหลือด้านอาชีพ
+• รหัสบุคคล  รหัสเด็ก
+• วันที่ให้ความช่วยเหลือ
+• ลักษณะการช่วยเหลือ:: ให้เงินสด
+• ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์
+• ลักษณะการช่วยเหลือ:: ให้ความรู้
+• ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน
+• รายละเอียดการช่วยเหลือ -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
+
+
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
-                        <input type="hidden" class="form-control" name="hwrkid" id="hwrkid" value="<?php echo $hwrkid; ?>" />
                         <!-- //div group -->
                         <div class="input-group">
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
+                            <!-- Search for a person... to thai -->
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $person_fullname; ?>" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
@@ -75,74 +75,61 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                         <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
                                     <!-- Dropdown items will be populated here -->
                             </div>
-
                             <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+                        </div>
 
+
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="hjobdte">วันที่ให้ความช่วยเหลือ</label>
+                            <input type="text" class="form-control" name="hjobdte" id="hjobdte" placeholder="วันที่ให้ความช่วยเหลือ" value="<?php echo $hjobdte; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="occid">รหัสอาชีพ</label>
-                            <select class="form-select" name="occid" id="occid" required>
-                                <?php
-                                while ($occupationRow = mysqli_fetch_assoc($occupationResult)) {
-                                    $selected = ($occupationRow['occid'] == $occupation_id) ? "selected" : "";
-                                    echo "<option value='{$occupationRow['occid']}' {$selected}>{$occupationRow['occnme']}</option>";
-                                }
-                                ?>
+                            <label for="hjobmoney">ลักษณะการช่วยเหลือ:: ให้เงินสด</label>
+                            <select class="form-control" name="hjobmoney" id="hjobmoney" required>
+                                <option value="1" <?php if ($hjobmoney == 1) echo "selected"; ?>>ให้เงินสด</option>
+                                <option value="0" <?php if ($hjobmoney == 0) echo "selected"; ?>>ไม่ให้เงินสด</option>
                             </select>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="prvid">จังหวัดที่ทำงาน</label>
-                            <select class="form-select" name="prvid" id="prvid" required>
-                                <?php
-                                while ($provinceRow = mysqli_fetch_assoc($provinceResult)) {
-                                    $selected = ($provinceRow['prvid'] == $province_id) ? "selected" : "";
-                                    echo "<option value='{$provinceRow['prvid']}' {$selected}>{$provinceRow['prvnme']}</option>";
-                                }
-                                ?>
+                            <label for="hjobobject">ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์</label>
+                            <select class="form-control" name="hjobobject" id="hjobobject" required>
+                                <option value="1" <?php if ($hjobobject == 1) echo "selected"; ?>>ให้สิ่งของ/อุปกรณ์</option>
+                                <option value="0" <?php if ($hjobobject == 0) echo "selected"; ?>>ไม่ให้สิ่งของ/อุปกรณ์</option>
                             </select>
                         </div>
-                        <!-- ชื่อสถานประกอบการ -->
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrknme">ชื่อสถานประกอบการ</label>
-                            <input type="text" class="form-control" name="wrknme" id="wrknme" value="<?php echo $workplace_name; ?>" required>
-                        </div>
 
-                        <!-- ทำงานในตำแหน่ง -->
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="workplace_position">ทำงานในตำแหน่ง</label>
-                            <input type="text" class="form-control" name="workplace_position" id="workplace_position" value="<?php echo $workplace_position; ?>" required>
-                        </div>
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrkstarty">ปีที่เริ่มประกอบอาชีพ</label>
-                            <input type="text" class="form-control" name="wrkstarty" id="wrkstarty" value="<?php echo $start_year; ?>" required>
+                            <label for="hjobknowledge">ลักษณะการช่วยเหลือ:: ให้ความรู้</label>
+                            <select class="form-control" name="hjobknowledge" id="hjobknowledge" required>
+                                <option value="1" <?php if ($hjobknowledge == 1) echo "selected"; ?>>ให้ความรู้</option>
+                                <option value="0" <?php if ($hjobknowledge == 0) echo "selected"; ?>>ไม่ให้ความรู้</option>
+                            </select>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="work_period_years">ทำงานเป็นระยะเวลากี่ปี</label>
-                            <input type="text" class="form-control" name="work_period_years" id="work_period_years" value="<?php echo $work_period_years; ?>" required>
+                            <label for="hjobtranfer">ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน</label>
+                            <select class="form-control" name="hjobtranfer" id="hjobtranfer" required>
+                                <option value="1" <?php if ($hjobtranfer == 1) echo "selected"; ?>>ส่งต่อให้หน่วยงาน</option>
+                                <option value="0" <?php if ($hjobtranfer == 0) echo "selected"; ?>>ไม่ส่งต่อให้หน่วยงาน</option>
+                            </select>
                         </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="work_period_months">กี่เดือน</label>
-                            <input type="text" class="form-control" name="work_period_months" id="work_period_months" value="<?php echo $work_period_months; ?>" required>
-                        </div>
+                        <!-- ... (other input fields) ... -->
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrkendy">ปีที่ลาออก</label>
-                            <input type="text" class="form-control" name="wrkendy" id="wrkendy" value="<?php echo $end_year; ?>">
-                        </div>
 
-                        <div class="col-12 mb-3">
-                            <label for="wrkendreas">เหตุผลที่ลาออก</label>
-                            <textarea class="form-control" name="wrkendreas" id="wrkendreas"><?php echo $end_reason; ?></textarea>
+                        <!-- ... (similar inputs for hjobobject, hjobknowledge, hjobtranfer) ... -->
+
+                        <div class="col-12 col-sm-12 mb-3">
+                            <label for="hjobdetail">รายละเอียดการช่วยเหลือ</label>
+                            <textarea class="form-control" name="hjobdetail" id="hjobdetail" placeholder="รายละเอียดการช่วยเหลือ" required><?php echo $hjobdetail; ?></textarea>
                         </div>
                         <script>
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas','#workplace_position').prop('disabled', setInput ? false : true);
+                                $('#hjobdte, #hjobmoney, #hjobobject, #hjobknowledge, #hjobtranfer, #hjobdetail').prop('disabled', setInput);
                             }
 
                             // Initialize the dropdown menu
@@ -157,7 +144,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 if (searchQuery.length >= 2) {
                                     // Make an AJAX call to fetch matching results
                                     $.ajax({
-                                        url: "4.works/searchPerson.php",
+                                        url: "7.history_help_job/searchPerson.php",
                                         method: "GET",
                                         dataType: "json",
                                         data: {
@@ -202,39 +189,29 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 enableInputFieldsAndButton(true);
                             });
                         </script>
-
-                        <hr class="mb-4">
-
-
                         <!--//app-card-body-->
 
                         <hr>
-                        <?php if (!$perid) { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-                        <?php } else { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-                            <!-- button cancle -->
-                            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-                        <?php } ?>
+                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
                         <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
                             </div>
                         </div>
                 </form>
@@ -246,150 +223,126 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
     </div>
 </div>
 <!--//row-->
+
 <script>
     $(document).ready(function() {
-        <?php if ($hwrkid) { ?>
+        console.log("document ready");
+        <?php if ($hhjobid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log($hwrkid);
-            console.log("Has perid");
+            console.log("enableInputFieldsAndButton(f);");
+
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);
-            console.log("No perid");
+            console.log("enableInputFieldsAndButton(false);");
+
         <?php } ?>
     });
     $(document).ready(function() {
-        $("#frmScreening").validate({
-            rules: {
-                eduid: {
-                    required: true,
-                    number: true,
-                    min: 1,
-                    max: 9
-                },
-                personSelect: {
-                    required: true
-                },
-                changePersonButton: {
-                    // Include any specific rules for this element if needed
-                },
-                personDropdown: {
-                    // Include any specific rules for this element if needed
-                },
-                perid: {
-                    required: true
-                },
-                occid: {
-                    // Include any specific rules for this element if needed
-                },
-                prvid: {
-                    // Include any specific rules for this element if needed
-                },
-                wrknme: {
-                    required: true
-                },
-                wrkstarty: {
-                    required: true,
-                    number: true
-                },
-                work_period_years: {
-                    required: true,
-                    number: true
-                },
-                work_period_months: {
-                    required: true,
-                    number: true
-                },
-                wrkendy: {
-                    // Include any specific rules for this element if needed
-                },
-                wrkendreas: {
-                    // Include any specific rules for this element if needed
-                },
+    $("#frmScreening").validate({
+        rules: {
+            // ... (existing validation rules)
+            personName: {
+                required: true
             },
-            ignore: [],
-            messages: {
-                // Add custom error messages here
+            hjobdte: {
+                required: true
             },
-            submitHandler: function(form) {
-                // Serialize form data into JSON format
-                var formData = $(form).serializeArray();
-                var jsonData = {};
-                $.each(formData, function(index, field) {
-                    jsonData[field.name] = field.value;
+            hjobmoney: {
+                required: true
+            },
+            hjobobject: {
+                required: true
+            },
+            hjobknowledge: {
+                required: true
+            },
+            hjobtranfer: {
+                required: true
+            },
+            // ... (other validation rules for new elements)
+        },
+        ignore: [],
+        messages: {
+            // Add custom error messages here
+        },
+        submitHandler: function(form) {
+            // Serialize form data into JSON format
+            var formData = $(form).serializeArray();
+            var jsonData = {};
+            $.each(formData, function(index, field) {
+                jsonData[field.name] = field.value;
+            });
+
+            // Determine the action based on whether perid is present or not
+            if ($('#heduid').val()) {
+                Swal.fire({
+                    title: 'คุณแน่ใจหรือไม่?',
+                    text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'อัปเดต',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performAjaxRequest(jsonData);
+                    }
                 });
+            } else {
+                performAjaxRequest(jsonData);
+            }
 
-                // Determine the action based on whether perid is present or not
-                if ($('#heduid').val()) {
-                    Swal.fire({
-                        title: 'คุณแน่ใจหรือไม่?',
-                        text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'อัปเดต',
-                        cancelButtonText: 'ยกเลิก'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            performAjaxRequest(jsonData);
-                        }
-                    });
-                } else {
-                    performAjaxRequest(jsonData);
-                }
+            function performAjaxRequest(data) {
+                // Add the action parameter to indicate the action to be performed
+                data['action'] = data['heduid'] ? 'update' : 'insert';
 
-                function performAjaxRequest(data) {
-                    // Convert birth_date 2564-01-01 to 25640101
-
-                    // Add the action parameter to indicate the action to be performed
-                    // data['action'] = data['h'] ? 'update' : 'insert';
-                    data['action'] = data['hwrkid'] ? 'update' : 'insert';
-
-                    // Send data to the server for insertion or update
-                    $.ajax({
-                        type: "POST",
-                        url: "4.works/insert_works.php",
-                        data: data,
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.success) {
-                                // Show success message
-                                Swal.fire({
-                                    title: 'สำเร็จ',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'ตกลง'
-                                }).then(() => {
-                                    // Go to the next page
-                                     window.location.href = "?page=4.works";
-                                });
-                            } else {
-                                // Show error message
-                                Swal.fire({
-                                    title: 'ข้อผิดพลาด',
-                                    text: "เกิดข้อผิดพลาด: " + response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'ตกลง'
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle Ajax error
-                            console.error(error);
+                // Send data to the server for insertion or update
+                $.ajax({
+                    type: "POST",
+                    url: "3.historyeducation/insert_historyeducation.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'สำเร็จ',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'ตกลง'
+                            }).then(() => {
+                                // Go to the next page
+                                window.location.href = "?page=3.historyeducation";
+                            });
+                        } else {
+                            // Show error message
                             Swal.fire({
                                 title: 'ข้อผิดพลาด',
-                                text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                                text: "เกิดข้อผิดพลาด: " + response.message,
                                 icon: 'error',
                                 confirmButtonText: 'ตกลง'
                             });
                         }
-                    });
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle Ajax error
+                        console.error(error);
+                        Swal.fire({
+                            title: 'ข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                });
             }
-        });
+        }
     });
+});
+
 </script>
-<script>
+<script language=Javascript>
     function sum_score() {
         var sum =
             Number(window.document.frmScreening.qtnvs1.value) +

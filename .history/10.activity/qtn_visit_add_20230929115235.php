@@ -1,30 +1,42 @@
 <?php
-$hhtrnid = $_GET["hhtrnid"]; // Get hhtrnid from page showing the list of htraining
-if ($hhtrnid) {
-    // Construct your SQL query to fetch htraining details and related information
-    $sql = "SELECT ht.hhtrnid, ht.perid, ht.htrndtestr, ht.htrndteend, ht.htrntit, ht.prvid, ht.htrndetail,
-                   CONCAT(p.name, ' ', p.sname) AS participant_name, prv.prvnme AS training_province
-            FROM htraining ht
-            JOIN person p ON ht.perid = p.perid
-            JOIN prv ON ht.prvid = prv.prvid
-            WHERE ht.hhtrnid = $hhtrnid"; // Modify the condition based on your database structure
+$actid = $_GET["actid"]; // Get activity ID from page showing list of activities
+if ($actid) {
+    // Construct your SQL query to fetch activity details and related information
+    $sql = "SELECT
+                a.actid,
+                a.actnme,
+                a.acttypid,
+                a.actdtestr,
+                a.actdteend,
+                a.actplc,
+                cv.vllnmegen AS place_village,
+                a.actattdno,
+                a.actdetail
+            FROM
+                activity a
+            JOIN
+                acttyp at ON a.acttypid = at.acttypid
+            JOIN
+                const_vllnmegen cv ON a.plcid = cv.plcid
+            WHERE
+                a.actid = $actid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
-        $perid = $row['perid'];
-        $htrndtestr = $row['htrndtestr'];
-        $htrndteend = $row['htrndteend'];
-        $htrntit = $row['htrntit'];
-        $prvid = $row['prvid'];
-        $htrndetail = $row['htrndetail'];
-        $participant_name = $row['participant_name'];
-        $training_province = $row['training_province'];
+        $actnme = $row['actnme'];
+        $acttypid = $row['acttypid'];
+        $actdtestr = $row['actdtestr'];
+        $actdteend = $row['actdteend'];
+        $actplc = $row['actplc'];
+        $place_village = $row['place_village'];
+        $actattdno = $row['actattdno'];
+        $actdetail = $row['actdetail'];
     }
 }
 ?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการอบรม</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลกิจกรรม</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -37,148 +49,155 @@ if ($hhtrnid) {
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการอบรม</b>
+                    <b>จัดการข้อมูลกิจกรรม</b>
                 </h5>
 
-                <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
-• รหัสบุคคล รหัสเด็ก
-• วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน
-• วันที่ติดตาม/เยี่ยมเยียนเสร็จ
-• ติดตาม/เยี่ยมเยียนด้วยวิธีใด
-• รายละเอียดการติดตาม/เยี่ยมเยียน -->
+                <!-- • รหัสกิจกรรม
+• ชื่อกิจกรรม
+• รหัสประเภทกิจกรรม
+• วันที่เริ่มจัดกิจกรรม
+• วันที่จัดกิจกรรมเสร็จ
+• สถานที่จัดกิจกรรม
+• จังหวัดอ าเภอต าบล ที่จัดกิจกรรม
+• จ านวนผู้เข้าร่วมกิจกรรม
+• รายละเอียดการจัดกิจกรรม -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
+                    <div class="row">
+                        <div class="col-12 col-sm-12">
+                            <p class="shadow-sm p-2 mb-3 bg-success text-white rounded">ข้อมูลทั่วไป</p>
+                        </div>
+                    </div>
 
 
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="eduid">บุคคล</label>
-                        <!-- //div group -->
-                        <div class="input-group">
-                            <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $participant_name; ?>" required>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
-                            </div>
-                        </div>
-                        <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
-                                    <!-- Dropdown items will be populated here -->
-                            </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
-                        </div>
+                        <label for="actnme">ชื่อกิจกรรม</label>
+                        <input type="text" class="form-control" name="actnme" id="actnme" placeholder="ชื่อกิจกรรม" value="<?php echo $actnme; ?>" required>
+                    </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="htrndtestr">วันที่เริ่มอบรม</label>
-                            <input type="text" class="form-control" name="htrndtestr" id="htrndtestr" placeholder="วันที่เริ่มอบรม" value="<?php echo $htrndtestr; ?>" required>
-                        </div>
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="acttypid">รหัสประเภทกิจกรรม</label>
+                        <!-- You can replace this input with a dropdown menu populated from a query -->
+                        <input type="text" class="form-control" name="acttypid" id="acttypid" placeholder="รหัสประเภทกิจกรรม" value="<?php echo $acttypid; ?>" required>
+                    </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="htrndteend">วันที่อบรมเสร็จ</label>
-                            <input type="text" class="form-control" name="htrndteend" id="htrndteend" placeholder="วันที่อบรมเสร็จ" value="<?php echo $htrndteend; ?>" required>
-                        </div>
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdtestr">วันที่เริ่มจัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="actdtestr" id="actdtestr" placeholder="วันที่เริ่มจัดกิจกรรม" value="<?php echo $actdtestr; ?>" required>
+                    </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="htrntit">เรื่องที่อบรม</label>
-                            <input type="text" class="form-control" name="htrntit" id="htrntit" placeholder="เรื่องที่อบรม" value="<?php echo $htrntit; ?>" required>
-                        </div>
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdteend">วันที่จัดกิจกรรมเสร็จ</label>
+                        <input type="text" class="form-control" name="actdteend" id="actdteend" placeholder="วันที่จัดกิจกรรมเสร็จ" value="<?php echo $actdteend; ?>" required>
+                    </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="prvid">จังหวัดที่อบรม</label>
-                            <!-- You can replace this input with a dropdown menu populated from a query -->
-                            <input type="text" class="form-control" name="prvid" id="prvid" placeholder="จังหวัดที่อบรม" value="<?php echo $prvid; ?>" required>
-                        </div>
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actplc">สถานที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="actplc" id="actplc" placeholder="สถานที่จัดกิจกรรม" value="<?php echo $actplc; ?>" required>
+                    </div>
 
-                        <div class="col-12 col-sm-12 mb-3">
-                            <label for="htrndetail">รายละเอียดการอบรม</label>
-                            <textarea class="form-control" name="htrndetail" id="htrndetail" placeholder="รายละเอียดการอบรม" required><?php echo $htrndetail; ?></textarea>
-                        </div>
-                        <script>
-                            // Function to enable all input fields
-                            function enableInputFieldsAndButton(setInput) {
-                                $('#personSelect').prop('disabled', setInput ? false : true);
-                                $('#htrndtestr, #htrndteend, #htrntit, #prvid, #htrndetail').prop('disabled', setInput);
-                            }
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="place_village">จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $place_village; ?>" required>
+                    </div>
 
-                            // Initialize the dropdown menu
-                            $('#personSelect').on('click', function() {
-                                $('#personDropdown').toggle();
-                            });
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actattdno">จำนวนผู้เข้าร่วมกิจกรรม</label>
+                        <input type="text" class="form-control" name="actattdno" id="actattdno" placeholder="จำนวนผู้เข้าร่วมกิจกรรม" value="<?php echo $actattdno; ?>" required>
+                    </div>
 
-                            // Handle input changes
-                            $('#personSelect').on('input', function() {
-                                var searchQuery = $(this).val();
-                                console.log('Search query:', searchQuery);
-                                if (searchQuery.length >= 2) {
-                                    // Make an AJAX call to fetch matching results
-                                    $.ajax({
-                                        url: "8.htraining/searchPerson.php",
-                                        method: "GET",
-                                        dataType: "json",
-                                        data: {
-                                            query: searchQuery
-                                        },
-                                        success: function(data) {
-                                            // Clear previous results
-                                            $('#personDropdown').empty();
+                    <div class="col-12 col-sm-12 mb-3">
+                        <label for="actdetail">รายละเอียดการจัดกิจกรรม</label>
+                        <textarea class="form-control" name="actdetail" id="actdetail" placeholder="รายละเอียดการจัดกิจกรรม" required><?php echo $actdetail; ?></textarea>
 
-                                            // Populate the dropdown with search results
-                                            data.forEach(function(result) {
-                                                var option = $('<div class="dropdown-item"></div>');
-                                                option.text(result.text); // Change this to the property you want to display
-                                                option.attr('data-value', result.id); // Change this to the property containing the person's ID
-                                                $('#personDropdown').append(option);
 
-                                                // Handle click event for each result
-                                                option.on('click', function() {
-                                                    var selectedValue = $(this).attr('data-value');
-                                                    var selectedText = $(this).text();
-                                                    $('#personSelect').val(selectedText); // Set the selected text in the input field
-                                                    $('#perid').val(selectedValue); // Set the selected ID in the hidden input
-                                                    $('#personDropdown').hide();
+                    </div>
+                    <script>
+                        // Function to enable all input fields
+                        function enableInputFieldsAndButton(setInput) {
+                            $('#personSelect').prop('disabled', setInput ? false : true);
+                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
+                        }
 
-                                                    // Enable input fields and show the change button
-                                                    enableInputFieldsAndButton(false);
-                                                });
+                        // Initialize the dropdown menu
+                        $('#personSelect').on('click', function() {
+                            $('#personDropdown').toggle();
+                        });
+
+                        // Handle input changes
+                        $('#personSelect').on('input', function() {
+                            var searchQuery = $(this).val();
+                            console.log('Search query:', searchQuery);
+                            if (searchQuery.length >= 2) {
+                                // Make an AJAX call to fetch matching results
+                                $.ajax({
+                                    url: "3.historyeducation/searchPerson.php",
+                                    method: "GET",
+                                    dataType: "json",
+                                    data: {
+                                        query: searchQuery
+                                    },
+                                    success: function(data) {
+                                        // Clear previous results
+                                        $('#personDropdown').empty();
+
+                                        // Populate the dropdown with search results
+                                        data.forEach(function(result) {
+                                            var option = $('<div class="dropdown-item"></div>');
+                                            option.text(result.text); // Change this to the property you want to display
+                                            option.attr('data-value', result.id); // Change this to the property containing the person's ID
+                                            $('#personDropdown').append(option);
+
+                                            // Handle click event for each result
+                                            option.on('click', function() {
+                                                var selectedValue = $(this).attr('data-value');
+                                                var selectedText = $(this).text();
+                                                $('#personSelect').val(selectedText); // Set the selected text in the input field
+                                                $('#perid').val(selectedValue); // Set the selected ID in the hidden input
+                                                $('#personDropdown').hide();
+
+                                                // Enable input fields and show the change button
+                                                enableInputFieldsAndButton(false);
                                             });
-                                        }
-                                    });
-                                } else {
-                                    // Clear dropdown if the input is too short
-                                    $('#personDropdown').empty();
-                                }
-                            });
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Clear dropdown if the input is too short
+                                $('#personDropdown').empty();
+                            }
+                        });
 
 
-                            // Disable all input fields initially
+                        // Disable all input fields initially
+                        enableInputFieldsAndButton(true);
+                        $('#changePersonButton').on('click', function() {
+                            // Enable input fields and hide the change button
                             enableInputFieldsAndButton(true);
-                            $('#changePersonButton').on('click', function() {
-                                // Enable input fields and hide the change button
-                                enableInputFieldsAndButton(true);
-                            });
-                        </script>
-                        <!--//app-card-body-->
+                        });
+                    </script>
+                    <hr>
+                    <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
+                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
-                        <hr>
-                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
-                        <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
-
-                        <hr class="mb-4">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
-                            </div>
+                    <hr class="mb-4">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="savofc">ผู้บันทึก</label>
+                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
                         </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="savdte">วันที่บันทึก</label>
+                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                        </div>
+                    </div>
                 </form>
 
             </div>
@@ -190,39 +209,47 @@ if ($hhtrnid) {
 <!--//row-->
 
 <script>
-    $(document).ready(function() {
-        <?php if ($hhtrnid) { ?>
-            // Enable input fields and show the change button
-            enableInputFieldsAndButton(false);
-            console.log("enableInputFieldsAndButton(false);");
+    script >
+        $(document).ready(function() {
+            console.log("document ready");
+            <?php if ($hflwid) { ?>
+                // Enable input fields and show the change button
+                enableInputFieldsAndButton(false);
+                console.log("enableInputFieldsAndButton(true);");
 
-        <?php } else { ?>
-            // Enable input fields and show the change button
-            enableInputFieldsAndButton(true);
-            console.log("enableInputFieldsAndButton(true);");
+            <?php } else { ?>
+                // Enable input fields and show the change button
+                enableInputFieldsAndButton(true);
+                console.log("enableInputFieldsAndButton(false);");
 
-        <?php } ?>
-    });
+            <?php } ?>
+        });
     $(document).ready(function() {
         $("#frmScreening").validate({
             rules: {
                 // ... (existing validation rules)
-                personName: {
+                actnme: {
                     required: true
                 },
-                htrndtestr: {
+                acttypid: {
                     required: true
                 },
-                htrndteend: {
+                actdtestr: {
                     required: true
                 },
-                htrntit: {
+                actdteend: {
                     required: true
                 },
-                prvid: {
+                actplc: {
                     required: true
                 },
-                htrndetail: {
+                place_village: {
+                    required: true
+                },
+                actattdno: {
+                    required: true
+                },
+                actdetail: {
                     required: true
                 },
                 // ... (other validation rules for new elements)
@@ -239,7 +266,7 @@ if ($hhtrnid) {
                     jsonData[field.name] = field.value;
                 });
 
-                // Determine the action based on whether perid is present or not
+                // Determine the action based on whether heduid is present or not
                 if ($('#heduid').val()) {
                     Swal.fire({
                         title: 'คุณแน่ใจหรือไม่?',
@@ -264,7 +291,7 @@ if ($hhtrnid) {
                     // Send data to the server for insertion or update
                     $.ajax({
                         type: "POST",
-                        url: "8.htraining/insert_htraining.php",
+                        url: "3.historyeducation/insert_historyeducation.php",
                         data: data,
                         dataType: "json",
                         success: function(response) {
@@ -277,7 +304,7 @@ if ($hhtrnid) {
                                     confirmButtonText: 'ตกลง'
                                 }).then(() => {
                                     // Go to the next page
-                                    window.location.href = "?page=8.htraining";
+                                    window.location.href = "?page=3.historyeducation";
                                 });
                             } else {
                                 // Show error message
@@ -305,7 +332,7 @@ if ($hhtrnid) {
         });
     });
 </script>
-<script>
+<script language=Javascript>
     function sum_score() {
         var sum =
             Number(window.document.frmScreening.qtnvs1.value) +

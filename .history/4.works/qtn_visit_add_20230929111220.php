@@ -62,7 +62,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 					
 //  -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
-                    <div class="col-12 col-sm-4 mb-3">
+                <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
                         <input type="hidden" class="form-control" name="hwrkid" id="hwrkid" value="<?php echo $hwrkid; ?>" />
                         <!-- //div group -->
@@ -72,13 +72,13 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
                         </div>
-                        <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
-                                    <!-- Dropdown items will be populated here -->
-                            </div>
-
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
-
+                        <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
+                            <!-- Dropdown items will be populated here -->
                         </div>
+
+                        <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+
+                    </div>
 
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="occid">รหัสอาชีพ</label>
@@ -109,11 +109,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                             <input type="text" class="form-control" name="wrknme" id="wrknme" value="<?php echo $workplace_name; ?>" required>
                         </div>
 
-                        <!-- ทำงานในตำแหน่ง -->
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="workplace_position">ทำงานในตำแหน่ง</label>
-                            <input type="text" class="form-control" name="workplace_position" id="workplace_position" value="<?php echo $workplace_position; ?>" required>
-                        </div>
+
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="wrkstarty">ปีที่เริ่มประกอบอาชีพ</label>
                             <input type="text" class="form-control" name="wrkstarty" id="wrkstarty" value="<?php echo $start_year; ?>" required>
@@ -142,7 +138,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas','#workplace_position').prop('disabled', setInput ? false : true);
+                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', setInput);
                             }
 
                             // Initialize the dropdown menu
@@ -210,31 +206,31 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 
                         <hr>
                         <?php if (!$perid) { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-                        <?php } else { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-                            <!-- button cancle -->
-                            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-                        <?php } ?>
-                        <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+                    <?php } else { ?>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                        <!-- button cancle -->
+                        <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+                    <?php } ?>
+                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" >
                             </div>
                         </div>
                 </form>
@@ -260,134 +256,135 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
         <?php } ?>
     });
     $(document).ready(function() {
-        $("#frmScreening").validate({
-            rules: {
-                eduid: {
-                    required: true,
-                    number: true,
-                    min: 1,
-                    max: 9
-                },
-                personSelect: {
-                    required: true
-                },
-                changePersonButton: {
-                    // Include any specific rules for this element if needed
-                },
-                personDropdown: {
-                    // Include any specific rules for this element if needed
-                },
-                perid: {
-                    required: true
-                },
-                occid: {
-                    // Include any specific rules for this element if needed
-                },
-                prvid: {
-                    // Include any specific rules for this element if needed
-                },
-                wrknme: {
-                    required: true
-                },
-                wrkstarty: {
-                    required: true,
-                    number: true
-                },
-                work_period_years: {
-                    required: true,
-                    number: true
-                },
-                work_period_months: {
-                    required: true,
-                    number: true
-                },
-                wrkendy: {
-                    // Include any specific rules for this element if needed
-                },
-                wrkendreas: {
-                    // Include any specific rules for this element if needed
-                },
+    $("#frmScreening").validate({
+        rules: {
+            eduid: {
+                required: true,
+                number: true,
+                min: 1,
+                max: 9
             },
-            ignore: [],
-            messages: {
-                // Add custom error messages here
+            personSelect: {
+                required: true
             },
-            submitHandler: function(form) {
-                // Serialize form data into JSON format
-                var formData = $(form).serializeArray();
-                var jsonData = {};
-                $.each(formData, function(index, field) {
-                    jsonData[field.name] = field.value;
+            changePersonButton: {
+                // Include any specific rules for this element if needed
+            },
+            personDropdown: {
+                // Include any specific rules for this element if needed
+            },
+            perid: {
+                required: true
+            },
+            occid: {
+                // Include any specific rules for this element if needed
+            },
+            prvid: {
+                // Include any specific rules for this element if needed
+            },
+            wrknme: {
+                required: true
+            },
+            wrkstarty: {
+                required: true,
+                number: true
+            },
+            work_period_years: {
+                required: true,
+                number: true
+            },
+            work_period_months: {
+                required: true,
+                number: true
+            },
+            wrkendy: {
+                // Include any specific rules for this element if needed
+            },
+            wrkendreas: {
+                // Include any specific rules for this element if needed
+            },
+        },
+        ignore: [],
+        messages: {
+            // Add custom error messages here
+        },
+        submitHandler: function(form) {
+            // Serialize form data into JSON format
+            var formData = $(form).serializeArray();
+            var jsonData = {};
+            $.each(formData, function(index, field) {
+                jsonData[field.name] = field.value;
+            });
+
+            // Determine the action based on whether perid is present or not
+            if ($('#heduid').val()) {
+                Swal.fire({
+                    title: 'คุณแน่ใจหรือไม่?',
+                    text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'อัปเดต',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performAjaxRequest(jsonData);
+                    }
                 });
+            } else {
+                performAjaxRequest(jsonData);
+            }
 
-                // Determine the action based on whether perid is present or not
-                if ($('#heduid').val()) {
-                    Swal.fire({
-                        title: 'คุณแน่ใจหรือไม่?',
-                        text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'อัปเดต',
-                        cancelButtonText: 'ยกเลิก'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            performAjaxRequest(jsonData);
-                        }
-                    });
-                } else {
-                    performAjaxRequest(jsonData);
-                }
+            function performAjaxRequest(data) {
+                // Convert birth_date 2564-01-01 to 25640101
 
-                function performAjaxRequest(data) {
-                    // Convert birth_date 2564-01-01 to 25640101
+                // Add the action parameter to indicate the action to be performed
+                // data['action'] = data['h'] ? 'update' : 'insert';
+                data['action'] = data['hwrkid'] ? 'update' : 'insert';
 
-                    // Add the action parameter to indicate the action to be performed
-                    // data['action'] = data['h'] ? 'update' : 'insert';
-                    data['action'] = data['hwrkid'] ? 'update' : 'insert';
-
-                    // Send data to the server for insertion or update
-                    $.ajax({
-                        type: "POST",
-                        url: "4.works/insert_works.php",
-                        data: data,
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.success) {
-                                // Show success message
-                                Swal.fire({
-                                    title: 'สำเร็จ',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'ตกลง'
-                                }).then(() => {
-                                    // Go to the next page
-                                     window.location.href = "?page=4.works";
-                                });
-                            } else {
-                                // Show error message
-                                Swal.fire({
-                                    title: 'ข้อผิดพลาด',
-                                    text: "เกิดข้อผิดพลาด: " + response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'ตกลง'
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle Ajax error
-                            console.error(error);
+                // Send data to the server for insertion or update
+                $.ajax({
+                    type: "POST",
+                    url: "4.works/insert_works.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'สำเร็จ',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'ตกลง'
+                            }).then(() => {
+                                // Go to the next page
+                                // window.location.href = "?page=4.works";
+                            });
+                        } else {
+                            // Show error message
                             Swal.fire({
                                 title: 'ข้อผิดพลาด',
-                                text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                                text: "เกิดข้อผิดพลาด: " + response.message,
                                 icon: 'error',
                                 confirmButtonText: 'ตกลง'
                             });
                         }
-                    });
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle Ajax error
+                        console.error(error);
+                        Swal.fire({
+                            title: 'ข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                });
             }
-        });
+        }
     });
+});
+
 </script>
 <script>
     function sum_score() {

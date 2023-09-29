@@ -1,47 +1,27 @@
 <?php
-$hwrkid = $_GET["perid"]; // Get hwrkid from page showing the list of hwork
-if ($hwrkid) {
-    // Construct your SQL query to fetch hwork details and related information
-    $sql = "SELECT h.hwrkid, p.perid as person_id, h.occid as occupation_id, h.wrknme as workplace_name,
-                   prv.prvnme as province_name, h.wrkpos as workplace_position, h.wrkstarty as start_year,
-                   h.wrkperiody as work_period_years, h.wrkperiodm as work_period_months,
-                   h.wrkendy as end_year, h.wrkendreas as end_reason, df.dispfrmnme as dispfrmnme,
-                   CONCAT(p.name, ' ', p.sname) AS person_fullname
-            FROM hwork h
-            LEFT JOIN person p ON h.perid = p.perid
-            LEFT JOIN prv ON h.prvid = prv.prvid
-            LEFT JOIN disptyp dt ON p.perid = dt.perid
-            LEFT JOIN dispform df ON dt.dispfrmid = df.dispfrmid
-            WHERE h.hwrkid = $hwrkid"; // Modify the condition based on your database structure
+$hflwid = $_GET["hflwid"]; // Get hfolowup ID from page showing list of hfolowup
+if ($hflwid) {
+    // Construct your SQL query to fetch hfolowup details and related information
+    $sql = "SELECT hf.hflwid, hf.perid, hf.hflwdtestr, hf.hflwdteend, hf.hflwmeth, hf.hflwdetail,
+                   CONCAT(p.name, ' ', p.sname) AS participant_name
+            FROM hfolowup hf
+            JOIN person p ON hf.perid = p.perid
+            WHERE hf.hflwid = $hflwid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
-        $person_id = $row['person_id'];
-        $occupation_id = $row['occupation_id'];
-        $workplace_name = $row['workplace_name'];
-        $province_name = $row['province_name'];
-        $workplace_position = $row['workplace_position'];
-        $start_year = $row['start_year'];
-        $work_period_years = $row['work_period_years'];
-        $work_period_months = $row['work_period_months'];
-        $end_year = $row['end_year'];
-        $end_reason = $row['end_reason'];
-        $person_fullname = $row['person_fullname'];
-        $hwrkid = $row['hwrkid'];
+        $perid = $row['perid'];
+        $hflwdtestr = $row['hflwdtestr'];
+        $hflwdteend = $row['hflwdteend'];
+        $hflwmeth = $row['hflwmeth'];
+        $hflwdetail = $row['hflwdetail'];
+        $participant_name = $row['participant_name'];
     }
 }
-
-// Query to fetch occupation options for dropdown
-$occupationQuery = "SELECT * FROM occ";
-$occupationResult = mysqli_query($conn, $occupationQuery);
-
-// Query to fetch province options for dropdown
-$provinceQuery = "SELECT * FROM prv";
-$provinceResult = mysqli_query($conn, $provinceQuery);
 ?>
 
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">จัดการข้อมูลประวัติการประกอบอาชีพ</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -54,20 +34,23 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลประวัติการประกอบอาชีพ</b>
+                    <b>จัดการข้อมูลประวัติการติดตาม/การเยี่ยมเยียน</b>
                 </h5>
 
-                <!-- •• รหัสประวัติการประกอบอาชีพ
-	
-					
-//  -->
+                <!-- รหัสประวัติการติดตาม/การเยี่ยมเยียน
+• รหัสบุคคล รหัสเด็ก
+• วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน
+• วันที่ติดตาม/เยี่ยมเยียนเสร็จ
+• ติดตาม/เยี่ยมเยียนด้วยวิธีใด
+• รายละเอียดการติดตาม/เยี่ยมเยียน -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
+
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
-                        <input type="hidden" class="form-control" name="hwrkid" id="hwrkid" value="<?php echo $hwrkid; ?>" />
                         <!-- //div group -->
                         <div class="input-group">
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
+                            <!-- Search for a person... to thai -->
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล" value="<?php echo $participant_name; ?>" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
@@ -75,74 +58,35 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                         <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
                                     <!-- Dropdown items will be populated here -->
                             </div>
-
                             <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
-
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="occid">รหัสอาชีพ</label>
-                            <select class="form-select" name="occid" id="occid" required>
-                                <?php
-                                while ($occupationRow = mysqli_fetch_assoc($occupationResult)) {
-                                    $selected = ($occupationRow['occid'] == $occupation_id) ? "selected" : "";
-                                    echo "<option value='{$occupationRow['occid']}' {$selected}>{$occupationRow['occnme']}</option>";
-                                }
-                                ?>
-                            </select>
+                            <label for="hflwdtestr">วันที่เริ่มติดตาม/เยี่ยมเยียน</label>
+                            <input type="text" class="form-control" name="hflwdtestr" id="hflwdtestr" placeholder="วันที่เริ่มติดตาม/เยี่ยมเยียน" value="<?php echo $hflwdtestr; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="prvid">จังหวัดที่ทำงาน</label>
-                            <select class="form-select" name="prvid" id="prvid" required>
-                                <?php
-                                while ($provinceRow = mysqli_fetch_assoc($provinceResult)) {
-                                    $selected = ($provinceRow['prvid'] == $province_id) ? "selected" : "";
-                                    echo "<option value='{$provinceRow['prvid']}' {$selected}>{$provinceRow['prvnme']}</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <!-- ชื่อสถานประกอบการ -->
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrknme">ชื่อสถานประกอบการ</label>
-                            <input type="text" class="form-control" name="wrknme" id="wrknme" value="<?php echo $workplace_name; ?>" required>
-                        </div>
-
-                        <!-- ทำงานในตำแหน่ง -->
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="workplace_position">ทำงานในตำแหน่ง</label>
-                            <input type="text" class="form-control" name="workplace_position" id="workplace_position" value="<?php echo $workplace_position; ?>" required>
-                        </div>
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrkstarty">ปีที่เริ่มประกอบอาชีพ</label>
-                            <input type="text" class="form-control" name="wrkstarty" id="wrkstarty" value="<?php echo $start_year; ?>" required>
+                            <label for="hflwdteend">วันที่ติดตาม/เยี่ยมเยียนเสร็จ</label>
+                            <input type="text" class="form-control" name="hflwdteend" id="hflwdteend" placeholder="วันที่ติดตาม/เยี่ยมเยียนเสร็จ" value="<?php echo $hflwdteend; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
-                            <label for="work_period_years">ทำงานเป็นระยะเวลากี่ปี</label>
-                            <input type="text" class="form-control" name="work_period_years" id="work_period_years" value="<?php echo $work_period_years; ?>" required>
+                            <label for="hflwmeth">ติดตาม/เยี่ยมเยียนด้วยวิธีใด</label>
+                            <!-- You can replace this input with a dropdown menu populated from a query -->
+                            <input type="text" class="form-control" name="hflwmeth" id="hflwmeth" placeholder="ติดตาม/เยี่ยมเยียนด้วยวิธีใด" value="<?php echo $hflwmeth; ?>" required>
                         </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="work_period_months">กี่เดือน</label>
-                            <input type="text" class="form-control" name="work_period_months" id="work_period_months" value="<?php echo $work_period_months; ?>" required>
+                        <div class="col-12 col-sm-12 mb-3">
+                            <label for="hflwdetail">รายละเอียดการติดตาม/เยี่ยมเยียน</label>
+                            <textarea class="form-control" name="hflwdetail" id="hflwdetail" placeholder="รายละเอียดการติดตาม/เยี่ยมเยียน" required><?php echo $hflwdetail; ?></textarea>
                         </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="wrkendy">ปีที่ลาออก</label>
-                            <input type="text" class="form-control" name="wrkendy" id="wrkendy" value="<?php echo $end_year; ?>">
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <label for="wrkendreas">เหตุผลที่ลาออก</label>
-                            <textarea class="form-control" name="wrkendreas" id="wrkendreas"><?php echo $end_reason; ?></textarea>
-                        </div>
                         <script>
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas','#workplace_position').prop('disabled', setInput ? false : true);
+                                $('#hflwdtestr, #hflwdteend, #hflwmeth, #hflwdetail').prop('disabled', setInput);
                             }
 
                             // Initialize the dropdown menu
@@ -157,7 +101,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 if (searchQuery.length >= 2) {
                                     // Make an AJAX call to fetch matching results
                                     $.ajax({
-                                        url: "4.works/searchPerson.php",
+                                        url: "9.hfolowup/searchPerson.php",
                                         method: "GET",
                                         dataType: "json",
                                         data: {
@@ -202,39 +146,27 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 enableInputFieldsAndButton(true);
                             });
                         </script>
-
-                        <hr class="mb-4">
-
-
-                        <!--//app-card-body-->
-
                         <hr>
-                        <?php if (!$perid) { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-                        <?php } else { ?>
-                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-                            <!-- button cancle -->
-                            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-                        <?php } ?>
+                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
                         <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true">
+                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true">
+                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
                             </div>
                         </div>
                 </form>
@@ -248,65 +180,39 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
 <!--//row-->
 <script>
     $(document).ready(function() {
-        <?php if ($hwrkid) { ?>
+        console.log("document ready");
+        <?php if ($hflwid) { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(false);
-            console.log($hwrkid);
-            console.log("Has perid");
+            console.log("enableInputFieldsAndButton(f);");
+
         <?php } else { ?>
             // Enable input fields and show the change button
             enableInputFieldsAndButton(true);
-            console.log("No perid");
+            console.log("enableInputFieldsAndButton(false);");
+
         <?php } ?>
     });
     $(document).ready(function() {
         $("#frmScreening").validate({
             rules: {
-                eduid: {
-                    required: true,
-                    number: true,
-                    min: 1,
-                    max: 9
-                },
-                personSelect: {
+                // ... (existing validation rules)
+                personName: {
                     required: true
                 },
-                changePersonButton: {
-                    // Include any specific rules for this element if needed
-                },
-                personDropdown: {
-                    // Include any specific rules for this element if needed
-                },
-                perid: {
+                hflwdtestr: {
                     required: true
                 },
-                occid: {
-                    // Include any specific rules for this element if needed
-                },
-                prvid: {
-                    // Include any specific rules for this element if needed
-                },
-                wrknme: {
+                hflwdteend: {
                     required: true
                 },
-                wrkstarty: {
-                    required: true,
-                    number: true
+                hflwmeth: {
+                    required: true
                 },
-                work_period_years: {
-                    required: true,
-                    number: true
+                hflwdetail: {
+                    required: true
                 },
-                work_period_months: {
-                    required: true,
-                    number: true
-                },
-                wrkendy: {
-                    // Include any specific rules for this element if needed
-                },
-                wrkendreas: {
-                    // Include any specific rules for this element if needed
-                },
+                // ... (other validation rules for new elements)
             },
             ignore: [],
             messages: {
@@ -339,16 +245,13 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                 }
 
                 function performAjaxRequest(data) {
-                    // Convert birth_date 2564-01-01 to 25640101
-
                     // Add the action parameter to indicate the action to be performed
-                    // data['action'] = data['h'] ? 'update' : 'insert';
-                    data['action'] = data['hwrkid'] ? 'update' : 'insert';
+                    data['action'] = data['heduid'] ? 'update' : 'insert';
 
                     // Send data to the server for insertion or update
                     $.ajax({
                         type: "POST",
-                        url: "4.works/insert_works.php",
+                        url: "3.historyeducation/insert_historyeducation.php",
                         data: data,
                         dataType: "json",
                         success: function(response) {
@@ -361,7 +264,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                     confirmButtonText: 'ตกลง'
                                 }).then(() => {
                                     // Go to the next page
-                                     window.location.href = "?page=4.works";
+                                    window.location.href = "?page=3.historyeducation";
                                 });
                             } else {
                                 // Show error message

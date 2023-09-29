@@ -108,7 +108,7 @@ if ($actid) {
                     <div class="col-12 col-sm-12 mb-3">
                         <label for="actdetail">รายละเอียดการจัดกิจกรรม</label>
                         <textarea class="form-control" name="actdetail" id="actdetail" placeholder="รายละเอียดการจัดกิจกรรม" required><?php echo $actdetail; ?></textarea>
-
+                        
 
                     </div>
                     <script>
@@ -209,115 +209,113 @@ if ($actid) {
 <!--//row-->
 
 <script>
-   
-
     $(document).ready(function() {
-        $("#frmScreening").validate({
-            rules: {
-                // ... (existing validation rules)
-                actnme: {
-                    required: true
-                },
-                acttypid: {
-                    required: true
-                },
-                actdtestr: {
-                    required: true
-                },
-                actdteend: {
-                    required: true
-                },
-                actplc: {
-                    required: true
-                },
-                place_village: {
-                    required: true
-                },
-                actattdno: {
-                    required: true
-                },
-                actdetail: {
-                    required: true
-                },
-                // ... (other validation rules for new elements)
+    $("#frmScreening").validate({
+        rules: {
+            // ... (existing validation rules)
+            actnme: {
+                required: true
             },
-            ignore: [],
-            messages: {
-                // Add custom error messages here
+            acttypid: {
+                required: true
             },
-            submitHandler: function(form) {
-                // Serialize form data into JSON format
-                var formData = $(form).serializeArray();
-                var jsonData = {};
-                $.each(formData, function(index, field) {
-                    jsonData[field.name] = field.value;
+            actdtestr: {
+                required: true
+            },
+            actdteend: {
+                required: true
+            },
+            actplc: {
+                required: true
+            },
+            place_village: {
+                required: true
+            },
+            actattdno: {
+                required: true
+            },
+            actdetail: {
+                required: true
+            },
+            // ... (other validation rules for new elements)
+        },
+        ignore: [],
+        messages: {
+            // Add custom error messages here
+        },
+        submitHandler: function(form) {
+            // Serialize form data into JSON format
+            var formData = $(form).serializeArray();
+            var jsonData = {};
+            $.each(formData, function(index, field) {
+                jsonData[field.name] = field.value;
+            });
+
+            // Determine the action based on whether heduid is present or not
+            if ($('#heduid').val()) {
+                Swal.fire({
+                    title: 'คุณแน่ใจหรือไม่?',
+                    text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'อัปเดต',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performAjaxRequest(jsonData);
+                    }
                 });
+            } else {
+                performAjaxRequest(jsonData);
+            }
 
-                // Determine the action based on whether heduid is present or not
-                if ($('#heduid').val()) {
-                    Swal.fire({
-                        title: 'คุณแน่ใจหรือไม่?',
-                        text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'อัปเดต',
-                        cancelButtonText: 'ยกเลิก'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            performAjaxRequest(jsonData);
-                        }
-                    });
-                } else {
-                    performAjaxRequest(jsonData);
-                }
+            function performAjaxRequest(data) {
+                // Add the action parameter to indicate the action to be performed
+                data['action'] = data['heduid'] ? 'update' : 'insert';
 
-                function performAjaxRequest(data) {
-                    // Add the action parameter to indicate the action to be performed
-                    data['action'] = data['heduid'] ? 'update' : 'insert';
-
-                    // Send data to the server for insertion or update
-                    $.ajax({
-                        type: "POST",
-                        url: "3.historyeducation/insert_historyeducation.php",
-                        data: data,
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.success) {
-                                // Show success message
-                                Swal.fire({
-                                    title: 'สำเร็จ',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'ตกลง'
-                                }).then(() => {
-                                    // Go to the next page
-                                    window.location.href = "?page=3.historyeducation";
-                                });
-                            } else {
-                                // Show error message
-                                Swal.fire({
-                                    title: 'ข้อผิดพลาด',
-                                    text: "เกิดข้อผิดพลาด: " + response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'ตกลง'
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle Ajax error
-                            console.error(error);
+                // Send data to the server for insertion or update
+                $.ajax({
+                    type: "POST",
+                    url: "3.historyeducation/insert_historyeducation.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'สำเร็จ',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'ตกลง'
+                            }).then(() => {
+                                // Go to the next page
+                                window.location.href = "?page=3.historyeducation";
+                            });
+                        } else {
+                            // Show error message
                             Swal.fire({
                                 title: 'ข้อผิดพลาด',
-                                text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                                text: "เกิดข้อผิดพลาด: " + response.message,
                                 icon: 'error',
                                 confirmButtonText: 'ตกลง'
                             });
                         }
-                    });
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle Ajax error
+                        console.error(error);
+                        Swal.fire({
+                            title: 'ข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                });
             }
-        });
+        }
     });
+});
 </script>
 <script language=Javascript>
     function sum_score() {
