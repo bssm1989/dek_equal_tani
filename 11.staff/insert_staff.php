@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         /*
-        hwrkid: 
+        : 
 perid: 4
 occid: 1
 prvid: 25
@@ -138,7 +138,7 @@ workplace_position: กด�
 */
 /*hwork	ประวัติการประกอบอาชีพ				
 ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
-hwrkid	bigint		รหัสประวัติการประกอบอาชีพ	PK	
+	bigint		รหัสประวัติการประกอบอาชีพ	PK	
 perid	bigint		รหัสบุคคล --> รหัสเด็ก	FK	
 occid	int	2	รหัสอาชีพ	FK	มีตารางย่อย
 wrknme	varchar	30	ชื่อสถานประกอบการ		
@@ -151,7 +151,7 @@ wrkendy	int	4	ปีที่ลาออก		เก็บ 4 หลัก เช
 wrkendreas	varchar	200	เหตุผลที่ลาออก		
 */
         // Insert person data
-        $hwrkidData = array(
+        $Data = array(
             'perid'=> $_POST['perid'],
             'occid' => $_POST['occid'],
             'prvid' => $_POST['prvid'],
@@ -169,11 +169,11 @@ wrkendreas	varchar	200	เหตุผลที่ลาออก
         );
        
         // Remove null values from personData array
-        $hwrkidData = array_filter($hwrkidData, function ($value) {
+        $Data = array_filter($Data, function ($value) {
             return $value !== null;
         });
    
-        $personInsert = insertData('hwork', $hwrkidData, $conn);
+        $personInsert = insertData('hwork', $Data, $conn);
         if ($personInsert) {
             $response['success'] = true;
             $response['message'] = 'Data inserted successfully.';
