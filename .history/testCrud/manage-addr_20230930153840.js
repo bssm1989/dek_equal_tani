@@ -9,11 +9,9 @@ class AddressDropdowns {
   }
   setInitialValuesFromHiddenInput() {
     const hiddenInput = document.getElementById(`${this.containerId}-addressCode`);
-    console.log('hiddenInput.value', hiddenInput.value);
-
     if (hiddenInput && hiddenInput.value !== '00000000') {
       console.log('hiddenInput.value', hiddenInput.value);
-    
+      hiddenInput.value='10040300';
       const addressCode = hiddenInput.value;
       const provinceCode = addressCode.slice(0, 2);
       const amphurCode = addressCode.slice(2, 4);

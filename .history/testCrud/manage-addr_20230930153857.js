@@ -13,7 +13,7 @@ class AddressDropdowns {
 
     if (hiddenInput && hiddenInput.value !== '00000000') {
       console.log('hiddenInput.value', hiddenInput.value);
-    
+      hiddenInput.value='10040300';
       const addressCode = hiddenInput.value;
       const provinceCode = addressCode.slice(0, 2);
       const amphurCode = addressCode.slice(2, 4);
