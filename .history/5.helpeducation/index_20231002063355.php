@@ -1,59 +1,59 @@
 <?php
-@session_start();
-$optid = $_SESSION['optid'];
+// @session_start();
+// $optid = $_SESSION['optid'];
 
-$sql = "SELECT
-    hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
-    p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
-FROM
-    hhelpedu hh
-LEFT JOIN
-    person p ON hh.perid = p.perid
-LEFT JOIN
-    titname t ON p.titid = t.titid
-LEFT JOIN
-    const_plcnmegen c ON p.plcid = c.plcidgen
-LEFT JOIN
-    disptyp dt ON p.perid = dt.perid
-LEFT JOIN
-    dispform df ON dt.dispfrmid = df.dispfrmid
-LEFT JOIN
-    hedu ed ON p.perid = ed.perid
-LEFT JOIN
-    edulev el ON ed.edulev = el.eduid";
-// echo $sql;
-$results = mysqli_query($conn, $sql);
-function getEducationLevel($eduid)
-{
-    // Define an array mapping eduid to the corresponding edulevnme
-    $eduLevelMapping = array(
-        0 => 'ไม่ระบุ',
-        1 => 'ไม่ได้เรียนหนังสือ',
-        2 => 'ไม่จบระดับประถมศึกษา',
-        3 => 'ประถมศึกษา',
-        4 => 'มัธยมตอนต้น',
-        5 => 'มัธยมตอนปลาย',
-        6 => 'ปวช',
-        7 => 'ปวส',
-        8 => 'ปริญญาตรี',
-        9 => 'ปริญญาโท',
-        10 => 'ปริญญาเอก',
-        11 => 'มศ.3',
-        12 => 'มศ.5',
-        13 => 'วัยก่อนเรียน',
-        14 => 'บริบาล/ปฐมวัย',
-        15 => 'อนุบาล',
-        16 => 'ศาสนาอิบตีดาอีย์ (ชั้น 1-4)',
-        17 => 'ศาสนามูตาวัตซิด (ชั้น 5-7)',
-        18 => 'ศาสนาซานาวีย์ (ชั้น 8-10)',
-        19 => 'กศน.ม.ต้น',
-        20 => 'กศน.ม.ปลาย',
-        21 => 'อนุปริญญา'
-    );
+// $sql = "SELECT
+//     hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
+//     p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
+// FROM
+//     hhelpedu hh
+// LEFT JOIN
+//     person p ON hh.perid = p.perid
+// LEFT JOIN
+//     titname t ON p.titid = t.titid
+// LEFT JOIN
+//     const_plcnmegen c ON p.plcid = c.plcidgen
+// LEFT JOIN
+//     disptyp dt ON p.perid = dt.perid
+// LEFT JOIN
+//     dispform df ON dt.dispfrmid = df.dispfrmid
+// LEFT JOIN
+//     hedu ed ON p.perid = ed.perid
+// LEFT JOIN
+//     edulev el ON ed.edulev = el.eduid";
+// // echo $sql;
+// // $results = mysqli_query($conn, $sql);
+// function getEducationLevel($eduid)
+// {
+//     // Define an array mapping eduid to the corresponding edulevnme
+//     $eduLevelMapping = array(
+//         0 => 'ไม่ระบุ',
+//         1 => 'ไม่ได้เรียนหนังสือ',
+//         2 => 'ไม่จบระดับประถมศึกษา',
+//         3 => 'ประถมศึกษา',
+//         4 => 'มัธยมตอนต้น',
+//         5 => 'มัธยมตอนปลาย',
+//         6 => 'ปวช',
+//         7 => 'ปวส',
+//         8 => 'ปริญญาตรี',
+//         9 => 'ปริญญาโท',
+//         10 => 'ปริญญาเอก',
+//         11 => 'มศ.3',
+//         12 => 'มศ.5',
+//         13 => 'วัยก่อนเรียน',
+//         14 => 'บริบาล/ปฐมวัย',
+//         15 => 'อนุบาล',
+//         16 => 'ศาสนาอิบตีดาอีย์ (ชั้น 1-4)',
+//         17 => 'ศาสนามูตาวัตซิด (ชั้น 5-7)',
+//         18 => 'ศาสนาซานาวีย์ (ชั้น 8-10)',
+//         19 => 'กศน.ม.ต้น',
+//         20 => 'กศน.ม.ปลาย',
+//         21 => 'อนุปริญญา'
+//     );
 
-    // Return the educational level name based on the given eduid
-    return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
-}
+//     // Return the educational level name based on the given eduid
+//     return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
+// }
 ?>
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
@@ -176,7 +176,7 @@ function getEducationLevel($eduid)
                                     <td class="align-middle text-start"><?= $hedudetail ?></td>
                                     <td>
                                     <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $ ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-danger text-white"
                                             onclick="deletePerson2(
                                                 '<?= $hheduid ?>',

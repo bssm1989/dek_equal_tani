@@ -72,14 +72,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                         </div>
                     </div>
 
-                  
-                    
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="pid">เลขบัตรประชาชน</label>
-                        <input type="text" class="form-control" name="pid" id="pid" placeholder="เลขบัตรประชาชน" value="<?php echo $pid; ?>" > <!--required> -->
-                    </div>
-                    
-                         <div class="col-12 col-sm-4 mb-3">
                         <label for="title_id">รหัสคำนำหน้าชื่อ</label>
                         <select class="form-select" name="title_id" id="title_id" > <!--required> -->
                             <?php
@@ -122,7 +115,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
 
                         <!-- <div class="col-12 col-sm-4 mb-3">
                             <label for="plcid">จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด</label>
-                            <input type="text" class="form-control" name="plcid" id="plcid" placeholder="จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด" value="<?php echo $plcid; ?>" > 
+                            <input type="text" class="form-control" name="plcid" id="plcid" placeholder="จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด" value="<?php echo $plcid; ?>" > <!--required> -->
                         </div> -->
                     </div>
                     <div class="col-12 col-sm-4 mb-3">

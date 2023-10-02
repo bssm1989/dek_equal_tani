@@ -72,16 +72,9 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                         </div>
                     </div>
 
-                  
-                    
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="pid">เลขบัตรประชาชน</label>
-                        <input type="text" class="form-control" name="pid" id="pid" placeholder="เลขบัตรประชาชน" value="<?php echo $pid; ?>" > <!--required> -->
-                    </div>
-                    
-                         <div class="col-12 col-sm-4 mb-3">
                         <label for="title_id">รหัสคำนำหน้าชื่อ</label>
-                        <select class="form-select" name="title_id" id="title_id" > <!--required> -->
+                        <select class="form-select" name="title_id" id="title_id" required>
                             <?php
                             while ($titnameRow = mysqli_fetch_assoc($titnameResult)) {
                                 $selected = ($titnameRow['titid'] == $title_id) ? "selected" : "";
@@ -95,110 +88,41 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                     <div class="row">
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="staffnme">ชื่อ</label>
-                            <input type="text" class="form-control" name="staffnme" id="staffnme" placeholder="ชื่อ" value="<?php echo $staffnme; ?>" > <!--required> -->
+                            <input type="text" class="form-control" name="staffnme" id="staffnme" placeholder="ชื่อ" value="<?php echo $staffnme; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="staffsnme">สกุล</label>
-                            <input type="text" class="form-control" name="staffsnme" id="staffsnme" placeholder="สกุล" value="<?php echo $staffsnme; ?>" > <!--required> -->
+                            <input type="text" class="form-control" name="staffsnme" id="staffsnme" placeholder="สกุล" value="<?php echo $staffsnme; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="stafftell">เบอร์โทรศัพท์</label>
-                            <input type="text" class="form-control" name="stafftell" id="stafftell" placeholder="เบอร์โทรศัพท์" value="<?php echo $stafftell; ?>" > <!--required> -->
+                            <input type="text" class="form-control" name="stafftell" id="stafftell" placeholder="เบอร์โทรศัพท์" value="<?php echo $stafftell; ?>" required>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="staffemail">อีเมล์</label>
-                            <input type="email" class="form-control" name="staffemail" id="staffemail" placeholder="อีเมล์" value="<?php echo $staffemail; ?>" > <!--required> -->
+                            <input type="email" class="form-control" name="staffemail" id="staffemail" placeholder="อีเมล์" value="<?php echo $staffemail; ?>" required>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="stafforg">หน่วยงานที่สังกัด</label>
-                            <input type="text" class="form-control" name="stafforg" id="stafforg" placeholder="หน่วยงานที่สังกัด" value="<?php echo $stafforg; ?>" > <!--required> -->
+                            <input type="text" class="form-control" name="stafforg" id="stafforg" placeholder="หน่วยงานที่สังกัด" value="<?php echo $stafforg; ?>" required>
                         </div>
 
-                        <!-- <div class="col-12 col-sm-4 mb-3">
+                        <div class="col-12 col-sm-4 mb-3">
                             <label for="plcid">จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด</label>
-                            <input type="text" class="form-control" name="plcid" id="plcid" placeholder="จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด" value="<?php echo $plcid; ?>" > 
-                        </div> -->
-                    </div>
-                    <div class="col-12 col-sm-4 mb-3">
-
-                        <div id="addr1" class="address">
-                            <!-- get value from php place_id -->
-                            <input type="hidden" id="addr1-addressCode" name="plcid" value="<?= $plcid; ?>" />
-
-                            <div class="notification"></div>
+                            <input type="text" class="form-control" name="plcid" id="plcid" placeholder="จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด" value="<?php echo $plcid; ?>" required>
                         </div>
                     </div>
-                    <script src="testCrud/data/address-data.js"></script>
-                    <script src="testCrud/manage-addr.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            const addr1 = new AddressDropdowns('addr1', addressData);
-                            addr1.init();
 
-
-                            $.validator.addMethod('eightDigits', function(value, element) {
-                                console.log('Custom validation method called:', value, element);
-
-                                const isValid = /^[0-9]{8}$/.test(value) && value !== '00000000';
-                                console.log('Validation result:', isValid);
-
-                                return this.optional(element) || isValid;
-                            }, 'Please enter an 8-digit code.');
-                            $('#editForm').validate({
-                                rules: {
-                                    name: 'required',
-                                    'addr1-addressCode': {
-                                        required: true,
-                                        eightDigits: true
-                                    },
-
-                                },
-                                ignore: [],
-                                messages: {
-                                    name: 'Please enter your name',
-                                    'addr1-addressCode': {
-                                        required: 'Please enter an address code',
-                                        eightDigits: 'Please enter an 8-digit code.'
-                                    },
-                                    'addr2-addressCode': {
-                                        required: 'Please enter an address code',
-                                        eightDigits: 'Please enter an 8-digit code.'
-                                    }
-                                },
-                                errorPlacement: function(error, element) {
-                                    // Show the error message inside the corresponding notification div
-                                    element.closest('.notification').html(error);
-
-                                    // Add red border to the address div
-                                    element.closest('.address').css('border', '2px solid red');
-                                },
-                                success: function(label, element) {
-                                    // Remove red border when validation succeeds
-                                    $(element).closest('.address').css('border', 'none');
-                                },
-                                submitHandler: function(form) {
-                                    if ($('#editForm').valid()) {
-                                        console.log('Form submitted successfully.');
-                                        console.log('Name:', $('#name').val());
-                                        console.log('Address 1:', addr1.getConcatenatedAddressCode());
-                                        console.log('Address 2:', addr2.getConcatenatedAddressCode());
-                                        console.log('Address 3:', addr3.getConcatenatedAddressCode());
-
-                                    }
-                                }
-                            });
-                        });
-                    </script>
                     <div class="row">
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="staffposid">รหัสตำแหน่ง/ภาระหน้าที่สำหรับระบบนี้</label>
-                            <select class="form-select" name="staffposid" id="staffposid" > <!--required> -->
+                            <select class="form-select" name="staffposid" id="staffposid" required>
                                 <?php
                                 while ($staffposRow = mysqli_fetch_assoc($staffposResult)) {
                                     $selected = ($staffposRow['staffposid'] == $staffposid) ? "selected" : "";
@@ -210,7 +134,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
 
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="staffprioid">รหัสสิทธิการเข้าถึงข้อมูล</label>
-                            <select class="form-select" name="staffprioid" id="staffprioid" > <!--required> -->
+                            <select class="form-select" name="staffprioid" id="staffprioid" required>
                                 <?php
                                 while ($staffprioRow = mysqli_fetch_assoc($staffprioResult)) {
                                     $selected = ($staffprioRow['staffprioid'] == $staffprioid) ? "selected" : "";
@@ -218,77 +142,77 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                                 }
                                 ?>
                             </select>
-
-                        </div>
-
-
+                            
                     </div>
-                    <script>
-                        // Function to enable all input fields
-                        function enableInputFieldsAndButton(setInput) {
-                            $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
-                        }
 
-                        // Initialize the dropdown menu
-                        $('#personSelect').on('click', function() {
-                            $('#personDropdown').toggle();
-                        });
 
-                        // Handle input changes
-                        $('#personSelect').on('input', function() {
-                            var searchQuery = $(this).val();
-                            console.log('Search query:', searchQuery);
-                            if (searchQuery.length >= 2) {
-                                // Make an AJAX call to fetch matching results
-                                $.ajax({
-                                    url: "3.historyeducation/searchPerson.php",
-                                    method: "GET",
-                                    dataType: "json",
-                                    data: {
-                                        query: searchQuery
-                                    },
-                                    success: function(data) {
-                                        // Clear previous results
-                                        $('#personDropdown').empty();
+            </div>
+            <script>
+                // Function to enable all input fields
+                function enableInputFieldsAndButton(setInput) {
+                    $('#personSelect').prop('disabled', setInput ? false : true);
+                    $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
+                }
 
-                                        // Populate the dropdown with search results
-                                        data.forEach(function(result) {
-                                            var option = $('<div class="dropdown-item"></div>');
-                                            option.text(result.text); // Change this to the property you want to display
-                                            option.attr('data-value', result.id); // Change this to the property containing the person's ID
-                                            $('#personDropdown').append(option);
+                // Initialize the dropdown menu
+                $('#personSelect').on('click', function() {
+                    $('#personDropdown').toggle();
+                });
 
-                                            // Handle click event for each result
-                                            option.on('click', function() {
-                                                var selectedValue = $(this).attr('data-value');
-                                                var selectedText = $(this).text();
-                                                $('#personSelect').val(selectedText); // Set the selected text in the input field
-                                                $('#perid').val(selectedValue); // Set the selected ID in the hidden input
-                                                $('#personDropdown').hide();
-
-                                                // Enable input fields and show the change button
-                                                enableInputFieldsAndButton(false);
-                                            });
-                                        });
-                                    }
-                                });
-                            } else {
-                                // Clear dropdown if the input is too short
+                // Handle input changes
+                $('#personSelect').on('input', function() {
+                    var searchQuery = $(this).val();
+                    console.log('Search query:', searchQuery);
+                    if (searchQuery.length >= 2) {
+                        // Make an AJAX call to fetch matching results
+                        $.ajax({
+                            url: "3.historyeducation/searchPerson.php",
+                            method: "GET",
+                            dataType: "json",
+                            data: {
+                                query: searchQuery
+                            },
+                            success: function(data) {
+                                // Clear previous results
                                 $('#personDropdown').empty();
+
+                                // Populate the dropdown with search results
+                                data.forEach(function(result) {
+                                    var option = $('<div class="dropdown-item"></div>');
+                                    option.text(result.text); // Change this to the property you want to display
+                                    option.attr('data-value', result.id); // Change this to the property containing the person's ID
+                                    $('#personDropdown').append(option);
+
+                                    // Handle click event for each result
+                                    option.on('click', function() {
+                                        var selectedValue = $(this).attr('data-value');
+                                        var selectedText = $(this).text();
+                                        $('#personSelect').val(selectedText); // Set the selected text in the input field
+                                        $('#perid').val(selectedValue); // Set the selected ID in the hidden input
+                                        $('#personDropdown').hide();
+
+                                        // Enable input fields and show the change button
+                                        enableInputFieldsAndButton(false);
+                                    });
+                                });
                             }
                         });
+                    } else {
+                        // Clear dropdown if the input is too short
+                        $('#personDropdown').empty();
+                    }
+                });
 
 
-                        // Disable all input fields initially
-                        enableInputFieldsAndButton(true);
-                        $('#changePersonButton').on('click', function() {
-                            // Enable input fields and hide the change button
-                            enableInputFieldsAndButton(true);
-                        });
-                    </script>
-                    <hr>
-                    <?php if (!$perid) { ?>
+                // Disable all input fields initially
+                enableInputFieldsAndButton(true);
+                $('#changePersonButton').on('click', function() {
+                    // Enable input fields and hide the change button
+                    enableInputFieldsAndButton(true);
+                });
+            </script>
+            <hr>
+            <?php if (!$perid) { ?>
                         <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
                     <?php } else { ?>
                         <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
@@ -297,32 +221,32 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                     <?php } ?>
                     <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
-                    <hr class="mb-4">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label for="savofc">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" > <!--required> -->
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="savdte">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" > <!--required> -->
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" > <!--required> -->
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" > <!--required> -->
-                        </div>
-                    </div>
-                </form>
-
+            <hr class="mb-4">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="savofc">ผู้บันทึก</label>
+                    <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="savdte">วันที่บันทึก</label>
+                    <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
+                    <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
+                    <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                </div>
             </div>
-            <!--//app-card-body-->
+            </form>
+
         </div>
-        <!--//app-card-->
+        <!--//app-card-body-->
     </div>
+    <!--//app-card-->
+</div>
 </div>
 <!--//row-->
 
@@ -391,8 +315,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                 function performAjaxRequest(data) {
                     // Add the action parameter to indicate the action to be performed
                     data['action'] = data['staffid'] ? 'update' : 'insert';
-                    data['plcid'] = data['plcid'].slice(0, 6);
-                    console.log(data);
+
                     // Send data to the server for insertion or update
                     $.ajax({
                         type: "POST",
@@ -409,7 +332,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                                     confirmButtonText: 'ตกลง'
                                 }).then(() => {
                                     // Go to the next page
-                                    // window.location.href = "?page=11.staff";
+                                    window.location.href = "?page=11.staff";
                                 });
                             } else {
                                 // Show error message

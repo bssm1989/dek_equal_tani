@@ -2,6 +2,12 @@
 @session_start();
 $optid = $_SESSION['optid'];
 
+// Make sure to update the database connection settings if needed
+
+// Replace the empty SQL query with your modified query to fetch data from the person, hwork, and prv tables, and join them accordingly.
+// You will need to adjust the JOIN conditions based on your table structure.
+$optid = $_SESSION['optid'];
+
 $sql = "SELECT
     hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
     p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
@@ -23,6 +29,7 @@ LEFT JOIN
     edulev el ON ed.edulev = el.eduid";
 // echo $sql;
 $results = mysqli_query($conn, $sql);
+
 function getEducationLevel($eduid)
 {
     // Define an array mapping eduid to the corresponding edulevnme
@@ -55,6 +62,11 @@ function getEducationLevel($eduid)
     return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
 }
 ?>
+
+<!-- Rest of your HTML code as before -->
+
+
+<hr class="mb-0">
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
         <h4 class="app-page-title mb-0">ประวัติการได้รับความช่วยเหลือด้านการศึกษา</h4>
@@ -121,7 +133,6 @@ function getEducationLevel($eduid)
                         <input type="text" class="form-control" id="searchBoxProvince" placeholder="พิมพ์จังหวัด,อำเภอ,ตำบลที่ต้องการค้นหา...">
                     </div>
                 </div>
-
                 <form name="frmUserSearch" id="frmUserSearch" method="post" action="" enctype="" onSubmit="" target="">
                     <table class="table responsive nowrap" id="myTableAll">
                         <thead class="table-light">
@@ -176,7 +187,7 @@ function getEducationLevel($eduid)
                                     <td class="align-middle text-start"><?= $hedudetail ?></td>
                                     <td>
                                     <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $ ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-danger text-white"
                                             onclick="deletePerson2(
                                                 '<?= $hheduid ?>',
@@ -198,21 +209,16 @@ function getEducationLevel($eduid)
                     </table>
                     <!-- </form> -->
                 </form>
-                <!--//app-card-body-->
-
-            </div>
-            <!--//app-card-body-->
         </div>
-        <!--//app-card-->
+        <!--//app-card-body-->
     </div>
+    <!--//app-card-->
 </div>
-<!--//row-->
-<?php
-mysqli_close($conn);
-?>
+<!-- ... Rest of your HTML code as before ... -->
+</div>
+<!-- End of your HTML code -->
 
-
-<!-- Rest of your HTML and PHP code as before -->
+<!-- ... Rest of your HTML and PHP code as before ... -->
 <script language=Javascript>
     $(document).ready(function() {
         // Function to get distinct values from the dispform table
@@ -230,8 +236,8 @@ mysqli_close($conn);
                     "previous": "ก่อนหน้านี้",
                     "next": "หน้าต่อไป"
                 }
-          
-        }, responsive: true,
+            },
+            responsive: true,
             columnDefs: [{
                     responsivePriority: 2,
                     targets: 2
@@ -257,7 +263,7 @@ mysqli_close($conn);
             const selectedValue = $('#dispfrmnmeDropdown').val();
 
             // Perform the custom search based on the values in the search box and the dropdown
-            dataTable.column(7).search(searchBoxValue || selectedValue).draw();
+            dataTable.column(11).search(searchBoxValue || selectedValue).draw();
         });
         $('#searchBoxEduLevel, #edulevDropdown').on('keyup change', function() {
             const searchBoxValue = $('#searchBoxEduLevel').val().trim();
@@ -285,6 +291,7 @@ mysqli_close($conn);
                 console.error('Error fetching data:', errorThrown);
             }
         });
+
         $.ajax({
             url: 'educations/get_edulev_values.php',
             method: 'GET',

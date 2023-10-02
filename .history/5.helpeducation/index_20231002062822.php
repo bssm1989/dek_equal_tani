@@ -176,7 +176,7 @@ function getEducationLevel($eduid)
                                     <td class="align-middle text-start"><?= $hedudetail ?></td>
                                     <td>
                                     <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $ ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-danger text-white"
                                             onclick="deletePerson2(
                                                 '<?= $hheduid ?>',

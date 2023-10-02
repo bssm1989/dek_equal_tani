@@ -2,6 +2,12 @@
 @session_start();
 $optid = $_SESSION['optid'];
 
+// Make sure to update the database connection settings if needed
+
+// Replace the empty SQL query with your modified query to fetch data from the person, hwork, and prv tables, and join them accordingly.
+// You will need to adjust the JOIN conditions based on your table structure.
+$optid = $_SESSION['optid'];
+
 $sql = "SELECT
     hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
     p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
@@ -23,6 +29,7 @@ LEFT JOIN
     edulev el ON ed.edulev = el.eduid";
 // echo $sql;
 $results = mysqli_query($conn, $sql);
+
 function getEducationLevel($eduid)
 {
     // Define an array mapping eduid to the corresponding edulevnme
@@ -55,45 +62,54 @@ function getEducationLevel($eduid)
     return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
 }
 ?>
+
+<!-- Rest of your HTML code as before -->
+
+<!-- Existing HTML code -->
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">ประวัติการได้รับความช่วยเหลือด้านการศึกษา</h4>
+        <h4 class="app-page-title mb-0">ข้อมูลประวัติการประกอบอาชีพ</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>&function=add" class="btn btn-primary text-white"><i class="fas fa-plus"></i>
             เพิ่มข้อมูลใหม่</a>
     </div>
 </div>
-
 <hr class="mb-0">
 <div class="row g-2 settings-section">
+    <!-- ... Rest of your HTML code as before ... -->
+    <!-- Start of the new table section -->
     <div class="col-12 col-md-12">
         <div class="app-card app-card-settings shadow-sm p-4">
-
             <div class="app-card-body">
                 <div class="row g-2">
                     <div class="col-12 col-md-6">
-                        <label for="searchBoxPersonID" class="form-label">ค้นหารหัสบุคคล:</label>
+                        <label for="searchBoxPersonID" class="form-label">ค้นหา รหัสบุคคล:</label>
                         <input type="text" class="form-control" id="searchBoxPersonID" placeholder="พิมพ์รหัสบุคคลที่ต้องการค้นหา...">
                     </div>
                     <div class="col-12 col-md-6">
-                        <label for="searchBoxPID" class="form-label">ค้นหาเลขบัตรประชาชน:</label>
+                        <label for="searchBoxPID" class="form-label">ค้นหา เลขบัตรประชาชน:</label>
                         <input type="text" class="form-control" id="searchBoxPID" placeholder="พิมพ์เลขบัตรประชาชนที่ต้องการค้นหา...">
                     </div>
                     <div class="col-12 col-md-6">
-                        <label for="searchBoxTitlename" class="form-label">ค้นหาคำนำหน้าชื่อ:</label>
+                        <label for="searchBoxTitlename" class="form-label">ค้นหา คำนำหน้าชื่อ:</label>
                         <input type="text" class="form-control" id="searchBoxTitlename" placeholder="พิมพ์คำนำหน้าชื่อที่ต้องการค้นหา...">
                     </div>
                     <div class="col-12 col-md-6">
-                        <label for="searchBoxName" class="form-label">ค้นหาชื่อ:</label>
+                        <label for="searchBoxName" class="form-label">ค้นหา ชื่อ:</label>
                         <input type="text" class="form-control" id="searchBoxName" placeholder="พิมพ์ชื่อที่ต้องการค้นหา...">
                     </div>
                     <div class="col-12 col-md-6">
-                        <label for="searchBoxSurname" class="form-label">ค้นหาสกุล:</label>
+                        <label for="searchBoxSurname" class="form-label">ค้นหา สกุล:</label>
                         <input type="text" class="form-control" id="searchBoxSurname" placeholder="พิมพ์สกุลที่ต้องการค้นหา...">
                     </div>
                 </div>
                 <div class="row g-2">
+                    <div class="col-12 col-md-6">
+                        <label for="searchBoxProvince" class="form-label">ค้นหา จังหวัด,อำเภอ,ตำบล:</label>
+                        <input type="text" class="form-control" id="searchBoxProvince" placeholder="พิมพ์จังหวัด,อำเภอ,ตำบลที่ต้องการค้นหา...">
+                    </div>
+
                     <div class="col-12 col-md-6">
                         <label for="searchBox" class="form-label">ค้นหาลักษณะความเหลื่อมล้ำ:</label>
                         <input type="text" class="form-control" id="searchBox" placeholder="พิมพ์คำที่ต้องการค้นหา...">
@@ -105,114 +121,87 @@ function getEducationLevel($eduid)
                         </select>
                     </div>
                 </div>
-                <div class="row g-2">
-                    <div class="col-12 col-md-6">
-                        <label for="searchBoxEduLevel" class="form-label">ค้นหาระดับการศึกษา:</label>
-                        <input type="text" class="form-control" id="searchBoxEduLevel" placeholder="พิมพ์ระดับการศึกษาที่ต้องการค้นหา...">
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="edulevDropdown" class="form-label">ระดับการศึกษา:</label>
-                        <select class="form-select" id="edulevDropdown">
-                            <!-- Dropdown options will be populated dynamically using JavaScript -->
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="searchBoxProvince" class="form-label">จังหวัด,อำเภอ,ตำบล:</label>
-                        <input type="text" class="form-control" id="searchBoxProvince" placeholder="พิมพ์จังหวัด,อำเภอ,ตำบลที่ต้องการค้นหา...">
-                    </div>
-                </div>
-
-                <form name="frmUserSearch" id="frmUserSearch" method="post" action="" enctype="" onSubmit="" target="">
-                    <table class="table responsive nowrap" id="myTableAll">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="align-middle text-center" scope='col'>#</th>
-                                <th class="align-middle text-start" scope='col'>รหัสประวัติการช่วยเหลือด้านการศึกษา</th>
-
-                                <th class="align-middle text-start" scope='col'>รหัสบุคคล</th>
-                                <th class="align-middle text-start" scope='col'>คำนำหน้าชื่อ</th>
-                                <th class="align-middle text-start" scope='col'>ชื่อ</th>
-                                <th class="align-middle text-start" scope='col'>สกุล</th>
-                                <th class="align-middle text-start" scope='col'>ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ</th>
-                                <th class="align-middle text-start" scope='col'>ชั้นปีที่ได้รับทุน</th>
-                                <th class="align-middle text-start" scope='col'>ปีการศึกษาที่ได้รับทุน</th>
-                                <th class="align-middle text-start" scope='col'>เป็นทุนรายเดือนหรือปีหรือครั้งคราว</th>
-                                <th class="align-middle text-start" scope='col'>จำนวนเงินที่ได้รับต่อครั้ง</th>
-                                <th class="align-middle text-start" scope='col'>รายละเอียดอื่น ๆ</th>
-                                <th>แก้ไข</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            // Loop through the $results array to display the data in the table
-                            $counter = 1;
-                            while ($row = mysqli_fetch_assoc($results)) {
-                                // Extract the data from the current row
-                                $hheduid = $row['hheduid'];
-                                $perid = $row['perid'];
-                                $eduid = $row['eduid'];
-                                $titnme = $row['titnme'];
-                                $name = $row['name'];
-                                $sname = $row['sname'];
-                                $hedulev = $row['hedulev'];
-                                $hedusemester = $row['hedusemester'];
-                                $hedufundtyp = $row['hedufundtyp'];
-                                $hedumoney = $row['hedumoney'];
-                                $hedudetail = $row['hedudetail'];
-                            ?>
-                                <!-- Display the data in each row of the table -->
-                                <tr id="row<?= $hheduid ?>" data-id="<?= $hheduid ?>">
-                                    <td class="align-middle text-center"><?= $counter ?></td>
-                                    <td class="align-middle text-start"><?= $hheduid ?></td>
-                                    <td class="align-middle text-start"><?= $perid ?></td>
-                                    <td class="align-middle text-start"><?= $titnme ?></td>
-                                    <td class="align-middle text-start"><?= $name ?></td>
-                                    <td class="align-middle text-start"><?= $sname ?></td>
-                                    <td class="align-middle text-start"><?= getEducationLevel($eduid) ?></td>
-                                    <td class="align-middle text-start"><?= $hedulev ?></td>
-                                    <td class="align-middle text-start"><?= $hedusemester ?></td>
-                                    <td class="align-middle text-start"><?= $hedufundtyp === 1 ? 'รายเดือน' : ($hedufundtyp === 2 ? 'รายปี' : 'รายครั้งคราว') ?></td>
-                                    <td class="align-middle text-start"><?= $hedumoney ?></td>
-                                    <td class="align-middle text-start"><?= $hedudetail ?></td>
-                                    <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                        <a href="javascript:void(0);" class="btn btn-danger text-white"
-                                            onclick="deletePerson2(
-                                                '<?= $hheduid ?>',
-                                                '<?= $name ?>',
-                                                '<?= $sname ?>',
-                                                'hhelpedu',
-                                                'hheduid'
-                                            );">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php
-                                $counter++;
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                    <!-- </form> -->
-                </form>
-                <!--//app-card-body-->
 
             </div>
-            <!--//app-card-body-->
+            <table class="table" id="myTableAll">
+                <!-- Table headings in Thai language -->
+                <thead class="table-light">
+                    <tr>
+                        <th class="align-middle text-center" scope='col'>รหัสประวัติการประกอบอาชีพ</th>
+                        <th class="align-middle text-start" scope='col'>รหัสเด็ก</th>
+                        <th class="align-middle text-start" scope='col'>รหัสอาชีพ</th>
+                        <th class="align-middle text-start" scope='col'>ชื่อสถานประกอบการ</th>
+                        <th class="align-middle text-start" scope='col'>จังหวัดที่ทำงาน</th>
+                        <th class="align-middle text-start" scope='col'>ทำงานในตำแหน่ง</th>
+                        <th class="align-middle text-start" scope='col'>ปีที่เริ่มประกอบอาชีพ</th>
+                        <th class="align-middle text-start" scope='col'>ทำงานเป็นระยะเวลา (ปี)</th>
+                        <th class="align-middle text-start" scope='col'>ทำงานเป็นระยะเวลา (เดือน)</th>
+                        <th class="align-middle text-start" scope='col'>ปีที่ลาออก</th>
+                        <th class="align-middle text-start" scope='col'>เหตุผลที่ลาออก</th>
+                        <th class="align-middle text-start" scope='col'>ลักษณะความเหลื่อมล้ำ</th>
+                        <th>แก้ไข</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Loop through the $results array to display the data in the table
+                    while ($row = mysqli_fetch_assoc($results)) {
+                        // Extract the data from the current row
+                        $hwrkid = $row['hwrkid'];
+                        $person_id = $row['person_id'];
+                        //name
+                        $name = $row['name'];
+                        //sname
+                        $sname = $row['sname'];
+                        $occupation_id = $row['occupation_id'];
+                        $workplace_name = $row['workplace_name'];
+                        $province_name = $row['province_name'];
+                        $workplace_position = $row['workplace_position'];
+                        $start_year = $row['start_year'];
+                        $work_period_years = $row['work_period_years'];
+                        $work_period_months = $row['work_period_months'];
+                        $end_year = $row['end_year'];
+                        $end_reason = $row['end_reason'];
+                        $dispfrmnme = $row['dispfrmnme'];
+                    ?>
+                        <!-- Display the data in each row of the table -->
+                        <tr id="row<?= $hwrkid ?>" data-id="<?= $hwrkid ?>">
+                            <td class="align-middle text-center"><?= $hwrkid ?></td>
+                            <td class="align-middle text-start"><?= $person_id ?></td>
+                            <td class="align-middle text-start"><?= $occupation_id ?></td>
+                            <td class="align-middle text-start"><?= $workplace_name ?></td>
+                            <td class="align-middle text-start"><?= $province_name ?></td>
+                            <td class="align-middle text-start"><?= $workplace_position ?></td>
+                            <td class="align-middle text-start"><?= $start_year ?></td>
+                            <td class="align-middle text-start"><?= $work_period_years ?></td>
+                            <td class="align-middle text-start"><?= $work_period_months ?></td>
+                            <td class="align-middle text-start"><?= $end_year ?></td>
+                            <td class="align-middle text-start"><?= $end_reason ?></td>
+                            <td class="align-middle text-start"><?= $dispfrmnme ?></td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    
+                                <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $hwrkid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                <button" type="button" class="btn btn-sm btn-danger text-white" onclick="deletePerson2(<?= $hwrkid ?>,'<?= $name ?>','<?= $sname ?>','hwork','hwrkid')"><i class="fas fa-trash-alt"></i></button>
+
+                                </div>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
-        <!--//app-card-->
+        <!--//app-card-body-->
     </div>
+    <!--//app-card-->
 </div>
-<!--//row-->
-<?php
-mysqli_close($conn);
-?>
+<!-- ... Rest of your HTML code as before ... -->
+</div>
+<!-- End of your HTML code -->
 
-
-<!-- Rest of your HTML and PHP code as before -->
+<!-- ... Rest of your HTML and PHP code as before ... -->
 <script language=Javascript>
     $(document).ready(function() {
         // Function to get distinct values from the dispform table
@@ -230,8 +219,8 @@ mysqli_close($conn);
                     "previous": "ก่อนหน้านี้",
                     "next": "หน้าต่อไป"
                 }
-          
-        }, responsive: true,
+            },
+            responsive: true,
             columnDefs: [{
                     responsivePriority: 2,
                     targets: 2
@@ -257,7 +246,7 @@ mysqli_close($conn);
             const selectedValue = $('#dispfrmnmeDropdown').val();
 
             // Perform the custom search based on the values in the search box and the dropdown
-            dataTable.column(7).search(searchBoxValue || selectedValue).draw();
+            dataTable.column(11).search(searchBoxValue || selectedValue).draw();
         });
         $('#searchBoxEduLevel, #edulevDropdown').on('keyup change', function() {
             const searchBoxValue = $('#searchBoxEduLevel').val().trim();
@@ -285,6 +274,7 @@ mysqli_close($conn);
                 console.error('Error fetching data:', errorThrown);
             }
         });
+
         $.ajax({
             url: 'educations/get_edulev_values.php',
             method: 'GET',

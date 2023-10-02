@@ -56,7 +56,7 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //   echo "SQL Query: $sql<br>";
+                  echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 

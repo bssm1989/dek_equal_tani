@@ -2,6 +2,12 @@
 @session_start();
 $optid = $_SESSION['optid'];
 
+// Make sure to update the database connection settings if needed
+
+// Replace the empty SQL query with your modified query to fetch data from the person, hwork, and prv tables, and join them accordingly.
+// You will need to adjust the JOIN conditions based on your table structure.
+$optid = $_SESSION['optid'];
+
 $sql = "SELECT
     hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
     p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
@@ -23,6 +29,7 @@ LEFT JOIN
     edulev el ON ed.edulev = el.eduid";
 // echo $sql;
 $results = mysqli_query($conn, $sql);
+
 function getEducationLevel($eduid)
 {
     // Define an array mapping eduid to the corresponding edulevnme
@@ -55,6 +62,11 @@ function getEducationLevel($eduid)
     return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
 }
 ?>
+
+<!-- Rest of your HTML code as before -->
+
+
+<hr class="mb-0">
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
         <h4 class="app-page-title mb-0">ประวัติการได้รับความช่วยเหลือด้านการศึกษา</h4>
@@ -122,8 +134,7 @@ function getEducationLevel($eduid)
                     </div>
                 </div>
 
-                <form name="frmUserSearch" id="frmUserSearch" method="post" action="" enctype="" onSubmit="" target="">
-                    <table class="table responsive nowrap" id="myTableAll">
+                <table class="table responsive nowrap" id="myTableAll">
                         <thead class="table-light">
                             <tr>
                                 <th class="align-middle text-center" scope='col'>#</th>
@@ -160,59 +171,44 @@ function getEducationLevel($eduid)
                                 $hedumoney = $row['hedumoney'];
                                 $hedudetail = $row['hedudetail'];
                             ?>
-                                <!-- Display the data in each row of the table -->
-                                <tr id="row<?= $hheduid ?>" data-id="<?= $hheduid ?>">
-                                    <td class="align-middle text-center"><?= $counter ?></td>
-                                    <td class="align-middle text-start"><?= $hheduid ?></td>
-                                    <td class="align-middle text-start"><?= $perid ?></td>
-                                    <td class="align-middle text-start"><?= $titnme ?></td>
-                                    <td class="align-middle text-start"><?= $name ?></td>
-                                    <td class="align-middle text-start"><?= $sname ?></td>
-                                    <td class="align-middle text-start"><?= getEducationLevel($eduid) ?></td>
-                                    <td class="align-middle text-start"><?= $hedulev ?></td>
-                                    <td class="align-middle text-start"><?= $hedusemester ?></td>
-                                    <td class="align-middle text-start"><?= $hedufundtyp === 1 ? 'รายเดือน' : ($hedufundtyp === 2 ? 'รายปี' : 'รายครั้งคราว') ?></td>
-                                    <td class="align-middle text-start"><?= $hedumoney ?></td>
-                                    <td class="align-middle text-start"><?= $hedudetail ?></td>
-                                    <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                        <a href="javascript:void(0);" class="btn btn-danger text-white"
-                                            onclick="deletePerson2(
-                                                '<?= $hheduid ?>',
-                                                '<?= $name ?>',
-                                                '<?= $sname ?>',
-                                                'hhelpedu',
-                                                'hheduid'
-                                            );">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php
-                                $counter++;
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                    <!-- </form> -->
-                </form>
-                <!--//app-card-body-->
+                        <!-- Display the data in each row of the table -->
+                        <tr id="row<?= $hwrkid ?>" data-id="<?= $hwrkid ?>">
+                            <td class="align-middle text-center"><?= $hwrkid ?></td>
+                            <td class="align-middle text-start"><?= $person_id ?></td>
+                            <td class="align-middle text-start"><?= $occupation_id ?></td>
+                            <td class="align-middle text-start"><?= $workplace_name ?></td>
+                            <td class="align-middle text-start"><?= $province_name ?></td>
+                            <td class="align-middle text-start"><?= $workplace_position ?></td>
+                            <td class="align-middle text-start"><?= $start_year ?></td>
+                            <td class="align-middle text-start"><?= $work_period_years ?></td>
+                            <td class="align-middle text-start"><?= $work_period_months ?></td>
+                            <td class="align-middle text-start"><?= $end_year ?></td>
+                            <td class="align-middle text-start"><?= $end_reason ?></td>
+                            <td class="align-middle text-start"><?= $dispfrmnme ?></td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    
+                                <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $hwrkid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                <button" type="button" class="btn btn-sm btn-danger text-white" onclick="deletePerson2(<?= $hwrkid ?>,'<?= $name ?>','<?= $sname ?>','hwork','hwrkid')"><i class="fas fa-trash-alt"></i></button>
 
-            </div>
-            <!--//app-card-body-->
+                                </div>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
-        <!--//app-card-->
+        <!--//app-card-body-->
     </div>
+    <!--//app-card-->
 </div>
-<!--//row-->
-<?php
-mysqli_close($conn);
-?>
+<!-- ... Rest of your HTML code as before ... -->
+</div>
+<!-- End of your HTML code -->
 
-
-<!-- Rest of your HTML and PHP code as before -->
+<!-- ... Rest of your HTML and PHP code as before ... -->
 <script language=Javascript>
     $(document).ready(function() {
         // Function to get distinct values from the dispform table
@@ -230,8 +226,8 @@ mysqli_close($conn);
                     "previous": "ก่อนหน้านี้",
                     "next": "หน้าต่อไป"
                 }
-          
-        }, responsive: true,
+            },
+            responsive: true,
             columnDefs: [{
                     responsivePriority: 2,
                     targets: 2
@@ -257,7 +253,7 @@ mysqli_close($conn);
             const selectedValue = $('#dispfrmnmeDropdown').val();
 
             // Perform the custom search based on the values in the search box and the dropdown
-            dataTable.column(7).search(searchBoxValue || selectedValue).draw();
+            dataTable.column(11).search(searchBoxValue || selectedValue).draw();
         });
         $('#searchBoxEduLevel, #edulevDropdown').on('keyup change', function() {
             const searchBoxValue = $('#searchBoxEduLevel').val().trim();
@@ -285,6 +281,7 @@ mysqli_close($conn);
                 console.error('Error fetching data:', errorThrown);
             }
         });
+
         $.ajax({
             url: 'educations/get_edulev_values.php',
             method: 'GET',

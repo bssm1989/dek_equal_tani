@@ -56,7 +56,7 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //   echo "SQL Query: $sql<br>";
+                  echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 
@@ -157,10 +157,10 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
         // Insert person data
         $Data = array(
      
-            'pid' => $_POST['pid'],
+            'pid' => $_POST['national_id'],
             'titid' => $_POST['title_id'],
-            'staffnme' => $_POST['staffnme'],//name
-            'staffsnme' => $_POST['staffsnme'],//surname
+            'name' => $_POST['name'],
+            'sname' => $_POST['surname'],
             'stafftell' => $_POST['stafftell'],
             'staffemail' => $_POST['staffemail'],
             'stafforg' => $_POST['stafforg'],

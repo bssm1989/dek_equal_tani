@@ -124,21 +124,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         /*
-        action:"insert"
-plcid:"100101"
-savdte:""
-savofc:""
-staffemail:"sfgsdds@gmsil.vom"
-staffid:""
-staffnme:"refdfdfd"
-stafforg:"sdgfdsfgdfg"
-staffposid:"1"
-staffprioid:"0"
-staffsnme:"fdfdfrwgft"
-stafftell:"53563563"
-title_id:"2"
-upddte:""
-updofc:""
+        : 
+perid: 4
+occid: 1
+prvid: 25
+wrknme: ำพำพำพำพ
+wrkstarty: 2
+work_period_years: 1
+work_period_months: 1
+wrkendy: 2564
+wrkendreas: กดกดกดกดกดกด
+workplace_position: กด�
 */
 /*staff	ข้อมูลผู้ใช้งานโปรแกรม				
 ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
@@ -156,18 +152,16 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
 */
         // Insert person data
         $Data = array(
-     
-            'pid' => $_POST['pid'],
-            'titid' => $_POST['title_id'],
-            'staffnme' => $_POST['staffnme'],//name
-            'staffsnme' => $_POST['staffsnme'],//surname
-            'stafftell' => $_POST['stafftell'],
-            'staffemail' => $_POST['staffemail'],
-            'stafforg' => $_POST['stafforg'],
-            'plcid' => $_POST['plcid'],
-            'staffposid' => $_POST['staffposid'],
-            'staffprioid' => $_POST['staffprioid'],
-
+            'perid'=> $_POST['perid'],
+            'occid' => $_POST['occid'],
+            'prvid' => $_POST['prvid'],
+            'wrknme' => $_POST['wrknme'],
+            'wrkstarty' => $_POST['wrkstarty'],
+          'wrkperiody' => $_POST['work_period_years'],
+            'wrkperiodm' => $_POST['work_period_months'],
+            'wrkendy' => $_POST['wrkendy'],
+            'wrkendreas' => $_POST['wrkendreas'],
+            'wrkpos' => $_POST['workplace_position'],
             // ... other fields to insert
 
 
@@ -179,7 +173,7 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
             return $value !== null;
         });
    
-        $personInsert = insertData('staff', $Data, $conn);
+        $personInsert = insertData('hwork', $Data, $conn);
         if ($personInsert) {
             $response['success'] = true;
             $response['message'] = 'Data inserted successfully.';

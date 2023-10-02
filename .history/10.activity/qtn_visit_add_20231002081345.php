@@ -1,49 +1,45 @@
 <?php
-$staff_id = $_GET["id"]; // Get staff ID from the page showing the list of staff
-
-if ($staff_id) {
+$actid = $_GET["actid"]; // Get activity ID from page showing list of activities
+if ($actid) {
+    // Construct your SQL query to fetch activity details and related information
     $sql = "SELECT
-                staff.staffid, staff.pid, staff.titid, staff.staffnme, staff.staffsnme,
-                staff.stafftell, staff.staffemail, staff.stafforg, staff.plcid,
-                staff.staffposid, staff.staffprioid,
-                titname.titnme, const_vllnmegen.plcname, staffpos.staffposnme
-            FROM staff
-            LEFT JOIN titname ON staff.titid = titname.titid
-            LEFT JOIN const_vllnmegen ON staff.plcid = const_vllnmegen.plcid
-            LEFT JOIN staffpos ON staff.staffposid = staffpos.staffposid
-            LEFT JOIN staffprio ON staff.staffprioid = staffprio.staffprioid
-            WHERE staff.staffid = $staff_id";
-
-    if ($rows = mysqli_fetch_array($result)) {
-        // Initialize variables from the fetched data
-        $staffid = $rows["staffid"];
-        $pid = $rows["pid"];
-        $titid = $rows["titid"];
-        $staffnme = $rows["staffnme"];
-        $staffsnme = $rows["staffsnme"];
-        $stafftell = $rows["stafftell"];
-        $staffemail = $rows["staffemail"];
-        $stafforg = $rows["stafforg"];
-        $plcid = $rows["plcid"];
-        $staffposid = $rows["staffposid"];
-        $staffprioid = $rows["staffprioid"];
+                a.actid,
+                a.actnme,
+                a.acttypid,
+                a.actdtestr,
+                a.actdteend,
+                a.actplc,
+                cv.vllnmegen AS place_village,
+                a.actattdno,
+                a.actdetail
+            FROM
+                activity a
+            JOIN
+                acttyp at ON a.acttypid = at.acttypid
+            JOIN
+                const_vllnmegen cv ON a.plcid = cv.plcid
+            WHERE
+                a.actid = $actid"; // Modify the condition based on your database structure
+    $result = mysqli_query($conn, $sql);
+    if ($row = mysqli_fetch_array($result)) {
+        $actnme = $row['actnme'];
+        $acttypid = $row['acttypid'];
+        $actdtestr = $row['actdtestr'];
+        $actdteend = $row['actdteend'];
+        $actplc = $row['actplc'];
+        $place_village = $row['place_village'];
+        $actattdno = $row['actattdno'];
+        $actdetail = $row['actdetail'];
+        $actid = $row['actid'];
     }
 }
-// Query to fetch titname options for dropdown
-$titnameQuery = "SELECT * FROM titname";
-$titnameResult = mysqli_query($conn, $titnameQuery);
-// Query to fetch titname options for dropdown
-
-$staffposQuery = "SELECT * FROM staffpos";
-$staffposResult = mysqli_query($conn, $staffposQuery);
-// Query to fetch titname options for dropdown
-$staffprioQuery = "SELECT * FROM staffprio";
-$staffprioResult = mysqli_query($conn, $staffprioQuery);
-
+$acttypQuery = "SELECT * FROM acttyp";
+$acttypResult = mysqli_query($conn, $acttypQuery);
 ?>
+
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> แบบประเมินสุขภาวะผู้เปราะบาง2</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลกิจกรรม</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -56,80 +52,72 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>แบบประเมินสุขภาวะผู้เปราะบาง</b>
+                    <b>จัดการข้อมูลกิจกรรม</b>
                 </h5>
-                <p><b> คำชี้แจง :</b> แบบสำรวจนี้มีวัตถุประสงค์เพื่อสังเกตอาการในเบื้องต้น
-                    นำไปสู่การดูแลเอาใจใส่ต่อไป ทั้งนี้ข้อมูลจะถูกเก็บเป็นความลับ
-                    ไม่นำไปเผยแพร่
-                    หากมีการนำเสนอจะเป็นการนำเสนอในภาพรวม </p>
-                <br>
+
+                <!-- • รหัสกิจกรรม
+• ชื่อกิจกรรม
+• รหัสประเภทกิจกรรม
+• วันที่เริ่มจัดกิจกรรม
+• วันที่จัดกิจกรรมเสร็จ
+• สถานที่จัดกิจกรรม
+• จังหวัดอ าเภอต าบล ที่จัดกิจกรรม
+• จ านวนผู้เข้าร่วมกิจกรรม
+• รายละเอียดการจัดกิจกรรม -->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
-                    <!-- input hidden staffid -->
-                    <input type="hidden" name="staffid" id="staffid" value="<?php echo $staffid; ?>" />
+                    <input type="hidden" name="actid" id="actid" value="<?php echo $actid; ?>" />
                     <div class="row">
                         <div class="col-12 col-sm-12">
                             <p class="shadow-sm p-2 mb-3 bg-success text-white rounded">ข้อมูลทั่วไป</p>
                         </div>
                     </div>
 
-                  
-                    
+
                     <div class="col-12 col-sm-4 mb-3">
-                        <label for="pid">เลขบัตรประชาชน</label>
-                        <input type="text" class="form-control" name="pid" id="pid" placeholder="เลขบัตรประชาชน" value="<?php echo $pid; ?>" > <!--required> -->
+                        <label for="actnme">ชื่อกิจกรรม</label>
+                        <input type="text" class="form-control" name="actnme" id="actnme" placeholder="ชื่อกิจกรรม" value="<?php echo $actnme; ?>"><!-- required>-->
                     </div>
-                    
-                         <div class="col-12 col-sm-4 mb-3">
-                        <label for="title_id">รหัสคำนำหน้าชื่อ</label>
-                        <select class="form-select" name="title_id" id="title_id" > <!--required> -->
-                            <?php
-                            while ($titnameRow = mysqli_fetch_assoc($titnameResult)) {
-                                $selected = ($titnameRow['titid'] == $title_id) ? "selected" : "";
-                                echo "<option value='{$titnameRow['titid']}' {$selected}>{$titnameRow['titnme']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- Add other input fields for staff information here -->
-                    <div class="row">
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="staffnme">ชื่อ</label>
-                            <input type="text" class="form-control" name="staffnme" id="staffnme" placeholder="ชื่อ" value="<?php echo $staffnme; ?>" > <!--required> -->
-                        </div>
-
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="staffsnme">สกุล</label>
-                            <input type="text" class="form-control" name="staffsnme" id="staffsnme" placeholder="สกุล" value="<?php echo $staffsnme; ?>" > <!--required> -->
-                        </div>
-
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="stafftell">เบอร์โทรศัพท์</label>
-                            <input type="text" class="form-control" name="stafftell" id="stafftell" placeholder="เบอร์โทรศัพท์" value="<?php echo $stafftell; ?>" > <!--required> -->
-                        </div>
+                  
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="acttypid">รหัสประเภทกิจกรรม</label>
+                        
+                        <!-- You can replace this input with a dropdown menu populated from a query -->
+                        <!-- <input type="text" class="form-control" name="acttypid" id="acttypid" placeholder="รหัสประเภทกิจกรรม" value="<?php echo $acttypid; ?>">required> -->
+                   <select class="form-select" name="acttypid" id="acttypid" required>
+                                <?php
+                                while ($acttypRow = mysqli_fetch_assoc($acttypResult)) {
+                                    $selected = ($acttypRow['acttypid'] == $acttypid) ? "selected" : "";
+                                    echo "<option value='{$acttypRow['acttypid']}' {$selected}>{$acttypRow['acttypnme']}</option>";
+                                }
+                                ?>
+                            </select>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="staffemail">อีเมล์</label>
-                            <input type="email" class="form-control" name="staffemail" id="staffemail" placeholder="อีเมล์" value="<?php echo $staffemail; ?>" > <!--required> -->
-                        </div>
-
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="stafforg">หน่วยงานที่สังกัด</label>
-                            <input type="text" class="form-control" name="stafforg" id="stafforg" placeholder="หน่วยงานที่สังกัด" value="<?php echo $stafforg; ?>" > <!--required> -->
-                        </div>
-
-                        <!-- <div class="col-12 col-sm-4 mb-3">
-                            <label for="plcid">จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด</label>
-                            <input type="text" class="form-control" name="plcid" id="plcid" placeholder="จังหวัด อำเภอ ตำบล หน่วยงานที่สังกัด" value="<?php echo $plcid; ?>" > 
-                        </div> -->
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdtestr">วันที่เริ่มจัดกิจกรรม</label>
+                        <input type="text" class="form-control datepicker" name="actdtestr" id="actdtestr" placeholder="วันที่เริ่มจัดกิจกรรม" value="<?php echo $actdtestr; ?>"><!-- required>-->
                     </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actdteend">วันที่จัดกิจกรรมเสร็จ</label>
+                        <input type="text" class="form-control datepicker" name="actdteend" id="actdteend" placeholder="วันที่จัดกิจกรรมเสร็จ" value="<?php echo $actdteend; ?>"><!-- required>-->
+                    </div>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actplc">สถานที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="actplc" id="actplc" placeholder="สถานที่จัดกิจกรรม" value="<?php echo $actplc; ?>"><!-- required>-->
+                    </div>
+
+                    <!-- <div class="col-12 col-sm-4 mb-3">
+                        <label for="place_village">จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม</label>
+                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $actplc; ?>">
+                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $place_village; ?>">
+                    </div> -->
                     <div class="col-12 col-sm-4 mb-3">
 
                         <div id="addr1" class="address">
                             <!-- get value from php place_id -->
-                            <input type="hidden" id="addr1-addressCode" name="plcid" value="<?= $plcid; ?>" />
+                            <input type="hidden" id="addr1-addressCode" name="place_village" value="<?= $place_village; ?>" />
 
                             <div class="notification"></div>
                         </div>
@@ -195,31 +183,15 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                             });
                         });
                     </script>
-                    <div class="row">
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="staffposid">รหัสตำแหน่ง/ภาระหน้าที่สำหรับระบบนี้</label>
-                            <select class="form-select" name="staffposid" id="staffposid" > <!--required> -->
-                                <?php
-                                while ($staffposRow = mysqli_fetch_assoc($staffposResult)) {
-                                    $selected = ($staffposRow['staffposid'] == $staffposid) ? "selected" : "";
-                                    echo "<option value='{$staffposRow['staffposid']}' {$selected}>{$staffposRow['staffposnme']}</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
 
-                        <div class="col-12 col-sm-4 mb-3">
-                            <label for="staffprioid">รหัสสิทธิการเข้าถึงข้อมูล</label>
-                            <select class="form-select" name="staffprioid" id="staffprioid" > <!--required> -->
-                                <?php
-                                while ($staffprioRow = mysqli_fetch_assoc($staffprioResult)) {
-                                    $selected = ($staffprioRow['staffprioid'] == $staffprioid) ? "selected" : "";
-                                    echo "<option value='{$staffprioRow['staffprioid']}' {$selected}>{$staffprioRow['staffprionme']}</option>";
-                                }
-                                ?>
-                            </select>
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="actattdno">จำนวนผู้เข้าร่วมกิจกรรม</label>
+                        <input type="text" class="form-control" name="actattdno" id="actattdno" placeholder="จำนวนผู้เข้าร่วมกิจกรรม" value="<?php echo $actattdno; ?>"><!-- required>-->
+                    </div>
 
-                        </div>
+                    <div class="col-12 col-sm-12 mb-3">
+                        <label for="actdetail">รายละเอียดการจัดกิจกรรม</label>
+                        <textarea class="form-control" name="actdetail" id="actdetail" placeholder="รายละเอียดการจัดกิจกรรม"><!-- required>--><?php echo $actdetail; ?></textarea>
 
 
                     </div>
@@ -301,19 +273,19 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="savofc">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" > <!--required> -->
+                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true"><!-- required>-->
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="savdte">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" > <!--required> -->
+                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true"><!-- required>-->
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" > <!--required> -->
+                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true"><!-- required>-->
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" > <!--required> -->
+                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true"><!-- required>-->
                         </div>
                     </div>
                 </form>
@@ -331,29 +303,28 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
         $("#frmScreening").validate({
             rules: {
                 // ... (existing validation rules)
-                staffnme: {
+                actnme: {
                     required: true
                 },
-                staffsnme: {
+                acttypid: {
                     required: true
                 },
-                stafftell: {
+                actdtestr: {
                     required: true
                 },
-                staffemail: {
-                    required: true,
-                    email: true
-                },
-                stafforg: {
+                actdteend: {
                     required: true
                 },
-                plcid: {
+                actplc: {
                     required: true
                 },
-                staffposid: {
+                place_village: {
                     required: true
                 },
-                staffprioid: {
+                actattdno: {
+                    required: true
+                },
+                actdetail: {
                     required: true
                 },
                 // ... (other validation rules for new elements)
@@ -390,13 +361,16 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
 
                 function performAjaxRequest(data) {
                     // Add the action parameter to indicate the action to be performed
-                    data['action'] = data['staffid'] ? 'update' : 'insert';
-                    data['plcid'] = data['plcid'].slice(0, 6);
+                    data['actdteend'] = data['actdteend'].replace(/-/g, "");
+                    data['actdtestr'] = data['actdtestr'].replace(/-/g, "");
+
+                    data['action'] = data['actid'] ? 'update' : 'insert';
+                    data['plcid'] = data['place_village'].slice(0, 6);
                     console.log(data);
                     // Send data to the server for insertion or update
                     $.ajax({
                         type: "POST",
-                        url: "11.staff/insert_staff.php",
+                        url: "10.activity/insert_activity.php",
                         data: data,
                         dataType: "json",
                         success: function(response) {
@@ -409,7 +383,7 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
                                     confirmButtonText: 'ตกลง'
                                 }).then(() => {
                                     // Go to the next page
-                                    // window.location.href = "?page=11.staff";
+                                    // window.location.href = "?page=10.activity";
                                 });
                             } else {
                                 // Show error message
@@ -436,7 +410,188 @@ $staffprioResult = mysqli_query($conn, $staffprioQuery);
             }
         });
     });
+    flatpickr(".datepicker", {
+        dateFormat: "Y-m-d", // Change the date format as needed
+        "locale": "th",
+        "yearinput": false,
 
+        onReady: function(selectedDates, dateStr, instance) {
+            // const yearDropdown = instance.yearElements[0]; // Updated selector
+            //check if year >2400
+            const yearDropdown = instance.yearElements[0]; // Updated selector
+            // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+            const buddhistYear = parseInt(yearDropdown.value) + 543;
+            month2digit = instance.selectedDates[0].getMonth() + 1;
+            if (month2digit < 10) {
+                month2digit = "0" + month2digit;
+            }
+            day2digit = instance.selectedDates[0].getDate();
+            if (day2digit < 10) {
+                day2digit = "0" + day2digit;
+            }
+
+            const formattedDate = `${buddhistYear}-${month2digit}-${day2digit}`;
+            instance.input.value = formattedDate;
+
+            // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+        },
+        onselect: function(selectedDates, dateStr, instance) {
+            const yearDropdown = instance.yearElements[0]; // Updated selector
+            yearDropdown.value = parseInt(yearDropdown.value) + 543;
+            console.log(yearDropdown.value);
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // const selectedDate = instance.latestSelectedDateObj; // Get the selected date object
+            // if (selectedDate) {
+            //     const buddhistYear = selectedDate.getFullYear() + 543;
+            //     const formattedDate = `${buddhistYear}-${selectedDate.getDate()}-${selectedDate.getMonth() + 1}`;
+            //     instance.input.value = formattedDate; // Set the input value to the formatted date
+            // }
+        },
+        onValueUpdate: function(selectedDates, dateStr, instance) {
+            // debugger;
+            // const selectedDate = selectedDates[0];
+            // if(selectedDate.getFullYear()>2400){
+            //     instance.currentYear = selectedDate.getFullYear() - 543;
+            //     instance.yearElements[0].value = selectedDate.getFullYear() - 543;
+            //     const yearDropdown = instance.yearElements[0]; // Updated selector
+
+            // const buddhistYear =instance.currentYear + 543;
+            // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+            // // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+            // // instance.input.value = formattedDate;
+
+            // instance.input.value = formattedDate; 
+
+            // }// Set the input value to the formatted date
+        },
+        onYearChange: function(selectedDates, dateStr, instance) {
+
+            // if(instance.yearElements[0].value>2400){
+            //     instance.yearElements[0].value=instance.yearElements[0].value-543;
+            //     const yearDropdown = instance.yearElements[0]; // Updated selector
+            // yearDropdown.value = parseInt(yearDropdown.value)+543;
+            // }else{
+            //     const yearDropdown = instance.yearElements[0]; // Updated selector
+            // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+
+            // }
+
+        },
+        onMonthChange: function(selectedDates, dateStr, instance) {
+
+
+            //     if(instance.yearElements[0].value>2400){
+
+            //         instance.yearElements[0].value=instance.yearElements[0].value-543;
+            //         const yearDropdown = instance.yearElements[0]; // Updated selector
+            //     yearDropdown.value = parseInt(yearDropdown.value)+543;
+            //     }else{
+            //                     const yearDropdown = instance.yearElements[0]; // Updated selector
+            //     yearDropdown.value = parseInt(yearDropdown.value) + 543;
+
+            //         }
+            //
+        },
+        onDayCreate: function(selectedDates, dateStr, instance) {
+            if (dateStr.length < 10) {
+                //dateStr 25640909 cut to year 2564 month 09 day 09
+                dateStr = dateStr.substring(0, 4) + "-" + dateStr.substring(4, 6) + "-" + dateStr.substring(6, 8);
+                //check if year >2400
+                if (dateStr.substring(0, 4) > 2400) {
+                    //year >2400
+                    //change year to buddhist year
+                    instance.currentYear = dateStr.substring(0, 4) - 543;
+                    instance.yearElements[0].value = dateStr.substring(0, 4) - 543;
+                    const yearDropdown = instance.yearElements[0]; // Updated selector
+                    yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                    instance.selectedDates[0].setYear(dateStr.substring(0, 4) - 543);
+                    instance.selectedDates[0].setMonth(dateStr.substring(5, 7) - 1);
+                    instance.selectedDates[0].setDate(dateStr.substring(8, 10));
+                    //change input value to buddhist year
+                    instance.input.value = dateStr;
+                } else {
+                    //year <2400
+                    //change input value to buddhist year
+                    instance.input.value = dateStr;
+                }
+
+            } else {
+                if (instance.yearElements[0].value > 2400) {
+                    instance.currentYear = instance.yearElements[0].value - 543;
+                    instance.yearElements[0].value = instance.yearElements[0].value - 543;
+                    const yearDropdown = instance.yearElements[0]; // Updated selector
+                    yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                } else {
+                    //     const yearDropdown = instance.yearElements[0]; // Updated selector
+                    //    // yearDropdown.value = parseInt(yearDropdown.value) + 543;
+                    //     const buddhistYear = parseInt(yearDropdown.value) + 543;
+                    //     month2digit = instance.selectedDates[0].getMonth() + 1;
+                    //     if (month2digit < 10) {
+                    //         month2digit = "0" + month2digit;
+                    //     }   
+                    //     day2digit = instance.selectedDates[0].getDate();
+                    //     if (day2digit < 10) {
+                    //         day2digit = "0" + day2digit;
+                    //     }
+
+                    //     const formattedDate = `${buddhistYear}-${month2digit}-${day2digit}`;
+                    //     instance.input.value = formattedDate;
+
+                }
+            }
+
+            console.log(instance.currentYear);
+
+        },
+
+        // Convert the selected Gregorian year to Buddhist year
+
+
+
+
+        onChange: function(selectedDates, dateStr, instance) {
+            // Convert the selected Gregorian year to Buddhist year
+            const selectedDate = selectedDates[0];
+            if (selectedDate.getFullYear() > 2400) {
+                instance.currentYear = selectedDate.getFullYear() - 543;
+                instance.yearElements[0].value = selectedDate.getFullYear() - 543;
+                const yearDropdown = instance.yearElements[0]; // Updated selector
+
+                const buddhistYear = instance.currentYear + 543; // Add 543 to convert to Buddhist year
+
+                // Update the input value with the converted year
+                const inputElement = instance.input;
+                //d-m-Y
+                month2digi = selectedDate.getMonth() + 1;
+                if (month2digi < 10) {
+                    month2digi = "0" + month2digi;
+                }
+                //yyyy-mm-dd
+                const formattedDate = `${buddhistYear}-${month2digi}-${selectedDate.getDate()}`;
+                // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+                inputElement.value = formattedDate;
+            } else {
+                const yearDropdown = instance.yearElements[0]; // Updated selector  
+                const buddhistYear = instance.currentYear + 543; // Add 543 to convert to Buddhist year
+                const inputElement = instance.input;
+                //d-m-Y ex 9-09-2564 month 2 digit
+                month2digi = selectedDate.getMonth() + 1;
+                if (month2digi < 10) {
+                    month2digi = "0" + month2digi;
+                }
+
+
+                const formattedDate = `${buddhistYear}-${month2digi}-${selectedDate.getDate()}`;
+                // const formattedDate = `${buddhistYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+                inputElement.value = formattedDate;
+                // Update the input value with the converted year
+            }
+        },
+
+    });
+</script>
+<script language=Javascript>
     function sum_score() {
         var sum =
             Number(window.document.frmScreening.qtnvs1.value) +

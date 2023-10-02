@@ -56,7 +56,7 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //   echo "SQL Query: $sql<br>";
+                  echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 
@@ -110,7 +110,7 @@ $response = array();
 
 
 
-
+      
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = isset($_POST['action']) ? $_POST['action'] : '';
@@ -124,50 +124,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         /*
-        action:"insert"
-plcid:"100101"
-savdte:""
-savofc:""
-staffemail:"sfgsdds@gmsil.vom"
-staffid:""
-staffnme:"refdfdfd"
-stafforg:"sdgfdsfgdfg"
-staffposid:"1"
-staffprioid:"0"
-staffsnme:"fdfdfrwgft"
-stafftell:"53563563"
-title_id:"2"
-upddte:""
-updofc:""
+ actattdno:"22"
+actdetail:"ไำไำไำไำ"
+actdteend:"25661020"
+actdtestr:"25661027"
+actid:""
+action:"insert"
+actnme:"gfgfgf"
+actplc:"dfdffdfd"
+acttypid:"1"
+place_village:"10010100"
 */
-/*staff	ข้อมูลผู้ใช้งานโปรแกรม				
+/*activity	กิจกรรมของ อบจ ที่ทำเกี่ยวกับประเด็นความเหลื่อมล้ำของเด็ก เช่น อบรม ประชุม				
 ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
-staffid	int	4	รหัสผู้ใช้งาน	PK	
-pid	varchar	13	เลขบัตรประชาชน	FK	มีตารางย่อย
-titid	int	2	รหัสคำนำหน้าชื่อ		
-staffnme	varchar	30	ชื่อ		
-staffsnme	varchar	30	สกุล		
-stafftell	varchar	10	เบอร์โทรศัพท์		
-staffemail	varchar	50	อีเมล์		
-stafforg	varchar	50	หน่วยงานที่สังกัด		
-plcid	varchar	6	จังหวัดอำเภอตำบล หน่วยงานที่สังกัด	FK	มีตารางย่อย 940101 เก็บ 6 หลัก
-staffposid	int	2	รหัสตำแหน่ง/ภาระหน้าที่สำหรับระบบนี้ เช่น ผู้ดูแลระบบ หัวหน้าโครงการ เจ้าหน้าที่ภาคสนาม เป็นต้น	FK	มีตารางย่อย
-staffprioid	int	2	รหัสสิทธิการเข้าถึงข้อมูล	FK	มีตารางย่อย
+actid	bigint		รหัสกิจกรรม	PK	
+actnme	varchar	50	ชื่อกิจกรรม		
+acttypid	int	2	รหัสประเภทกิจกรรม	FK	มีตารางย่อย
+actdtestr	varchar	8	วันที่เริ่มจัดกิจกรรม		เก็บ 8 หลัก เช่น 25660426
+actdteend	varchar	8	วันที่จัดกิจกรรมเสร็จ		เก็บ 8 หลัก เช่น 25660426
+actplc	varchar	100	สถานที่จัดกิจกรรม		
+plcid	varchar	6	จังหวัดอำเภอตำบล ที่จัดกิจกรรม		มีตารางย่อย 940101 เก็บ 6 หลัก
+actattdno	int	5	จำนวนผู้เข้าร่วมกิจกรรม		
+actdetail	varchar	1000	รายละเอียดการจัดกิจกรรม		
 */
         // Insert person data
         $Data = array(
-     
-            'pid' => $_POST['pid'],
-            'titid' => $_POST['title_id'],
-            'staffnme' => $_POST['staffnme'],//name
-            'staffsnme' => $_POST['staffsnme'],//surname
-            'stafftell' => $_POST['stafftell'],
-            'staffemail' => $_POST['staffemail'],
-            'stafforg' => $_POST['stafforg'],
-            'plcid' => $_POST['plcid'],
-            'staffposid' => $_POST['staffposid'],
-            'staffprioid' => $_POST['staffprioid'],
-
+          
+            'actnme' => $_POST['actnme'],
+            'acttypid' => $_POST['acttypid'],
+            'actdtestr' => $_POST['actdtestr'],
+            'actdteend' => $_POST['actdteend'],
+            'actplc' => $_POST['actplc'],
+            'plcid' => $_POST['place_village'],
             // ... other fields to insert
 
 
@@ -179,7 +167,7 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
             return $value !== null;
         });
    
-        $personInsert = insertData('staff', $Data, $conn);
+        $personInsert = insertData('activity', $Data, $conn);
         if ($personInsert) {
             $response['success'] = true;
             $response['message'] = 'Data inserted successfully.';
@@ -304,7 +292,7 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
         }
     } else {
         $response['success'] = false;
-        $response['message'] = 'Invalid action.';
+        $response['message'] = 'Invalid action..';
     }
 } else {
     $response['success'] = false;

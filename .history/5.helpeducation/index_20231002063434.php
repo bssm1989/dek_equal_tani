@@ -2,69 +2,55 @@
 @session_start();
 $optid = $_SESSION['optid'];
 
-$sql = "SELECT
-    hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
-    p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
-FROM
-    hhelpedu hh
-LEFT JOIN
-    person p ON hh.perid = p.perid
-LEFT JOIN
-    titname t ON p.titid = t.titid
-LEFT JOIN
-    const_plcnmegen c ON p.plcid = c.plcidgen
-LEFT JOIN
-    disptyp dt ON p.perid = dt.perid
-LEFT JOIN
-    dispform df ON dt.dispfrmid = df.dispfrmid
-LEFT JOIN
-    hedu ed ON p.perid = ed.perid
-LEFT JOIN
-    edulev el ON ed.edulev = el.eduid";
-// echo $sql;
-$results = mysqli_query($conn, $sql);
-function getEducationLevel($eduid)
-{
-    // Define an array mapping eduid to the corresponding edulevnme
-    $eduLevelMapping = array(
-        0 => 'ไม่ระบุ',
-        1 => 'ไม่ได้เรียนหนังสือ',
-        2 => 'ไม่จบระดับประถมศึกษา',
-        3 => 'ประถมศึกษา',
-        4 => 'มัธยมตอนต้น',
-        5 => 'มัธยมตอนปลาย',
-        6 => 'ปวช',
-        7 => 'ปวส',
-        8 => 'ปริญญาตรี',
-        9 => 'ปริญญาโท',
-        10 => 'ปริญญาเอก',
-        11 => 'มศ.3',
-        12 => 'มศ.5',
-        13 => 'วัยก่อนเรียน',
-        14 => 'บริบาล/ปฐมวัย',
-        15 => 'อนุบาล',
-        16 => 'ศาสนาอิบตีดาอีย์ (ชั้น 1-4)',
-        17 => 'ศาสนามูตาวัตซิด (ชั้น 5-7)',
-        18 => 'ศาสนาซานาวีย์ (ชั้น 8-10)',
-        19 => 'กศน.ม.ต้น',
-        20 => 'กศน.ม.ปลาย',
-        21 => 'อนุปริญญา'
-    );
+// Make sure to update the database connection settings if needed
 
-    // Return the educational level name based on the given eduid
-    return isset($eduLevelMapping[$eduid]) ? $eduLevelMapping[$eduid] : 'ไม่ระบุ';
+// Replace the empty SQL query with your modified query to fetch data from the person, hwork, and prv tables, and join them accordingly.
+// You will need to adjust the JOIN conditions based on your table structure.
+$sql = "SELECT 
+            h.hwrkid, p.pid as person_id,
+            p.name,
+            p.sname,
+             h.occid as occupation_id, h.wrknme as workplace_name, 
+            prv.prvnme as province_name, h.wrkpos as workplace_position, h.wrkstarty as start_year, 
+            h.wrkperiody as work_period_years, h.wrkperiodm as work_period_months, 
+            h.wrkendy as end_year, h.wrkendreas as end_reason , df.dispfrmnme as dispfrmnme
+        FROM 
+            hwork h
+        LEFT JOIN 
+            person p ON h.perid = p.perid
+        LEFT JOIN 
+            prv ON h.prvid = prv.prvid
+            LEFT JOIN 
+            disptyp dt ON p.perid = dt.perid
+        LEFT JOIN 
+            dispform df ON dt.dispfrmid = df.dispfrmid";
+
+// Execute the SQL query and fetch the results into the $results array
+// You will need to replace the $conn variable with your database connection variable
+$results = mysqli_query($conn, $sql);
+
+// Function to get the educational level (you can keep this function as it is)
+function getEducationLevel($edulev)
+{
+    // Function logic to get the educational level based on the given edulev
+    // ...
+    // Return the educational level
+    // return $education_level;
 }
 ?>
+
+<!-- Rest of your HTML code as before -->
+
+<!-- Existing HTML code -->
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0">ประวัติการได้รับความช่วยเหลือด้านการศึกษา</h4>
+        <h4 class="app-page-title mb-0">ข้อมูลประวัติการประกอบอาชีพ</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>&function=add" class="btn btn-primary text-white"><i class="fas fa-plus"></i>
             เพิ่มข้อมูลใหม่</a>
     </div>
 </div>
-
 <hr class="mb-0">
 <div class="row g-2 settings-section">
     <div class="col-12 col-md-12">
@@ -176,7 +162,7 @@ function getEducationLevel($eduid)
                                     <td class="align-middle text-start"><?= $hedudetail ?></td>
                                     <td>
                                     <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $ ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-danger text-white"
                                             onclick="deletePerson2(
                                                 '<?= $hheduid ?>',

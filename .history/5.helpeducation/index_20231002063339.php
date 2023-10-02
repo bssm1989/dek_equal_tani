@@ -1,28 +1,28 @@
 <?php
 @session_start();
-$optid = $_SESSION['optid'];
+// $optid = $_SESSION['optid'];
 
-$sql = "SELECT
-    hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
-    p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
-FROM
-    hhelpedu hh
-LEFT JOIN
-    person p ON hh.perid = p.perid
-LEFT JOIN
-    titname t ON p.titid = t.titid
-LEFT JOIN
-    const_plcnmegen c ON p.plcid = c.plcidgen
-LEFT JOIN
-    disptyp dt ON p.perid = dt.perid
-LEFT JOIN
-    dispform df ON dt.dispfrmid = df.dispfrmid
-LEFT JOIN
-    hedu ed ON p.perid = ed.perid
-LEFT JOIN
-    edulev el ON ed.edulev = el.eduid";
-// echo $sql;
-$results = mysqli_query($conn, $sql);
+// $sql = "SELECT
+//     hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
+//     p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
+// FROM
+//     hhelpedu hh
+// LEFT JOIN
+//     person p ON hh.perid = p.perid
+// LEFT JOIN
+//     titname t ON p.titid = t.titid
+// LEFT JOIN
+//     const_plcnmegen c ON p.plcid = c.plcidgen
+// LEFT JOIN
+//     disptyp dt ON p.perid = dt.perid
+// LEFT JOIN
+//     dispform df ON dt.dispfrmid = df.dispfrmid
+// LEFT JOIN
+//     hedu ed ON p.perid = ed.perid
+// LEFT JOIN
+//     edulev el ON ed.edulev = el.eduid";
+// // echo $sql;
+// $results = mysqli_query($conn, $sql);
 function getEducationLevel($eduid)
 {
     // Define an array mapping eduid to the corresponding edulevnme
@@ -176,7 +176,7 @@ function getEducationLevel($eduid)
                                     <td class="align-middle text-start"><?= $hedudetail ?></td>
                                     <td>
                                     <div class="btn-group" role="group">
-                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $perid ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+                                        <a href="?page=<?= $_GET['page'] ?>&function=add&perid=<?= $ ?>" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-danger text-white"
                                             onclick="deletePerson2(
                                                 '<?= $hheduid ?>',
