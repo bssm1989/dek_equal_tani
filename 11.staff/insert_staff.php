@@ -56,7 +56,7 @@ $response = array();
                 $values = '"' . implode('", "', array_values($data)) . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
-                //   echo "SQL Query: $sql<br>";
+                  echo "SQL Query: $sql<br>";
 
                 $result = mysqli_query($conn, $sql);
 
@@ -87,7 +87,7 @@ $response = array();
 
                 $sql = "UPDATE $table SET $updateString WHERE $condition";
 
-                // echo "SQL Query: $sql<br>";
+                // echo $sql;
 
                 $result = mysqli_query($conn, $sql);
 
@@ -192,29 +192,25 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
 
     } elseif ($action === 'update') {
 
-        $peridToUpdate = isset($_POST['perid']) ? $_POST['perid'] : '';
+        $peridToUpdate = isset($_POST['staffid']) ? $_POST['staffid'] : '';
 
         if (!empty($peridToUpdate)) {
+      
             $personDataToUpdate = array(
-                'pid' => $_POST['national_id'],
+                'pid' => $_POST['pid'],
                 'titid' => $_POST['title_id'],
-                'name' => $_POST['name'],
-                'sname' => $_POST['surname'],
-                'genid' => $_POST['gender_id'],
-                'religid' => $_POST['religion_id'],
-                'religoth' => $_POST['religion_other'],
-                'brtdte' => $_POST['birth_date'],
-                'age' => $_POST['age'],
-                'adr' => $_POST['address'],
-                'soi' => $_POST['street'],
-                // 'vllid' => $_POST['village_id'],
-                'plcid' => $_POST['place_id'],
-                'postcode' => $_POST['postcode'],
-                'pertel' => $_POST['phone_number'],
-                'hholdid' => $_POST['household_id'],
+                'staffnme' => $_POST['staffnme'],//name
+                'staffsnme' => $_POST['staffsnme'],//surname
+                'stafftell' => $_POST['stafftell'],
+                'staffemail' => $_POST['staffemail'],
+                'stafforg' => $_POST['stafforg'],
+                'plcid' => $_POST['plcid'],
+                'staffposid' => $_POST['staffposid'],
+                'staffprioid' => $_POST['staffprioid'],
 
                 // ... other fields to update
             );
+            // var_dump($personDataToUpdate);
         }
 
         $personDataToUpdate = array_filter($personDataToUpdate, function ($value) {
@@ -226,11 +222,11 @@ staffprioid	int	2	รหัสสิทธิการเข้าถึงข�
         //     }
         // }
 //make  get perid to make condition in update
-        $personid = $_POST['perid'];
-        $updatePersonCondition = "perid =$personid"; // Use the appropriate condition for updating person data  
+        $personid = $_POST['staffid'];
+        $updatePersonCondition = "staffid =$personid"; // Use the appropriate condition for updating person data  
                
-        
-        $updatedPerson = updateData('person', $personDataToUpdate, $updatePersonCondition, $conn,$personid);
+        // var_dump($personDataToUpdate);
+        $updatedPerson = updateData('staff', $personDataToUpdate, $updatePersonCondition, $conn,$personid);
 
         if ($updatedPerson) {
             $response['success'] = true;
