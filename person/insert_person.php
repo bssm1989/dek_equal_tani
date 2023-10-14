@@ -123,12 +123,17 @@ function insertData2($table, $data, $conn)
 
             try {
                 $columns = implode(', ', array_keys($data));
-                $values = '"' . implode('", "', array_values($data)) . '"';
+               $values = '"' . implode('", "', array_values($data)) . '"';
+        // add session "staffid" to recorded_by and put datetime to recorded_date
+        $columns .= ', recorded_by, recorded_date';
+        $values .= ', "' . $_SESSION['staffid'] . '", "' . date('Y-m-d H:i:s') . '"';
                 $sql = "INSERT INTO $table ($columns) VALUES ($values)";
 
                 // echo "SQL Query: $sql<br>";
 
-                $result = mysqli_query($conn, $sql);
+                $user_id = $_SESSION['staffid'];
+        mysqli_query($conn,"SET @user_id =$user_id,@query_value ='$sql'");
+        $result = mysqli_query($conn, $sql);
 
                 if ($result) {
                     // echo "Inserted ID: " . mysqli_insert_id($conn) . "<br>";
@@ -153,13 +158,16 @@ function insertData2($table, $data, $conn)
                 foreach ($data as $key => $value) {
                     $updateString .= "$key = '$value', ";
                 }
-                $updateString = rtrim($updateString, ', ');
+               $updateString .= 'modified_by = "' . $_SESSION['staffid'] . '", modified_date = "' . date('Y-m-d H:i:s') . '"';
+        $updateString = rtrim($updateString, ', ');
 
                 $sql = "UPDATE $table SET $updateString WHERE $condition";
 
                 // echo "SQL Query: $sql<br>";
 
-                $result = mysqli_query($conn, $sql);
+                $user_id = $_SESSION['staffid'];
+        mysqli_query($conn,"SET @user_id =$user_id,@query_value ='$sql'");
+        $result = mysqli_query($conn, $sql);
 
                 if ($result) {
                     // echo "Updated ID: " .$id;

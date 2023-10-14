@@ -1,0 +1,400 @@
+person	ตารางบุคคล							
+ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+perid	bigint		รหัสบุคคล	PK	ลองดูว่าจะรันตัวเลขอย่างไร เช่น ปีเดือนวันเวลาวินาที หรือรันตัวเลขไปเรื่อยๆ			
+pid	varchar	13	เลขบัตรประชาชน					
+titid	int	2	รหัสคำนำหน้าชื่อ	FK	มีตารางย่อย			
+name	varchar	50	ชื่อ					
+sname	varchar	50	สกุล					
+genid	int	1	รหัสเพศ	FK	มีตารางย่อย			
+religid	int	2	รหัสศาสนา	FK	มีตารางย่อย			
+religoth	varchar	30	กรณีศาสนาอื่น ๆ					
+brtdte	varchar	8	ปีเดือนวันเกิด		เก็บ 8 หลัก เช่น 25660426			
+age	int	1	อายุ		กรณีระบุแค่อายุ ไม่ได้ระบุวันเดือนปีเกิด			
+adr	varchar	20	ที่อยู่ปัจจุบัน บ้านเลขที่					
+soi	varchar	30	ถนน ซอย					
+vllid	varchar	2	หมู่ที่		มีตารางย่อย เก็บ 2 หลัก เช่น 01, 02, 03			
+plcid	varchar	6	จังหวัดอำเภอตำบล		มีตารางย่อย 940101 เก็บ 6 หลัก			
+postcode	int	5	รหัสไปรษณีย์					
+pertel	varchar	30	เบอร์โทรศัพท์					
+hholdid	bigint	2	รหัสครัวเรือน	FK	มีตารางย่อย		
+    
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON person
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, table_name, record_id, user_id,query_value, action_timestamp)
+    VALUES ('INSERT', 'person', NEW.perid, @user_id,@query_value, NOW());
+END;
+//
+DELIMITER ;
+
+								
+perrel	ตารางความสัมพันธ์ระหว่างบุคคล							
+ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+intperid	bigint		รหัสบุคคล --> รหัสบุคคลอ้างอิง	PK FK	perid ในตาราง person			
+affperid	bigint		รหัสบุคคล --> รหัสบุคคลที่มีความสัมพันธ์	PK FK	perid ในตาราง person			
+relid	int	1	รหัสความสัมพันธ์	FK	มีตารางย่อย			
+reloth	varchar	50	ระบุกรณีเป็นญาติหรืออื่น ๆ					
+
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON 
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW()
+END;
+//
+DELIMITER ;						
+								
+child	ตารางข้อมูลเฉพาะเด็ก							
+ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+perid	bigint		รหัสเด็ก	PK FK				
+chiphoto	image		รูปถ่ายเด็ก		เก็บ 1 รูป			
+chiord	int	2	เป็นบุตรคนที่เท่าไหร่					
+livewid	int	2	นักเรียนอาศัยอยู่กับใคร	FK	มีตารางย่อย			
+famsttid	int	2	รหัสสถานภาพครอบครัว	FK	มีตารางย่อย			
+distschkm	int	3	การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่กิโลเมตรกี่เมตร		หน่วย:: กิโลเมตร			
+distschm	int	3	การเดินทางจากที่พักอาศัยไปโรงเรียน:: ระยะทางกี่กิโลเมตรกี่เมตร		หน่วย:: เมตร			
+distschhrs	int	2	การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมงกี่นาที		หน่วย:: ชั่วโมง			
+distschmin	int	2	การเดินทางจากที่พักอาศัยไปโรงเรียน:: ใช้เวลากี่ชั่วโมงกี่นาที		หน่วย:: นาที			
+farepay	int	4	ค่าใช้จ่ายในการเดินทางไป-กลับกี่บาท/เดือน		หน่วย:: บาท/เดือน			
+schmethid	int	2	รหัสวิธีเดินทางหลัก	FK	มีตารางย่อย			
+chidetail	varchar	1000	รายละเอียดเชิงคุณภาพ					
+
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON child
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, table_name, record_id, user_id,query_value, action_timestamp)
+    VALUES ('INSERT', 'child', NEW.perid, @user_id,@query_value, NOW());
+END;
+//
+DELIMITER ;
+
+
+					\
+
+XXXXdisptyp	ประเภทความเหลื่อมล้ำ							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXdisptypid	bigint		รหัสความเหลื่อมล้ำ	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXdispfrmid	int	2	รหัสลักษณะความเหลื่อมล้ำ	FK	มีตารางย่อย			
+XXXX								
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  disptyp
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'disptyp', NEW.disptypid);
+END;
+//
+DELIMITER ;		
+						
+XXXXmember	ข้อมูลผู้ปกครอง/สมาชิกในบ้านเพิ่มเติม							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXperid	bigint		รหัสบุคคล --> รหัสสมาชิก	PK FK				
+XXXXeduid	int	1	รหัสระดับการศึกษาสูงสุด	FK	มีตารางย่อย			
+XXXXmarid	int	1	รหัสสถานะการแต่งงาน	FK	มีตารางย่อย			
+XXXXchinum	int	2	จำนวนบุตร					
+XXXXoccid	int	2	รหัสอาชีพ	FK	มีตารางย่อย			
+XXXXoccspec	varchar	50	ระบุอาชีพแบบเฉพาะเจาะจง					
+XXXXsalary	int	10	รายได้จากค่าจ้าง/เงินเดือน ต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXincagri	int	10	รายได้จากเกษตรกรรม (หลังหักค่าใช้จ่าย) ต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXincbusi	int	10	รายได้จากธุรกิจส่วนตัว (หลังหักค่าใช้จ่าย) ต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXincwelf	int	10	รายได้สวัสดิการจากรัฐ (บำนาญ, เบี้ยผู้สูงอายุ, เงินอุดหนุนอื่น ๆ จากรัฐบาล) ต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXincoth	int	10	รายได้จากแหล่งอื่นๆ (เงินโอนครอบครัว, ค่าเช่าและอื่นๆ) ต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXinctotal	int	10	รายได้รวมเฉลี่ยต่อเดือน		หน่วย:: บาทต่อเดือน			
+XXXXwelfare	int	1	ได้สวัสดิการแห่งรัฐ(ทะเบียนคนจน)/โครงการคนละครึ่ง/เราชนะ/ม.33เรารักกัน		1=yes, 0=no			
+XXXXdisable	int	1	มีความพิการ ทางร่างกาย/ สติปัญญา/มีโรคเรื้อรัง		1=yes, 0=no			
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  member
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'member', NEW.perid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhhold	ข้อมูลครัวเรือน/ครอบครัว							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhholdid	bigint		รหัสครัวเรือน	PK				
+XXXXadr	varchar	20	ที่อยู่ปัจจุบัน บ้านเลขที่		ต้องตรงกันกับที่อยู่ในตาราง person			
+XXXXsoi	varchar	30	ถนน ซอย		ต้องตรงกันกับที่อยู่ในตาราง person			
+XXXXvllid	varchar	2	หมู่ที่		มีตารางย่อย เก็บ 2 หลัก เช่น 01, 02, 03 ต้องตรงกันกับที่อยู่ในตาราง person			
+XXXXplcid	varchar	6	จังหวัดอำเภอตำบล		มีตารางย่อย 940101 เก็บ 6 หลัก ต้องตรงกันกับที่อยู่ในตาราง person			
+XXXXpostcode	int	5	รหัสไปรษณีย์					
+XXXXmemno	int	2	จำนวนสมาชิกในครัวเรือน (รวมตัวนักเรียน)					
+XXXXhhdeponid	int	2	รหัสครัวเรือนมีภาระพึ่งพิง	FK	มีตารางย่อย			
+XXXXhhtypid	int	2	รหัสการอยู่อาศัย	FK	มีตารางย่อย			
+XXXXhhrent	int	5	กรณีอยู่บ้านเช่า เช่าเดือนละกี่บาท	FK	มีตารางย่อย			
+XXXXhhflrid	int	2	รหัสวัสดุที่ใช้ทำพื้นบ้าน (ที่ไม่ใช่ใต้ถุนบ้าน)	FK	มีตารางย่อย			
+XXXXhhwallid	int	2	รหัสวัสดุที่ใช้ทำฝาบ้าน	FK	มีตารางย่อย			
+XXXXhhrfid	int	2	รหัสวัสดุที่ใช้ทำหลังคา	FK	มีตารางย่อย			
+XXXXhhtoilet	int	1	มีห้องส้วมในที่อยู่อาศัย/บริเวณบ้าน		1=yes, 0=no			
+XXXXhavagrland	int	1	มีดินทำการเกษตรได้(รวมเช่า)		0=ไม่ทำเกษตร, 1=ทำเกษตร			
+XXXXagrlandid	int	2	กรณีทำการเกษตร มีที่ดินจำนวนกี่ไร่	FK	มีตารางย่อย			
+XXXXhhwaterid	int	2	รหัสแหล่งน้ำดื่ม	FK	มีตารางย่อย			
+XXXXhavelect	int	1	มีไฟฟ้าใช้หรือไม่		0=ไม่มีไฟฟ้า/ไม่มีเครื่องกำเนิดไฟฟ้าชนิดอื่น ๆ, 1=มีไฟฟ้า			
+XXXXhhelectid	int	2	กรณีมีไฟฟ้าใช้ ให้ระบุแหล่งไฟฟ้า	FK	มีตารางย่อย			
+XXXXvhcar	int	1	ยานพาหนะในครัวเรือน (ที่ใช้งานได้):: รถยนต์นั่งส่วนบุคคล		1=yes, 0=no			
+XXXXvhcarage	int	1	อายุ:: รถยนต์นั่งส่วนบุคคล		1=อายุเกิน 15 ปี, 2=ไม่เกิน 15 ปี			
+XXXXvhtruck	int	1	ยานพาหนะในครัวเรือน (ที่ใช้งานได้):: รถปิกอัพ/รถบรรทุกเล็ก/รถตู้		1=yes, 0=no			
+XXXXvhtruckage	int	1	อายุ:: รถปิกอัพ/รถบรรทุกเล็ก/รถตู้		1=อายุเกิน 15 ปี, 2=ไม่เกิน 15 ปี			
+XXXXvhtractor	int	1	ยานพาหนะในครัวเรือน (ที่ใช้งานได้):: รถไถ/รถเกี่ยวข้าว/รถประเภทเดียวกัน		1=yes, 0=no			
+XXXXvhtractorage	int	1	อายุ:: รถไถ/รถเกี่ยวข้าว/รถประเภทเดียวกัน		1=อายุเกิน 15 ปี, 2=ไม่เกิน 15 ปี			
+XXXXvhmbike	int	1	ยานพาหนะในครัวเรือน (ที่ใช้งานได้):: รถมอเตอร์ไซต์/เรือประมงพื้นบ้าน (ขนาดเล็ก) 		1=yes, 0=no			
+XXXXvhno	int	1	ยานพาหนะในครัวเรือน (ที่ใช้งานได้):: ไม่มียานพาหนะในครัวเรือน		1=yes, 0=no			
+XXXXhitemcomputer	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: คอมพิวเตอร์		1=yes, 0=no			
+XXXXhitemaircon	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: แอร์		1=yes, 0=no			
+XXXXhitemtvflat	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: ทีวีจอแบน		1=yes, 0=no			
+XXXXhitemwashmachine	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: เครื่องซักผ้า		1=yes, 0=no			
+XXXXhitemrefrige	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: ตู้เย็น		1=yes, 0=no			
+XXXXhitemno	int	1	ของใช้ในครัวเรือน (ที่ใช้งานได้):: ไม่มีของใช้ดังกล่าว		1=yes, 0=no			
+XXXXhhimg1	image		กรุณาถ่ายให้เห็น หลังคาและฝาผนังของที่พักอาศัยทั้งหลัง		เก็บ 1 รูป			
+XXXXhhimg2	image		กรุณาถ่ายให้เห็น พื้นและบริเวณภายในของที่พักอาศัย		เก็บ 1 รูป			
+XXXX								
+
+XXXX	
+									
+XXXXinstitute	ข้อมูลสถาบัน กรณีเด็กพักในสถาบัน							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXinstid	int	2	รหัสสถาบัน	PK				
+XXXXinsttypid	int	2	รหัสประเภทสถาบัน	FK	มีตารางย่อย			
+XXXXinstregister	int	1	จดทะเบียนหรือไม่ กรณีเป็นมูลนิธิ/สถานสงเคราะห์		1=yes, 0=no			
+XXXXinstnme	varchar	100	ชื่อสถาบัน					
+XXXXprvid	varchar	2	จังหวัดที่ตั้งของสถาบัน	FK	มีตารางย่อย --> ตารางจังหวัด			
+XXXXinstname	varchar	50	ชื่อผู้รับผิดชอบสถาบัน					
+XXXXinssname	varchar	50	นามสกุลผู้รับผิดชอบสถาบัน					
+XXXXinststdno	int	5	สถาบันมีนักเรียนในความดูแล ณ ปัจจุบัน จำนวนกี่คน					
+XXXXinstinc	int	8	สถาบันมีรายรับจากการสนับสนุน/รับบริจาคในรูปเงินและสิ่งของ คิดเป็นมูลค่ารวมทั้งสิ้น บาท/ปี		หน่วย:: บาทต่อปี			
+XXXXinstlandrai	int	3	สถาบันมีที่ดินกี่ไร่กี่งาน		หน่วย:: ไร่			
+XXXXinstlandngan	int	3	สถาบันมีที่ดินกี่ไร่กี่งาน		หน่วย:: งาน			
+XXXXinstbulding	int	3	สถาบันมีอาคารกี่หลัง		หน่วย:: หลัง			
+XXXXinstvehicle	int	3	สถาบันมียานพาหนะที่ใช้งานได้กี่คัน		หน่วย:: คัน			
+XXXXinstimg1	image		กรุณาถ่ายให้เห็น หลังคาและฝาผนังของที่พักอาศัยทั้งหลัง		เก็บ 1 รูป			
+XXXXinstimg2	image		กรุณาถ่ายให้เห็น พื้นและบริเวณภายในของที่พักอาศัย		เก็บ 1 รูป			
+XXXX								
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON   institute
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'institute', NEW.instid);
+END;
+//
+DELIMITER ;		
+									
+XXXXinststay	ข้อมูลการพักในสถาบัน							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	PK FK				
+XXXXinstid	int	2	รหัสสถาบัน	PK FK				
+XXXXpersince	int	6	นักเรียนรายนี้อยู่กับสถาบันตั้งแต่เดือนปี (พ.ศ.)		เก็บ 6 หลัก เช่น 256602			
+XXXXstaytypid	int	2	รหัสลักษณะที่พักอาศัยในสถาบัน --> พักอาศัยในสถาบันแบบใด	FK	มีตารางย่อย			
+XXXXhelpmoney	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้เงินสด		1=yes, 0=no			
+XXXXhelpobject	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้สิ่งของ		1=yes, 0=no			
+XXXXhelpaccom	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้ที่พักอาศัย		1=yes, 0=no			
+XXXXhelpfood	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้อาหาร		1=yes, 0=no			
+XXXXhelpfare	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ให้การเดินทาง		1=yes, 0=no			
+XXXXhelpedu	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านการศึกษา		1=yes, 0=no			
+XXXXhelphealth	int	1	สถาบันให้ความช่วยเหลือแก่นักเรียนรายนี้ด้วยวิธี:: ดูแลด้านสุขภาพ		1=yes, 0=no			
+XXXXhelppayment	int	7	สถาบันมีรายจ่ายเฉลี่ยในการดูแลนักเรียนรายนี้		หน่วย:: บาท/คน/ปีการศึกษา			
+XXXXneedscholar	int	1	สถาบันมีความประสงค์รับเงินอุดหนุนจาก กสศ. และสามารถปฏิบัติตามเงื่อนไขการรับทุนสำหรับนักเรียนรายนี้หรือไม่		1=ต้องการ, 2=ไม่ต้องการ			
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  inststay
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'inststay', NEW.perid);
+END;
+//
+DELIMITER ;									
+								
+XXXXhedu	ประวัติการศึกษา							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXheduid	bigint		รหัสประวัติการศึกษา	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXeduid	int	2	ระดับการศึกษา	FK	มีตารางย่อย			
+XXXXedulev	int	1	ชั้นปี					
+XXXXedusemester	int	6	ปีการศึกษา		เก็บ 6 หลัก เช่น 256601			
+XXXXedugrade	number	4	เกรดเฉลี่ย		เช่น 3.50			
+XXXXedudetail	varchar	200	รายละเอียดอื่น ๆ					
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  hedu
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'hedu', NEW.heduid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhwork	ประวัติการประกอบอาชีพ							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhwrkid	bigint		รหัสประวัติการประกอบอาชีพ	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXoccid	int	2	รหัสอาชีพ	FK	มีตารางย่อย			
+XXXXwrknme	varchar	30	ชื่อสถานประกอบการ					
+XXXXprvid	varchar	2	จังหวัดที่ทำงาน	FK	มีตารางย่อย			
+XXXXwrkpos	varchar	30	ทำงานในตำแหน่ง					
+XXXXwrkstarty	int	4	ปีที่เริ่มประกอบอาชีพ		เก็บ 4 หลัก เช่น 2566			
+XXXXwrkperiody	int	2	ทำงานเป็นระยะเวลกี่ปีกี่เดือน		หน่วย:: ปี			
+XXXXwrkperiodm	int	2	ทำงานเป็นระยะเวลกี่ปีกี่เดือน		หน่วย:: เดือน			
+XXXXwrkendy	int	4	ปีที่ลาออก		เก็บ 4 หลัก เช่น 2566			
+XXXXwrkendreas	varchar	200	เหตุผลที่ลาออก					
+XXXX		
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  hwork
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'hwork', NEW.hwrkid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhhelpedu	ประวัติการได้รับความช่วยเหลือด้านการศึกษา							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhheduid	bigint		รหัสประวัติการช่วยเหลือด้านการศึกษา	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXeduid	int	2	ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ	FK	มีตารางย่อย			
+XXXXhedulev	int	1	ชั้นปีที่ได้รับทุน					
+XXXXhedusemester	int	6	ปีการศึกษาที่ได้รับทุน		เก็บ 6 หลัก เช่น 256601			
+XXXXhedufundtyp	int	1	เป็นทุนรายเดือนหรือปีหรือครั้งคราว		1=รายเดือน, 2=รายปี, 3=รายครั้งคราว			
+XXXXhedumoney	int	6	จำนวนเงินที่ได้รับต่อครั้ง		หน่วย:: บาท/เดือน บาท/ปี บาท/ครั้ง			
+XXXXhedudetail	varchar	200	รายละเอียดอื่น ๆ					
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  hhelpedu
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW()     ,'hhelpedu', NEW.hheduid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhhelpjob	ประวัติการช่วยเหลือด้านอาชีพ							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhhjobid	bigint		รหัสประวัติการช่วยเหลือด้านอาชีพ	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXhjobdte	varchar	8	วันที่ให้ความช่วยเหลือ		เก็บ 8 หลัก เช่น 25660426			
+XXXXhjobmoney	int	1	ลักษณะการช่วยเหลือ:: ให้เงินสด		1=yes, 0=no			
+XXXXhjobobject	int	1	ลักษณะการช่วยเหลือ:: ให้สิ่งของ/อุปกรณ์		1=yes, 0=no			
+XXXXhjobknowledge	int	1	ลักษณะการช่วยเหลือ:: ให้ความรู้		1=yes, 0=no			
+XXXXhjobtranfer	int	1	ลักษณะการช่วยเหลือ:: ส่งต่อให้หน่วยงาน		1=yes, 0=no			
+XXXXhjobdetail	varchar	1000	รายละเอียดการช่วยเหลือ					
+XXXX		
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  hhelpjob
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'hhelpjob', NEW.hhjobid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhtraining	ประวัติการอบรม							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhhtrnid	bigint		รหัสประวัติการอบรม	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXhtrndtestr	varchar	8	วันที่เริ่มอบรม เปิดไว้กรณีอบรมหลายวัน		เก็บ 8 หลัก เช่น 25660426			
+XXXXhtrndteend	varchar	8	วันที่อบรมเสร็จ		เก็บ 8 หลัก เช่น 25660426			
+XXXXhtrntit	varchar	50	เรื่องที่อบรม					
+XXXXprvid	varchar	2	จังหวัดที่อบรม	FK	มีตารางย่อย			
+XXXXhtrndetail	varchar	1000	รายละเอียดการอบรม					
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  htraining
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'htraining', NEW.hhtrnid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXhfolowup	ประวัติการติดตาม/การเยี่ยมเยียน							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXhflwid	bigint		รหัสประวัติการติดตาม/การเยี่ยมเยียน	PK				
+XXXXperid	bigint		รหัสบุคคล --> รหัสเด็ก	FK				
+XXXXhflwdtestr	varchar	8	วันที่เริ่มติดตาม/เยี่ยมเยียน (แต่ละครั้ง) เปิดไว้กรณีติดตามหลายวัน		เก็บ 8 หลัก เช่น 25660426			
+XXXXhflwdteend	varchar	8	วันที่ติดตาม/เยี่ยมเยียนเสร็จ		เก็บ 8 หลัก เช่น 25660426			
+XXXXhflwmeth	int	1	ติดตาม/เยี่ยมเยียนด้วยวิธีใด		1=เจ้าหน้าที่ลงพื้นที่, 2=โทรศัพท์/ส่งข้อความ			
+XXXXhflwdetail	varchar	1000	รายละเอียดการติดตาม/เยี่ยมเยียน					
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON     hfolowup
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'hfolowup', NEW.hflwid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXactivity	กิจกรรมของ อบจ ที่ทำเกี่ยวกับประเด็นความเหลื่อมล้ำของเด็ก เช่น อบรม ประชุม							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXactid	bigint		รหัสกิจกรรม	PK				
+XXXXactnme	varchar	50	ชื่อกิจกรรม					
+XXXXacttypid	int	2	รหัสประเภทกิจกรรม	FK	มีตารางย่อย			
+XXXXactdtestr	varchar	8	วันที่เริ่มจัดกิจกรรม		เก็บ 8 หลัก เช่น 25660426			
+XXXXactdteend	varchar	8	วันที่จัดกิจกรรมเสร็จ		เก็บ 8 หลัก เช่น 25660426			
+XXXXactplc	varchar	100	สถานที่จัดกิจกรรม					
+XXXXplcid	varchar	6	จังหวัดอำเภอตำบล ที่จัดกิจกรรม		มีตารางย่อย 940101 เก็บ 6 หลัก			
+XXXXactattdno	int	5	จำนวนผู้เข้าร่วมกิจกรรม					
+XXXXactdetail	varchar	1000	รายละเอียดการจัดกิจกรรม					
+XXXX	
+DELIMITER //
+CREATE TRIGGER log_insert_trigger_activity
+AFTER INSERT ON  activity
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'activity', NEW.actid);
+END;
+//
+DELIMITER ;									
+XXXX								
+XXXXstaff	ข้อมูลผู้ใช้งานโปรแกรม							
+XXXXชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม			
+XXXXstaffid	int	4	รหัสผู้ใช้งาน	PK				
+XXXXpid	varchar	13	เลขบัตรประชาชน	FK	มีตารางย่อย			
+XXXXtitid	int	2	รหัสคำนำหน้าชื่อ					
+XXXXstaffnme	varchar	30	ชื่อ					
+XXXXstaffsnme	varchar	30	สกุล					
+XXXXstafftell	varchar	10	เบอร์โทรศัพท์					
+XXXXstaffemail	varchar	50	อีเมล์					
+XXXXstafforg	varchar	50	หน่วยงานที่สังกัด					
+XXXXplcid	varchar	6	จังหวัดอำเภอตำบล หน่วยงานที่สังกัด	FK	มีตารางย่อย 940101 เก็บ 6 หลัก			
+XXXXstaffposid	int	2	รหัสตำแหน่ง/ภาระหน้าที่สำหรับระบบนี้ เช่น ผู้ดูแลระบบ หัวหน้าโครงการ เจ้าหน้าที่ภาคสนาม เป็นต้น	FK	มีตารางย่อย			
+XXXXstaffprioid	int	2	รหัสสิทธิการเข้าถึงข้อมูล	FK	มีตารางย่อย			
+DELIMITER //
+CREATE TRIGGER log_insert_trigger
+AFTER INSERT ON  staff
+FOR EACH ROW
+BEGIN
+    INSERT INTO user_actions_log (action_type, user_id,query_value, action_timestamp,table_name,  record_id)
+    VALUES ('INSERT',  @user_id,@query_value, NOW() ,'staff', NEW.staffid);
+END;
+//
+DELIMITER ;		

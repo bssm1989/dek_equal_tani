@@ -4,15 +4,15 @@ if($qtn_visid){
     $sql = "SELECT q.`qtn_visid`,a.perid,a.pid,CONCAT(prenme,nme,' ',surnme) AS nme,a.sex,a.brtdte,`weight`,`height`,`waistline`,`blood_pressure`,`help`,helpoth,
     p.roladr,p.rolvllno,e.plcnmegen AS rolplc,a.tel,o.optnme,t.pertypnme,
     `qtn_assessor`,`pos_ofcid`,`qtn_round`,`qtn_date`,`qtnvs1`,`qtnvs2`,`qtnvs3`,`qtnvs4`,`qtnvs5`,`qtnvs6`,`qtnvs7`,`qtnvs8`,`qtnvs_sum`,`qtnvsoth`,
-    CONCAT(o1.`ofcnme`) AS savofc,q.savdte,CONCAT(o2.`ofcnme`) AS updofc,q.upddte 
+    CONCAT(o1.`ofcnme`) AS recorded_by,q.recorded_date,CONCAT(o2.`ofcnme`) AS modified_by,q.modified_date	 
     FROM `questionnaire_visit` q INNER JOIN person a ON q.perid = a.perid
     LEFT JOIN `person_qtn_additional` p ON a.perid = p.perid
     LEFT JOIN `const_plcnmegen` e ON p.rolplcid=e.plcidgen
     LEFT JOIN `const_prenme` pre ON a.preid=pre.preid 
     LEFT JOIN opt o ON a.optid = o.optid 
     LEFT JOIN `const_pertyp` t ON p.pertypid = t.pertypid
-    LEFT JOIN ofc o1 ON o1.ofcid=q.savofc
-    LEFT JOIN ofc o2 ON o2.ofcid=q.updofc";
+    LEFT JOIN ofc o1 ON o1.ofcid=q.recorded_by
+    LEFT JOIN ofc o2 ON o2.ofcid=q.modified_by";
     $sql.= " where q.qtn_visid=$qtn_visid";
     $result = mysqli_query($conn,$sql);
     // echo "sql1-> ".$sql;
@@ -49,8 +49,8 @@ if($qtn_visid){
         }
         $qtnvs_sum = $sum." : ".$res;
         
-        $savdte 	= substr($rows["savdte"],8,2)."-".substr($rows["savdte"],5,2)."-".substr($rows["savdte"],0,4);	
-        $upddte 	= substr($rows["upddte"],8,2)."-".substr($rows["upddte"],5,2)."-".substr($rows["upddte"],0,4);
+        $recorded_date 	= substr($rows["recorded_date"],8,2)."-".substr($rows["recorded_date"],5,2)."-".substr($rows["recorded_date"],0,4);	
+        $modified_date	 	= substr($rows["modified_date"],8,2)."-".substr($rows["modified_date"],5,2)."-".substr($rows["modified_date"],0,4);
     }
 }else {
     $qtn_assessor = $ofcname;
@@ -548,24 +548,24 @@ if($qtn_visid){
                     <hr class="mb-4">
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <label for="savofc">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder=""
-                                value="<?=$rows["savofc"];?>" readonly="true" required>
+                            <label for="recorded_by">ผู้บันทึก</label>
+                            <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder=""
+                                value="<?=$rows["recorded_by"];?>" readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="savdte">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder=""
-                                value="<?php echo $savdte; ?>" readonly="true" required>
+                            <label for="recorded_date">วันที่บันทึก</label>
+                            <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder=""
+                                value="<?php echo $recorded_date; ?>" readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder=""
-                                value="<?=$rows["updofc"];?>" readonly="true" required>
+                            <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder=""
+                                value="<?=$rows["modified_by"];?>" readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder=""
-                                value="<?php echo $upddte; ?>" readonly="true" required>
+                            <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder=""
+                                value="<?php echo $modified_date	; ?>" readonly="true" required>
                         </div>
                     </div>
                 </form>
@@ -679,10 +679,10 @@ function saveGuestionnaire() {
             eval("var decoded_data = " + xmlhttp.responseText);
             if (decoded_data['checkSave'] == "yes") {
                 window.document.frmScreening.qtn_visid.value = decoded_data['qtn_visid0'];
-                window.document.frmScreening.savofc.value = decoded_data['savofc0'];
-                window.document.frmScreening.savdte.value = decoded_data['savdte0'];
-                window.document.frmScreening.updofc.value = decoded_data['updofc0'];
-                window.document.frmScreening.upddte.value = decoded_data['upddte0'];
+                window.document.frmScreening.recorded_by.value = decoded_data['recorded_by0'];
+                window.document.frmScreening.recorded_date.value = decoded_data['recorded_date0'];
+                window.document.frmScreening.modified_by.value = decoded_data['modified_by0'];
+                window.document.frmScreening.modified_date	.value = decoded_data['modified_date	0'];
                 window.location.href = '?page=visit&function=update&id=' + decoded_data['qtn_visid0'];
                 alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                 // window.document.getElementById('showSql').innerHTML=xmlhttp.responseText;
