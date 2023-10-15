@@ -12,6 +12,30 @@ if ($perid) {
             WHERE i.perid = $perid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
+        $recorded_by = $row["recorded_by"];
+        $recorded_date = $row["recorded_date"];
+        $modified_by = $row["modified_by"];
+        $modified_date = $row["modified_date"];
+        $recorded_by = $row["recorded_by"];
+        // Query record_by from staff table and get name and lastname
+        $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
+
+        $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
+      
+        if ($staff = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+        }
+        
+        if ($modified_by) {
+
+            $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
+            $modified_byResult = mysqli_query($conn, $modified_byQuery);
+            if ($staff = mysqli_fetch_array($modified_byResult)) {
+
+                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+            }
+        }
+
         $instid = $row['instid'];
         $persince = $row['persince'];
         $staytypid = $row['staytypid'];
@@ -99,7 +123,8 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                         <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
                                     <!-- Dropdown items will be populated here -->
                             </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+                             <input type="hidden" id="perid" name="perid" value="<?php echo $perid; ?>" />
+
                         </div>
                     </div>
 
@@ -182,7 +207,7 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                             if (searchQuery.length >= 2) {
                                 // Make an AJAX call to fetch matching results
                                 $.ajax({
-                                    url: "3.historyeducation/searchPerson.php",
+                                    url: "6.2inststay/searchPerson.php",
                                     method: "GET",
                                     dataType: "json",
                                     data: {
@@ -230,26 +255,32 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                     <!--//app-card-body-->
 
                     <hr>
-                    <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
+                    <?php if (!$perid) { ?>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+                    <?php } else { ?>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                        <!-- button cancle -->
+                        <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+                    <?php } ?>
                     <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                     <hr class="mb-4">
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <label for="savofc">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
+                            <label for="recorded_by">ผู้บันทึก</label>
+                            <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder="" value="<?= $$recorded_by; ?>"readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="savdte">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                            <label for="recorded_date">วันที่บันทึก</label>
+                            <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder="" value="<?php echo $recorded_date; ?>" readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                            <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="" value="<?= $modified_by; ?>"readonly="true" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                            <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
+                            <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder="" value="<?php echo $modified_date	; ?>" readonly="true" required>
                         </div>
                     </div>
                 </form>
@@ -263,6 +294,14 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
 <!--//row-->
 
 <script>
+     $(document).ready(function() {
+        <?php if ($perid) { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(true);
+        <?php } else { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(false);
+        <?php } ?>
     function sum_score() {
         var sum =
             Number(window.document.frmScreening.qtnvs1.value) +
@@ -363,10 +402,10 @@ needscholar	int	1	สถาบันมีความประสงค์ร�
                 eval("var decoded_data = " + xmlhttp.responseText);
                 if (decoded_data['checkSave'] == "yes") {
                     window.document.frmScreening.qtn_visid.value = decoded_data['qtn_visid0'];
-                    window.document.frmScreening.savofc.value = decoded_data['savofc0'];
-                    window.document.frmScreening.savdte.value = decoded_data['savdte0'];
-                    window.document.frmScreening.updofc.value = decoded_data['updofc0'];
-                    window.document.frmScreening.upddte.value = decoded_data['upddte0'];
+                    window.document.frmScreening.recorded_by.value = decoded_data['recorded_by0'];
+                    window.document.frmScreening.recorded_date.value = decoded_data['recorded_date0'];
+                    window.document.frmScreening.modified_by.value = decoded_data['modified_by0'];
+                    window.document.frmScreening.modified_date	.value = decoded_data['modified_date	0'];
                     window.location.href = '?page=visit&function=update&id=' + decoded_data['qtn_visid0'];
                     alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                     // window.document.getElementById('showSql').innerHTML=xmlhttp.responseText;

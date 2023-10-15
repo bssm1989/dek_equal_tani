@@ -1,26 +1,18 @@
 <?php
-$actid = $_GET["actid"]; // Get activity ID from page showing list of activities
-if ($actid) {
-    // Construct your SQL query to fetch activity details and related information
-    $sql = "SELECT
-                a.actid,
-                a.actnme,
-                a.acttypid,
-                a.actdtestr,
-                a.actdteend,
-                a.actplc,
-                cv.vllnmegen AS place_village,
-                a.actattdno,
-                a.actdetail
-            FROM
-                activity a
-            JOIN
-                acttyp at ON a.acttypid = at.acttypid
-            JOIN
-                const_vllnmegen cv ON a.plcid = cv.plcid
-            WHERE
-                a.actid = $actid"; // Modify the condition based on your database structure
+echo $_GET["perid"];
+$heduid = $_GET["perid"]; // Get heduid from page showing the list of hedu
+echo $heduid;
+if ($heduid) {
+    // Construct your SQL query to fetch hedu details and related information
+    $sql = "SELECT h.perid, CONCAT(p.name, ' ', p.sname) AS person_fullname,
+                   h.heduid, e.edulevnme, h.edusemester, h.edugrade, h.edudetail,h.edulev,h.eduid
+            FROM hedu AS h
+            JOIN person AS p ON h.perid = p.perid
+            JOIN edulev AS e ON h.eduid = e.eduid
+            WHERE h.heduid = $heduid"; // Modify the condition based on your database structure
+    echo $sql;
     $result = mysqli_query($conn, $sql);
+    var_dump($result);
     if ($row = mysqli_fetch_array($result)) {
         $recorded_by = $row["recorded_by"];
         $recorded_date = $row["recorded_date"];
@@ -46,24 +38,22 @@ if ($actid) {
             }
         }
 
-        $actnme = $row['actnme'];
-        $acttypid = $row['acttypid'];
-        $actdtestr = $row['actdtestr'];
-        $actdteend = $row['actdteend'];
-        $actplc = $row['actplc'];
-        $place_village = $row['place_village'];
-        $actattdno = $row['actattdno'];
-        $actdetail = $row['actdetail'];
-        $actid = $row['actid'];
+        $person_id = $row['perid'];
+        $edulev_id = $row['eduid'];
+        $edulev = $row['edulev'];
+        $edusemester = $row['edusemester'];
+        $edugrade = $row['edugrade'];
+        $edudetail = $row['edudetail'];
+        $person_fullname = $row['person_fullname'];
     }
 }
-$acttypQuery = "SELECT * FROM acttyp";
-$acttypResult = mysqli_query($conn, $acttypQuery);
+echo "dfdfdfd";
+$edulevQuery = "SELECT * FROM edulev";
+$edulevResult = mysqli_query($conn, $edulevQuery);
 ?>
-
 <div class="row justify-content-between card-header text-right mb-0">
     <div class="col-auto">
-        <h4 class="app-page-title mb-0"> จัดการข้อมูลกิจกรรม</h4>
+        <h4 class="app-page-title mb-0"> จัดการข้อมูลประวัติการช่วยเหลือด้านการศึกษา</h4>
     </div>
     <div class="col-auto">
         <a href="?page=<?= $_GET['page'] ?>" class="btn app-btn-secondary">ย้อนกลับ</a>
@@ -76,242 +66,187 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
 
             <div class="app-card-body">
                 <h5 class="app-page-title mb-0 text-info text-center mt-3 pt-4 mt-md-0 pt-md-0 mb-3">
-                    <b>จัดการข้อมูลกิจกรรม</b>
+                    <b>จัดการข้อมูลประวัติการช่วยเหลือด้านการศึกษา</b>
                 </h5>
 
-                <!-- • รหัสกิจกรรม
-• ชื่อกิจกรรม
-• รหัสประเภทกิจกรรม
-• วันที่เริ่มจัดกิจกรรม
-• วันที่จัดกิจกรรมเสร็จ
-• สถานที่จัดกิจกรรม
-• จังหวัดอ าเภอต าบล ที่จัดกิจกรรม
-• จ านวนผู้เข้าร่วมกิจกรรม
-• รายละเอียดการจัดกิจกรรม -->
+                <!-- รหัสประวัติการศึกษา
+• รหัสบุคคล=รหัสเด็ก
+• ระดับการศึกษา
+• ชั้นปี
+• ปีการศึกษา
+• เกรดเฉลี่ย
+• รายละเอียดอื่น ๆ
+hedu	ประวัติการศึกษา				
+ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
+heduid	bigint		รหัสประวัติการศึกษา	PK	
+perid	bigint		รหัสบุคคล = รหัสเด็ก	FK	
+eduid	int	2	ระดับการศึกษา	FK	มีตารางย่อย
+edulev	int	1	ชั้นปี		
+edusemester	int	6	ปีการศึกษา		เก็บ 6 หลัก เช่น 256601
+edugrade	number	4	เกรดเฉลี่ย		เช่น 3.50
+edudetail	varchar	200	รายละเอียดอื่น ๆ		
+edu	ระดับการศึกษา				
+ชื่อฟิลด์	ประเภทข้อมูล	ความยาว	ความหมาย	PK/FK	คำอธิบายเพิ่มเติม
+eduid	int	1	รหัสระดับการศึกษา	PK	
+edunme	varchar	50	ชื่อระดับการศึกษา		-->
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
-                    <input type="hidden" name="actid" id="actid" value="<?php echo $actid; ?>" />
-                    <div class="row">
-                        <div class="col-12 col-sm-12">
-                            <p class="shadow-sm p-2 mb-3 bg-success text-white rounded">ข้อมูลทั่วไป</p>
+
+                    <div class="col-12 col-sm-4 mb-3">
+                        <label for="eduid">บุคคล</label>
+                        <!-- //div group -->
+                        <div class="input-group">
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
+                            </div>
                         </div>
-                    </div>
+                        <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
+                                    <!-- Dropdown items will be populated here -->
+                            </div>
+
+                            <input type="hidden" id="perid" name="perid" value="<?= $person_id; ?>">
+
+                        </div>
 
 
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="actnme">ชื่อกิจกรรม</label>
-                        <input type="text" class="form-control" name="actnme" id="actnme" placeholder="ชื่อกิจกรรม" value="<?php echo $actnme; ?>"><!-- required>-->
-                    </div>
-                  
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="acttypid">รหัสประเภทกิจกรรม</label>
-                        
-                        <!-- You can replace this input with a dropdown menu populated from a query -->
-                        <!-- <input type="text" class="form-control" name="acttypid" id="acttypid" placeholder="รหัสประเภทกิจกรรม" value="<?php echo $acttypid; ?>">required> -->
-                   <select class="form-select" name="acttypid" id="acttypid" required>
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="eduid">ระดับการศึกษา</label>
+                            <select class="form-select" name="eduid" id="eduid" required>
                                 <?php
-                                while ($acttypRow = mysqli_fetch_assoc($acttypResult)) {
-                                    $selected = ($acttypRow['acttypid'] == $acttypid) ? "selected" : "";
-                                    echo "<option value='{$acttypRow['acttypid']}' {$selected}>{$acttypRow['acttypnme']}</option>";
+                                while ($edulevRow = mysqli_fetch_assoc($edulevResult)) {
+                                    $selected = ($edulevRow['eduid'] == $edulev_id) ? "selected" : "";
+                                    echo "<option value='{$edulevRow['eduid']}' {$selected}>{$edulevRow['edulevnme']}</option>";
                                 }
                                 ?>
                             </select>
-                    </div>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="actdtestr">วันที่เริ่มจัดกิจกรรม</label>
-                        <input type="text" class="form-control datepicker" name="actdtestr" id="actdtestr" placeholder="วันที่เริ่มจัดกิจกรรม" value="<?php echo $actdtestr; ?>"><!-- required>-->
-                    </div>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="actdteend">วันที่จัดกิจกรรมเสร็จ</label>
-                        <input type="text" class="form-control datepicker" name="actdteend" id="actdteend" placeholder="วันที่จัดกิจกรรมเสร็จ" value="<?php echo $actdteend; ?>"><!-- required>-->
-                    </div>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="actplc">สถานที่จัดกิจกรรม</label>
-                        <input type="text" class="form-control" name="actplc" id="actplc" placeholder="สถานที่จัดกิจกรรม" value="<?php echo $actplc; ?>"><!-- required>-->
-                    </div>
-
-                    <!-- <div class="col-12 col-sm-4 mb-3">
-                        <label for="place_village">จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม</label>
-                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $actplc; ?>">
-                        <input type="text" class="form-control" name="place_village" id="place_village" placeholder="จังหวัด อำเภอ ตำบล ที่จัดกิจกรรม" value="<?php echo $place_village; ?>">
-                    </div> -->
-                    <div class="col-12 col-sm-4 mb-3">
-
-                        <div id="addr1" class="address">
-                            <!-- get value from php place_id -->
-                            <input type="hidden" id="addr1-addressCode" name="place_village" value="<?= $place_village; ?>" />
-
-                            <div class="notification"></div>
                         </div>
-                    </div>
-                    <script src="testCrud/data/address-data.js"></script>
-                    <script src="testCrud/manage-addr.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            const addr1 = new AddressDropdowns('addr1', addressData);
-                            addr1.init();
 
 
-                            $.validator.addMethod('eightDigits', function(value, element) {
-                                console.log('Custom validation method called:', value, element);
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="edusemester">ชั้นปี</label>
+                            <input type="text" class="form-control" name="edulev" id="edulev" value="<?php echo $edulev; ?>" required>
+                        </div>
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="edusemester">ปีการศึกษา</label>
+                            <input type="text" class="form-control" name="edusemester" id="edusemester" value="<?php echo $edusemester; ?>" required>
+                        </div>
 
-                                const isValid = /^[0-9]{8}$/.test(value) && value !== '00000000';
-                                console.log('Validation result:', isValid);
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="edugrade">เกรดเฉลี่ย</label>
+                            <input type="text" class="form-control" name="edugrade" id="edugrade" value="<?php echo $edugrade; ?>" required>
+                        </div>
 
-                                return this.optional(element) || isValid;
-                            }, 'Please enter an 8-digit code.');
-                            $('#editForm').validate({
-                                rules: {
-                                    name: 'required',
-                                    'addr1-addressCode': {
-                                        required: true,
-                                        eightDigits: true
-                                    },
+                        <div class="col-12 mb-3">
+                            <label for="edudetail">รายละเอียดอื่น ๆ</label>
+                            <textarea class="form-control" name="edudetail" id="edudetail" rows="3"><?php echo $edudetail; ?></textarea>
+                        </div>
+                        <!-- ... (previous HTML code) ... -->
+                        <!-- input perid hidden -->
+                        <input type="hidden" id="perid" name="heduid" value="<?= $heduid; ?>">
 
-                                },
-                                ignore: [],
-                                messages: {
-                                    name: 'Please enter your name',
-                                    'addr1-addressCode': {
-                                        required: 'Please enter an address code',
-                                        eightDigits: 'Please enter an 8-digit code.'
-                                    },
-                                    'addr2-addressCode': {
-                                        required: 'Please enter an address code',
-                                        eightDigits: 'Please enter an 8-digit code.'
-                                    }
-                                },
-                                errorPlacement: function(error, element) {
-                                    // Show the error message inside the corresponding notification div
-                                    element.closest('.notification').html(error);
+                        <script>
+                            // Function to enable all input fields
+                            function enableInputFieldsAndButton(setInput) {
 
-                                    // Add red border to the address div
-                                    element.closest('.address').css('border', '2px solid red');
-                                },
-                                success: function(label, element) {
-                                    // Remove red border when validation succeeds
-                                    $(element).closest('.address').css('border', 'none');
-                                },
-                                submitHandler: function(form) {
-                                    if ($('#editForm').valid()) {
-                                        console.log('Form submitted successfully.');
-                                        console.log('Name:', $('#name').val());
-                                        console.log('Address 1:', addr1.getConcatenatedAddressCode());
-                                        console.log('Address 2:', addr2.getConcatenatedAddressCode());
-                                        console.log('Address 3:', addr3.getConcatenatedAddressCode());
+                                $('#personSelect').prop('disabled', setInput ? false : true);
+                                $('#eduid').prop('disabled', setInput);
+                                $('#edusemester').prop('disabled', setInput);
+                                $('#edugrade').prop('disabled', setInput);
+                                $('#edudetail').prop('disabled', setInput);
+                                $('#changePersonButton').prop('disabled', setInput);
+                                $('#edulev').prop('disabled', setInput);
+                            }
 
-                                    }
+                            // Initialize the dropdown menu
+                            $('#personSelect').on('click', function() {
+                                $('#personDropdown').toggle();
+                            });
+
+                            // Handle input changes
+                            $('#personSelect').on('input', function() {
+                                var searchQuery = $(this).val();
+                                console.log('Search query:', searchQuery);
+                                if (searchQuery.length >= 2) {
+                                    // Make an AJAX call to fetch matching results
+                                    $.ajax({
+                                        url: "3.historyeducation/searchPerson.php",
+                                        method: "GET",
+                                        dataType: "json",
+                                        data: {
+                                            query: searchQuery
+                                        },
+                                        success: function(data) {
+                                            // Clear previous results
+                                            $('#personDropdown').empty();
+
+                                            // Populate the dropdown with search results
+                                            data.forEach(function(result) {
+                                                var option = $('<div class="dropdown-item"></div>');
+                                                option.text(result.text); // Change this to the property you want to display
+                                                option.attr('data-value', result.id); // Change this to the property containing the person's ID
+                                                $('#personDropdown').append(option);
+
+                                                // Handle click event for each result
+                                                option.on('click', function() {
+                                                    var selectedValue = $(this).attr('data-value');
+                                                    var selectedText = $(this).text();
+                                                    $('#personSelect').val(selectedText); // Set the selected text in the input field
+                                                    $('#perid').val(selectedValue); // Set the selected ID in the hidden input
+                                                    $('#personDropdown').hide();
+
+                                                    // Enable input fields and show the change button
+                                                    enableInputFieldsAndButton(false);
+                                                });
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    // Clear dropdown if the input is too short
+                                    $('#personDropdown').empty();
                                 }
                             });
-                        });
-                    </script>
-
-                    <div class="col-12 col-sm-4 mb-3">
-                        <label for="actattdno">จำนวนผู้เข้าร่วมกิจกรรม</label>
-                        <input type="text" class="form-control" name="actattdno" id="actattdno" placeholder="จำนวนผู้เข้าร่วมกิจกรรม" value="<?php echo $actattdno; ?>"><!-- required>-->
-                    </div>
-
-                    <div class="col-12 col-sm-12 mb-3">
-                        <label for="actdetail">รายละเอียดการจัดกิจกรรม</label>
-                        <textarea class="form-control" name="actdetail" id="actdetail" placeholder="รายละเอียดการจัดกิจกรรม"><!-- required>--><?php echo $actdetail; ?></textarea>
 
 
-                    </div>
-                    <script>
-                        // Function to enable all input fields
-                        function enableInputFieldsAndButton(setInput) {
-                            $('#personSelect').prop('disabled', setInput ? false : true);
-                            $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
-                        }
-
-                        // Initialize the dropdown menu
-                        $('#personSelect').on('click', function() {
-                            $('#personDropdown').toggle();
-                        });
-
-                        // Handle input changes
-                        $('#personSelect').on('input', function() {
-                            var searchQuery = $(this).val();
-                            console.log('Search query:', searchQuery);
-                            if (searchQuery.length >= 2) {
-                                // Make an AJAX call to fetch matching results
-                                $.ajax({
-                                    url: "3.historyeducation/searchPerson.php",
-                                    method: "GET",
-                                    dataType: "json",
-                                    data: {
-                                        query: searchQuery
-                                    },
-                                    success: function(data) {
-                                        // Clear previous results
-                                        $('#personDropdown').empty();
-
-                                        // Populate the dropdown with search results
-                                        data.forEach(function(result) {
-                                            var option = $('<div class="dropdown-item"></div>');
-                                            option.text(result.text); // Change this to the property you want to display
-                                            option.attr('data-value', result.id); // Change this to the property containing the person's ID
-                                            $('#personDropdown').append(option);
-
-                                            // Handle click event for each result
-                                            option.on('click', function() {
-                                                var selectedValue = $(this).attr('data-value');
-                                                var selectedText = $(this).text();
-                                                $('#personSelect').val(selectedText); // Set the selected text in the input field
-                                                $('#perid').val(selectedValue); // Set the selected ID in the hidden input
-                                                $('#personDropdown').hide();
-
-                                                // Enable input fields and show the change button
-                                                enableInputFieldsAndButton(false);
-                                            });
-                                        });
-                                    }
-                                });
-                            } else {
-                                // Clear dropdown if the input is too short
-                                $('#personDropdown').empty();
-                            }
-                        });
-
-
-                        // Disable all input fields initially
-                        enableInputFieldsAndButton(true);
-                        $('#changePersonButton').on('click', function() {
-                            // Enable input fields and hide the change button
+                            // Disable all input fields initially
                             enableInputFieldsAndButton(true);
-                        });
-                    </script>
-                    <hr>
-                    <?php if (!$perid) { ?>
-                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
-                    <?php } else { ?>
-                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
-                        <!-- button cancle -->
-                        <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
-                    <?php } ?>
-                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+                            $('#changePersonButton').on('click', function() {
+                                // Enable input fields and hide the change button
+                                enableInputFieldsAndButton(true);
+                            });
+                        </script>
 
-                    <hr class="mb-4">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label for="recorded_by">ผู้บันทึก</label>
-                            <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder="" value="<?= $$recorded_by; ?>"readonly="true"><!-- required>-->
+
+                        <hr>
+                        <!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
+                        <?php if (!$heduid) { ?>
+                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+                        <?php } else { ?>
+                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                            <!-- button cancle -->
+                            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+                        <?php } ?>
+                        <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+
+                        <hr class="mb-4">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="recorded_by">ผู้บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder="" value="<?= $$recorded_by; ?>"readonly="true" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="recorded_date">วันที่บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder="" value="<?php echo $recorded_date; ?>" readonly="true" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="" value="<?= $modified_by; ?>"readonly="true" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder="" value="<?php echo $modified_date	; ?>" readonly="true" required>
+                            </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="recorded_date">วันที่บันทึก</label>
-                            <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder="" value="<?php echo $recorded_date; ?>" readonly="true"><!-- required>-->
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="" value="<?= $modified_by; ?>"readonly="true"><!-- required>-->
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
-                            <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder="" value="<?php echo $modified_date	; ?>" readonly="true"><!-- required>-->
-                        </div>
-                    </div>
+
                 </form>
 
             </div>
@@ -324,36 +259,88 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
 
 <script>
     $(document).ready(function() {
+        <?php if ($perid) { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(true);
+        <?php } else { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(false);
+        <?php } ?>
+        var form = $('#frmScreening'); // Replace 'yourFormId' with the actual ID of your form
+
+        // Attach a submit event handler to the form
+        // Prevent the form from submitting
+
+        // Loop through each input element within the form
+        // Loop through each input and select element within the form
+        form.submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            // Loop through each input element within the form
+            form.find('input, select').each(function() {
+                var element = $(this);
+                var elementType = element.prop('tagName').toLowerCase(); // Get the tag name of the element
+                var name = element.attr('name');
+                var value = element.val();
+
+                console.log('Type:', elementType, 'Name:', name, 'Value:', value);
+            });
+        });
+
+
         $("#frmScreening").validate({
             rules: {
-                // ... (existing validation rules)
-                actnme: {
+                //make rule from input select perid
+                perid: {
                     required: true
                 },
-                acttypid: {
-                    required: true
+                //make rule form input heduid
+                // heduid: {
+                //     required: true,
+                //     number: true,
+                //     min: 1,
+                //     max: 9999999999
+                // },
+                //make rule form input edudetail
+                edudetail: {
+                    required: true,
+                    minlength: 5
                 },
-                actdtestr: {
-                    required: true
+                //make rule form input edugrade
+                edugrade: {
+                    required: true,
+                    number: true,
+                    min: 0,
+                    max: 4
                 },
-                actdteend: {
-                    required: true
+                edulev: {
+                    required: true,
+                    number: true,
+                    min: 1,
+
                 },
-                actplc: {
-                    required: true
+                //make rule form input edusemester
+                edusemester: {
+                    required: true,
+                    number: true,
+                    min: 2550,
+                    max: 2569
                 },
-                place_village: {
-                    required: true
+                //make rule form input eduid
+                eduid: {
+                    required: true,
+                    number: true,
+                    min: 1,
+
                 },
-                actattdno: {
-                    required: true
-                },
-                actdetail: {
-                    required: true
-                },
-                // ... (other validation rules for new elements)
+
+                //perid: "required",
+                //qtn_assessor: "required",
+
+
             },
             ignore: [],
+
             messages: {
                 // Add custom error messages here
             },
@@ -365,7 +352,7 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
                     jsonData[field.name] = field.value;
                 });
 
-                // Determine the action based on whether heduid is present or not
+                // Determine the action based on whether perid is present or not
                 if ($('#heduid').val()) {
                     Swal.fire({
                         title: 'คุณแน่ใจหรือไม่?',
@@ -384,17 +371,16 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
                 }
 
                 function performAjaxRequest(data) {
-                    // Add the action parameter to indicate the action to be performed
-                    data['actdteend'] = data['actdteend'].replace(/-/g, "");
-                    data['actdtestr'] = data['actdtestr'].replace(/-/g, "");
+                    // Convert birth_date 2564-01-01 to 25640101
 
-                    data['action'] = data['actid'] ? 'update' : 'insert';
-                    data['place_village'] = data['place_village'].slice(0, 6);
+                    // Add the action parameter to indicate the action to be performed
+                    data['action'] = data['heduid'] ? 'update' : 'insert';
                     console.log(data);
                     // Send data to the server for insertion or update
                     $.ajax({
                         type: "POST",
-                        url: "10.activity/insert_activity.php",
+
+                        url: "3.historyeducation/insert_historyeducation.php",
                         data: data,
                         dataType: "json",
                         success: function(response) {
@@ -406,8 +392,8 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
                                     icon: 'success',
                                     confirmButtonText: 'ตกลง'
                                 }).then(() => {
-                                    // Go to the next page
-                                    // window.location.href = "?page=10.activity";
+                                    // Go to next page
+                                    window.location.href = "?page=3.historyeducation";
                                 });
                             } else {
                                 // Show error message
@@ -432,8 +418,48 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
                     });
                 }
             }
+
+
+
+
         });
     });
+
+    // Select the form element by its ID or class
+
+
+    function sum_score() {
+        var sum =
+            Number(window.document.frmScreening.qtnvs1.value) +
+            Number(window.document.frmScreening.qtnvs2.value) +
+            Number(window.document.frmScreening.qtnvs3.value) +
+            Number(window.document.frmScreening.qtnvs4.value) +
+            Number(window.document.frmScreening.qtnvs5.value) +
+            Number(window.document.frmScreening.qtnvs6.value) +
+            Number(window.document.frmScreening.qtnvs7.value) +
+            Number(window.document.frmScreening.qtnvs8.value);
+
+        var result = "";
+        if (sum >= 3) {
+            result = "มีภาวะเปราะบาง";
+        } else if (sum >= 1) {
+            result = "เริ่มเปราะบาง";
+        } else {
+            result = "ไม่มีความเปราะบาง";
+        }
+        window.document.frmScreening.qtnvs_sum.value = sum + " : " + result;
+    };
+</script>
+
+<script language=Javascript>
+    const currentYear = new Date().getFullYear();
+    const buddhistYearOptions = [];
+    for (let i = currentYear - 543; i >= currentYear - 2500; i--) {
+        buddhistYearOptions.push({
+            value: i.toString(),
+            label: `${i + 543} (พ.ศ. ${i})`
+        });
+    }
     flatpickr(".datepicker", {
         dateFormat: "Y-m-d", // Change the date format as needed
         "locale": "th",
@@ -614,32 +640,7 @@ $acttypResult = mysqli_query($conn, $acttypQuery);
         },
 
     });
-</script>
-<script language=Javascript>
-    function sum_score() {
-        var sum =
-            Number(window.document.frmScreening.qtnvs1.value) +
-            Number(window.document.frmScreening.qtnvs2.value) +
-            Number(window.document.frmScreening.qtnvs3.value) +
-            Number(window.document.frmScreening.qtnvs4.value) +
-            Number(window.document.frmScreening.qtnvs5.value) +
-            Number(window.document.frmScreening.qtnvs6.value) +
-            Number(window.document.frmScreening.qtnvs7.value) +
-            Number(window.document.frmScreening.qtnvs8.value);
 
-        var result = "";
-        if (sum >= 3) {
-            result = "มีภาวะเปราะบาง";
-        } else if (sum >= 1) {
-            result = "เริ่มเปราะบาง";
-        } else {
-            result = "ไม่มีความเปราะบาง";
-        }
-        window.document.frmScreening.qtnvs_sum.value = sum + " : " + result;
-    };
-</script>
-
-<script language=Javascript>
     function saveGuestionnaire() {
         var xmlhttp = Inint_AJAX();
         var Url = "./visit/qtn_visit_crud.php";

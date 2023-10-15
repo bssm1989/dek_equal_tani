@@ -134,25 +134,25 @@ WHERE h.hholdid = $hholdid";
         $recorded_by = $row["recorded_by"];
         // Query record_by from staff table and get name and lastname
         $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
-
+echo "<h1>recorded_byQuery = $recorded_byQuery</h1>";
         $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
-      
-        if ($staff = mysqli_fetch_array($recorded_byResult)) {
-            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+        var_dump($row);
+        if ($row = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $row["staffnme"] . " " . $row["staffsnme"];
         }
         
         if ($modified_by) {
 
             $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
             $modified_byResult = mysqli_query($conn, $modified_byQuery);
-            if ($staff = mysqli_fetch_array($modified_byResult)) {
+            if ($row = mysqli_fetch_array($modified_byResult)) {
 
-                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+                $modified_by = $row["staffnme"] . " " . $row["staffsnme"];
             }
         }
 
         // $hholdid = $row["hholdid"];
-   
+        var_dump($row);
         $adr = $row["adr"];
         $soi = $row["soi"];
         $vllid = $row["vllid"];

@@ -136,23 +136,23 @@ WHERE h.hholdid = $hholdid";
         $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
 
         $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
-      
-        if ($staff = mysqli_fetch_array($recorded_byResult)) {
-            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+       
+        if ($row = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $row["staffnme"] . " " . $row["staffsnme"];
         }
-        
+        var_dump($row);
         if ($modified_by) {
 
             $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
             $modified_byResult = mysqli_query($conn, $modified_byQuery);
-            if ($staff = mysqli_fetch_array($modified_byResult)) {
+            if ($row = mysqli_fetch_array($modified_byResult)) {
 
-                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+                $modified_by = $row["staffnme"] . " " . $row["staffsnme"];
             }
         }
 
         // $hholdid = $row["hholdid"];
-   
+        var_dump($row);
         $adr = $row["adr"];
         $soi = $row["soi"];
         $vllid = $row["vllid"];

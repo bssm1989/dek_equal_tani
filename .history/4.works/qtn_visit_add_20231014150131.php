@@ -1,11 +1,12 @@
 <?php
-$hwrkid = $_GET["id"]; // Get hwrkid from page showing the list of hwork
+$hwrkid = $_GET["perid"]; // Get hwrkid from page showing the list of hwork
 if ($hwrkid) {
     // Construct your SQL query to fetch hwork details and related information
-    $sql = "SELECT h.hwrkid, p.pid as person_id, h.occid as occupation_id, h.wrknme as workplace_name,
+    $sql = "SELECT h.hwrkid, p.perid as person_id, h.occid as occupation_id, h.wrknme as workplace_name,
                    prv.prvnme as province_name, h.wrkpos as workplace_position, h.wrkstarty as start_year,
                    h.wrkperiody as work_period_years, h.wrkperiodm as work_period_months,
-                   h.wrkendy as end_year, h.wrkendreas as end_reason, df.dispfrmnme as dispfrmnme
+                   h.wrkendy as end_year, h.wrkendreas as end_reason, df.dispfrmnme as dispfrmnme,
+                   CONCAT(p.name, ' ', p.sname) AS person_fullname
             FROM hwork h
             LEFT JOIN person p ON h.perid = p.perid
             LEFT JOIN prv ON h.prvid = prv.prvid
@@ -14,6 +15,30 @@ if ($hwrkid) {
             WHERE h.hwrkid = $hwrkid"; // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
+        $recorded_by = $row["recorded_by"];
+        $recorded_date = $row["recorded_date"];
+        $modified_by = $row["modified_by"];
+        $modified_date = $row["modified_date"];
+        $recorded_by = $row["recorded_by"];
+        // Query record_by from staff table and get name and lastname
+        $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
+
+        $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
+      
+        if ($staff = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+        }
+        
+        if ($modified_by) {
+
+            $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
+            $modified_byResult = mysqli_query($conn, $modified_byQuery);
+            if ($staff = mysqli_fetch_array($modified_byResult)) {
+
+                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+            }
+        }
+
         $person_id = $row['person_id'];
         $occupation_id = $row['occupation_id'];
         $workplace_name = $row['workplace_name'];
@@ -24,6 +49,8 @@ if ($hwrkid) {
         $work_period_months = $row['work_period_months'];
         $end_year = $row['end_year'];
         $end_reason = $row['end_reason'];
+        $person_fullname = $row['person_fullname'];
+        $hwrkid = $row['hwrkid'];
     }
 }
 
@@ -61,18 +88,20 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
                     <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
+                        <input type="hidden" class="form-control" name="hwrkid" id="hwrkid" value="<?php echo $hwrkid; ?>" />
                         <!-- //div group -->
                         <div class="input-group">
-                            <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
                         </div>
-                        <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
+                        <div id=" personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
                                     <!-- Dropdown items will be populated here -->
                             </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+
+                            <input type="hidden" id="perid" name="perid" value="<?php echo $person_id; ?>" required>
+
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
@@ -104,7 +133,11 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                             <input type="text" class="form-control" name="wrknme" id="wrknme" value="<?php echo $workplace_name; ?>" required>
                         </div>
 
-
+                        <!-- ทำงานในตำแหน่ง -->
+                        <div class="col-12 col-sm-4 mb-3">
+                            <label for="workplace_position">ทำงานในตำแหน่ง</label>
+                            <input type="text" class="form-control" name="workplace_position" id="workplace_position" value="<?php echo $workplace_position; ?>" required>
+                        </div>
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="wrkstarty">ปีที่เริ่มประกอบอาชีพ</label>
                             <input type="text" class="form-control" name="wrkstarty" id="wrkstarty" value="<?php echo $start_year; ?>" required>
@@ -133,7 +166,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                             // Function to enable all input fields
                             function enableInputFieldsAndButton(setInput) {
                                 $('#personSelect').prop('disabled', setInput ? false : true);
-                                $('#personSelect, #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas').prop('disabled', true);
+                                $(' #occid, #prvid, #wrknme, #wrkstarty, #work_period_years, #work_period_months, #wrkendy, #wrkendreas', '#workplace_position').prop('disabled', setInput ? false : true);
                             }
 
                             // Initialize the dropdown menu
@@ -148,7 +181,7 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                                 if (searchQuery.length >= 2) {
                                     // Make an AJAX call to fetch matching results
                                     $.ajax({
-                                        url: "3.historyeducation/searchPerson.php",
+                                        url: "4.works/searchPerson.php",
                                         method: "GET",
                                         dataType: "json",
                                         data: {
@@ -200,26 +233,32 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                         <!--//app-card-body-->
 
                         <hr>
-                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
+                        <?php if (!$hwrkid) { ?>
+                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+                        <?php } else { ?>
+                            <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                            <!-- button cancle -->
+                            <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+                        <?php } ?>
                         <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
+                                <label for="recorded_by">ผู้บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder="" value="<?= $$recorded_by; ?>"readonly="true">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                                <label for="recorded_date">วันที่บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder="" value="<?php echo $recorded_date; ?>" readonly="true">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                                <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="" value="<?= $modified_by; ?>"readonly="true">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                                <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder="" value="<?php echo $modified_date	; ?>" readonly="true">
                             </div>
                         </div>
                 </form>
@@ -231,7 +270,149 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
     </div>
 </div>
 <!--//row-->
+<script>
+    $(document).ready(function() {
+        <?php if ($hwrkid) { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(false);
+            // console.log($hwrkid);
+            console.log("Has perid");
+        <?php } else { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(true);
+            console.log("No perid");
+        <?php } ?>
+    });
+    $(document).ready(function() {
+        $("#frmScreening").validate({
+            rules: {
+                eduid: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 9
+                },
+                personSelect: {
+                    required: true
+                },
+                changePersonButton: {
+                    // Include any specific rules for this element if needed
+                },
+                personDropdown: {
+                    // Include any specific rules for this element if needed
+                },
+                perid: {
+                    required: true
+                },
+                occid: {
+                    // Include any specific rules for this element if needed
+                },
+                prvid: {
+                    // Include any specific rules for this element if needed
+                },
+                wrknme: {
+                    required: true
+                },
+                wrkstarty: {
+                    required: true,
+                    number: true
+                },
+                work_period_years: {
+                    required: true,
+                    number: true
+                },
+                work_period_months: {
+                    required: true,
+                    number: true
+                },
+                wrkendy: {
+                    // Include any specific rules for this element if needed
+                },
+                wrkendreas: {
+                    // Include any specific rules for this element if needed
+                },
+            },
+            ignore: [],
+            messages: {
+                // Add custom error messages here
+            },
+            submitHandler: function(form) {
+                // Serialize form data into JSON format
+                var formData = $(form).serializeArray();
+                var jsonData = {};
+                $.each(formData, function(index, field) {
+                    jsonData[field.name] = field.value;
+                });
 
+                // Determine the action based on whether perid is present or not
+                if ($('#heduid').val()) {
+                    Swal.fire({
+                        title: 'คุณแน่ใจหรือไม่?',
+                        text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'อัปเดต',
+                        cancelButtonText: 'ยกเลิก'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            performAjaxRequest(jsonData);
+                        }
+                    });
+                } else {
+                    performAjaxRequest(jsonData);
+                }
+
+                function performAjaxRequest(data) {
+                    // Convert birth_date 2564-01-01 to 25640101
+
+                    // Add the action parameter to indicate the action to be performed
+                    // data['action'] = data['h'] ? 'update' : 'insert';
+                    data['action'] = data['hwrkid'] ? 'update' : 'insert';
+
+                    // Send data to the server for insertion or update
+                    $.ajax({
+                        type: "POST",
+                        url: "4.works/insert_works.php",
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.success) {
+                                // Show success message
+                                Swal.fire({
+                                    title: 'สำเร็จ',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'ตกลง'
+                                }).then(() => {
+                                    // Go to the next page
+                                    window.location.href = "?page=4.works";
+                                });
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'ข้อผิดพลาด',
+                                    text: "เกิดข้อผิดพลาด: " + response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'ตกลง'
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle Ajax error
+                            console.error(error);
+                            Swal.fire({
+                                title: 'ข้อผิดพลาด',
+                                text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                                icon: 'error',
+                                confirmButtonText: 'ตกลง'
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
 <script>
     function sum_score() {
         var sum =
@@ -333,10 +514,10 @@ $provinceResult = mysqli_query($conn, $provinceQuery);
                 eval("var decoded_data = " + xmlhttp.responseText);
                 if (decoded_data['checkSave'] == "yes") {
                     window.document.frmScreening.qtn_visid.value = decoded_data['qtn_visid0'];
-                    window.document.frmScreening.savofc.value = decoded_data['savofc0'];
-                    window.document.frmScreening.savdte.value = decoded_data['savdte0'];
-                    window.document.frmScreening.updofc.value = decoded_data['updofc0'];
-                    window.document.frmScreening.upddte.value = decoded_data['upddte0'];
+                    window.document.frmScreening.recorded_by.value = decoded_data['recorded_by0'];
+                    window.document.frmScreening.recorded_date.value = decoded_data['recorded_date0'];
+                    window.document.frmScreening.modified_by.value = decoded_data['modified_by0'];
+                    window.document.frmScreening.modified_date	.value = decoded_data['modified_date	0'];
                     window.location.href = '?page=visit&function=update&id=' + decoded_data['qtn_visid0'];
                     alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                     // window.document.getElementById('showSql').innerHTML=xmlhttp.responseText;

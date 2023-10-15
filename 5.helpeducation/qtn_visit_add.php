@@ -17,7 +17,7 @@ if ($hheduid) {
             echo $sql;
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
-$recorded_by = $row["recorded_by"];
+        $recorded_by = $row["recorded_by"];
         $recorded_date = $row["recorded_date"];
         $modified_by = $row["modified_by"];
         $modified_date = $row["modified_date"];
@@ -26,17 +26,21 @@ $recorded_by = $row["recorded_by"];
         $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
 
         $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
-
-        if ($row = mysqli_fetch_array($recorded_byResult)) {
-            $recorded_by = $row["staffnme"] . " " . $row["staffsnme"];
+      
+        if ($staff = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
         }
-        if($modified_by){
+        
+        if ($modified_by) {
+
             $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
             $modified_byResult = mysqli_query($conn, $modified_byQuery);
-            if ($row = mysqli_fetch_array($modified_byResult)) {
-                $modified_by = $row["staffnme"] . " " . $row["staffsnme"];
+            if ($staff = mysqli_fetch_array($modified_byResult)) {
+
+                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
             }
         }
+
         $perid = $row['perid'];
         $eduid = $row['eduid'];
         $hedulev = $row['hedulev'];

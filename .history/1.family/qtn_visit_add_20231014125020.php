@@ -124,10 +124,10 @@ WHERE h.hholdid = $hholdid";
     // echo $sql;
     // Modify the condition based on your database structure
     $result = mysqli_query($conn, $sql);
-
+    exit();
     if ($row = mysqli_fetch_array($result)) {
-
-        $recorded_by = $row["recorded_by"];
+       
+$recorded_by = $row["recorded_by"];
         $recorded_date = $row["recorded_date"];
         $modified_by = $row["modified_by"];
         $modified_date = $row["modified_date"];
@@ -136,23 +136,23 @@ WHERE h.hholdid = $hholdid";
         $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
 
         $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
-      
-        if ($staff = mysqli_fetch_array($recorded_byResult)) {
-            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
-        }
-        
-        if ($modified_by) {
 
+        if ($row = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $row["staffnme"] . " " . $row["staffsnme"];
+        }
+        if($modified_by){
+        
             $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
             $modified_byResult = mysqli_query($conn, $modified_byQuery);
-            if ($staff = mysqli_fetch_array($modified_byResult)) {
-
-                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+            if ($row = mysqli_fetch_array($modified_byResult)) {
+         
+                $modified_by = $row["staffnme"] . " " . $row["staffsnme"];
+            
             }
         }
-
+      
         // $hholdid = $row["hholdid"];
-   
+        
         $adr = $row["adr"];
         $soi = $row["soi"];
         $vllid = $row["vllid"];
@@ -188,6 +188,7 @@ WHERE h.hholdid = $hholdid";
         $hitemno = $row["hitemno"];
         $hhimg1 = $row["hhimg1"];
         $hhimg2 = $row["hhimg2"];
+        
     }
     //value place_id
     // echo "<h1>place_id = $place_id</h1>";
@@ -630,7 +631,7 @@ $hhelectidResult = mysqli_query($conn, $hhelectidQuery);
 
             <hr>
             <!--<button class="mt-3/// btn app-btn-primary" type="button" onClick="">บันทึก</button>-->
-            <?php echo $hholdid; ?>
+           <?php echo $hholdid; ?>
             <?php if (!$hholdid) { ?>
                 <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
             <?php } else { ?>

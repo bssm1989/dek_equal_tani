@@ -1,9 +1,10 @@
 <?php
-$hheduid = $_GET["id"]; // Get hheduid from page showing the list of hhelpedu
+$hheduid = $_GET["perid"]; // Get hheduid from page showing the list of hhelpedu
 if ($hheduid) {
     // Construct your SQL query to fetch hhelpedu details and related information
     $sql = "SELECT hh.hheduid, hh.perid, hh.eduid, hh.hedulev, hh.hedusemester, hh.hedufundtyp, hh.hedumoney, hh.hedudetail,
-                   p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname, c.plcnmegen, df.dispfrmnme, el.edulevnme
+                   p.perid AS person_perid, p.pid, t.titnme, p.name, p.sname,
+                    c.plcnmegen, df.dispfrmnme, el.edulevnme
             FROM hhelpedu hh
             LEFT JOIN person p ON hh.perid = p.perid
             LEFT JOIN titname t ON p.titid = t.titid
@@ -13,8 +14,33 @@ if ($hheduid) {
             LEFT JOIN hedu ed ON p.perid = ed.perid
             LEFT JOIN edulev el ON ed.edulev = el.eduid
             WHERE hh.hheduid = $hheduid"; // Modify the condition based on your database structure
+            echo $sql;
     $result = mysqli_query($conn, $sql);
     if ($row = mysqli_fetch_array($result)) {
+        $recorded_by = $row["recorded_by"];
+        $recorded_date = $row["recorded_date"];
+        $modified_by = $row["modified_by"];
+        $modified_date = $row["modified_date"];
+        $recorded_by = $row["recorded_by"];
+        // Query record_by from staff table and get name and lastname
+        $recorded_byQuery = "SELECT * FROM staff WHERE staffid = $recorded_by";
+
+        $recorded_byResult = mysqli_query($conn, $recorded_byQuery);
+      
+        if ($staff = mysqli_fetch_array($recorded_byResult)) {
+            $recorded_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+        }
+        
+        if ($modified_by) {
+
+            $modified_byQuery = "SELECT * FROM staff WHERE staffid = $modified_by";
+            $modified_byResult = mysqli_query($conn, $modified_byQuery);
+            if ($staff = mysqli_fetch_array($modified_byResult)) {
+
+                $modified_by = $staff["staffnme"] . " " . $staff["staffsnme"];
+            }
+        }
+
         $perid = $row['perid'];
         $eduid = $row['eduid'];
         $hedulev = $row['hedulev'];
@@ -22,6 +48,8 @@ if ($hheduid) {
         $hedufundtyp = $row['hedufundtyp'];
         $hedumoney = $row['hedumoney'];
         $hedudetail = $row['hedudetail'];
+        $hheduid = $row['hheduid'];
+        $person_fullname=$row['name'] . ' ' . $row['sname'];
     }
 }
 
@@ -73,12 +101,13 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                 <form name="frmScreening" id="frmScreening" method="post" action="" enctype="" onSubmit="" target="">
 
 
-                <div class="col-12 col-sm-4 mb-3">
+                    <div class="col-12 col-sm-4 mb-3">
                         <label for="eduid">บุคคล</label>
                         <!-- //div group -->
+                        <!-- input hidden hheduid -->
+                        <input type="hidden" name="hheduid" id="hheduid" value="<?php echo $hheduid; ?>" />
                         <div class="input-group">
-                            <!-- Search for a person... to thai -->
-                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="ค้นหาบุคคล">
+                            <input type="text" id="personSelect" name="personName" class="form-control" placeholder="Search for a person..." value="<?php echo $person_fullname; ?>" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="changePersonButton" ">Change</button>
                             </div>
@@ -86,21 +115,22 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                         <div id="personDropdown" class="dropdown-menu" aria-labelledby="personSelect">
                                     <!-- Dropdown items will be populated here -->
                             </div>
-                            <input type="hidden" id="perid" name="perid" /> <!-- Hidden input to store the selected ID -->
+
+                            <input type="hidden" id="perid" name="perid" value="<?php echo $perid; ?>" />
+
                         </div>
 
+                        <div class=" col-12 col-sm-4 mb-3">
+                            <label for="eduid">ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ</label>
+                            <select class="form-select" name="eduid" id="eduid" required>
+                                <?php
+                                while ($eduRow = mysqli_fetch_assoc($eduResult)) {
 
-                    <div class=" col-12 col-sm-4 mb-3">
-                                <label for="eduid">ระดับการศึกษาขณะที่ได้รับการช่วยเหลือ</label>
-                                <select class="form-select" name="eduid" id="eduid" required>
-                                    <?php
-                                    while ($eduRow = mysqli_fetch_assoc($eduResult)) {
-
-                                        $selected = ($eduRow['eduid'] == $eduid) ? "selected" : "";
-                                        echo "<option value='{$eduRow['eduid']}' {$selected}>{$eduRow['edulevnme']}</option>";
-                                    }
-                                    ?>
-                                </select>
+                                    $selected = ($eduRow['eduid'] == $eduid) ? "selected" : "";
+                                    echo "<option value='{$eduRow['eduid']}' {$selected}>{$eduRow['edulevnme']}</option>";
+                                }
+                                ?>
+                            </select>
                         </div>
 
                         <div class="col-12 col-sm-4 mb-3">
@@ -122,7 +152,7 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                                 <option value="3" <?php echo ($hedufundtyp == 3) ? "selected" : ""; ?>>รายครั้งคราว</option>
                             </select>
                         </div>
-
+                      
                         <div class="col-12 col-sm-4 mb-3">
                             <label for="hedumoney">จำนวนเงินที่ได้รับต่อครั้ง</label>
                             <input type="text" class="form-control" name="hedumoney" id="hedumoney" placeholder="จำนวนเงินที่ได้รับต่อครั้ง" value="<?php echo $hedumoney; ?>" required>
@@ -199,26 +229,32 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                         <!--//app-card-body-->
 
                         <hr>
-                        <button class="mt-3 btn app-btn-primary" type="button" onClick="if(checkPerid('กรุณาระบุผู้ประเมินก่อนค่ะ/ครับ')==true){ if(confirm('ต้องการบันทึกข้อมูลหรือไม่')==true) saveGuestionnaire()};">บันทึก</button>
-                        <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
+                        <?php if (!$perid) { ?>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="บันทึก" />
+                    <?php } else { ?>
+                        <input type="submit" class="mt-3 btn btn-primary text-white" name="submit" value="แก้ไข" />
+                        <!-- button cancle -->
+                        <input type="button" class="mt-3 btn btn-warning  text-white" name="cancle" value="ยกเลิก" onClick="window.location.href='?page=person'" />
+                    <?php } ?>
+                    <button class="mt-3 btn btn-danger text-white" type="reset" onClick="if(confirm('ต้องการเคลียร์ข้อมูลหรือไม่')==true) clearForm();">เคลียร์หน้าจอ</button>
 
                         <hr class="mb-4">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <label for="savofc">ผู้บันทึก</label>
-                                <input type="text" class="form-control" name="savofc" id="savofc" placeholder="" value="<?= $rows["savofc"]; ?>" readonly="true" required>
+                                <label for="recorded_by">ผู้บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_by" id="recorded_by" placeholder="" value="<?= $$recorded_by; ?>"readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="savdte">วันที่บันทึก</label>
-                                <input type="text" class="form-control" name="savdte" id="savdte" placeholder="" value="<?php echo $savdte; ?>" readonly="true" required>
+                                <label for="recorded_date">วันที่บันทึก</label>
+                                <input type="text" class="form-control" name="recorded_date" id="recorded_date" placeholder="" value="<?php echo $recorded_date; ?>" readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="updofc">ผู้ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="updofc" id="updofc" placeholder="" value="<?= $rows["updofc"]; ?>" readonly="true" required>
+                                <label for="modified_by">ผู้ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="" value="<?= $modified_by; ?>"readonly="true" >
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="upddte">วันที่ปรับปรุงแก้ไข</label>
-                                <input type="text" class="form-control" name="upddte" id="upddte" placeholder="" value="<?php echo $upddte; ?>" readonly="true" required>
+                                <label for="modified_date">วันที่ปรับปรุงแก้ไข</label>
+                                <input type="text" class="form-control" name="modified_date" id="modified_date" placeholder="" value="<?php echo $modified_date	; ?>" readonly="true" >
                             </div>
                         </div>
                 </form>
@@ -230,7 +266,132 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
     </div>
 </div>
 <!--//row-->
+<script>
+    $(document).ready(function() {
+        <?php if ($perid) { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(false);
+            console.log('<?= $perid ?>');
+        <?php } else { ?>
+            // Enable input fields and show the change button
+            enableInputFieldsAndButton(true);
+            console.log("No perid");
+        <?php } ?>
+    });
+    $(document).ready(function() {
+    $("#frmScreening").validate({
+        rules: {
+            // ... (existing validation rules)
+            personSelect: {
+                required: true
+            },
+            changePersonButton: {
+                // Include any specific rules for this element if needed
+            },
+            personDropdown: {
+                // Include any specific rules for this element if needed
+            },
+            perid: {
+                required: true
+            },
+            eduid: {
+                required: true
+            },
+            hedulev: {
+                required: true
+            },
+            hedusemester: {
+                required: true
+            },
+            hedufundtyp: {
+                required: true
+            },
+            hedumoney: {
+                required: true
+            },
+            hedudetail: {
+                required: true
+            },
+        },
+        ignore: [],
+        messages: {
+            // Add custom error messages here
+        },
+        submitHandler: function(form) {
+            // Serialize form data into JSON format
+            var formData = $(form).serializeArray();
+            var jsonData = {};
+            $.each(formData, function(index, field) {
+                jsonData[field.name] = field.value;
+            });
 
+            // Determine the action based on whether perid is present or not
+            if ($('#heduid').val()) {
+                Swal.fire({
+                    title: 'คุณแน่ใจหรือไม่?',
+                    text: 'คุณกำลังจะอัปเดตข้อมูล การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'อัปเดต',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performAjaxRequest(jsonData);
+                    }
+                });
+            } else {
+                performAjaxRequest(jsonData);
+            }
+
+            function performAjaxRequest(data) {
+                // Add the action parameter to indicate the action to be performed
+                data['action'] = data['hheduid'] ? 'update' : 'insert';
+
+                // Send data to the server for insertion or update
+                $.ajax({
+                    type: "POST",
+                    url: "5.helpeducation/insert_helpeducation.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'สำเร็จ',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'ตกลง'
+                            }).then(() => {
+                                // Go to the next page
+                                // window.location.href = "?page=5.helpeducation";
+                            });
+                        } else {
+                            // Show error message
+                            Swal.fire({
+                                title: 'ข้อผิดพลาด',
+                                text: "เกิดข้อผิดพลาด: " + response.message,
+                                icon: 'error',
+                                confirmButtonText: 'ตกลง'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle Ajax error
+                        console.error(error);
+                        Swal.fire({
+                            title: 'ข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดขณะส่งแบบฟอร์ม',
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
+</script>
 <script>
     function sum_score() {
         var sum =
@@ -332,10 +493,10 @@ hedudetail	varchar	200	รายละเอียดอื่น ๆ
                 eval("var decoded_data = " + xmlhttp.responseText);
                 if (decoded_data['checkSave'] == "yes") {
                     window.document.frmScreening.qtn_visid.value = decoded_data['qtn_visid0'];
-                    window.document.frmScreening.savofc.value = decoded_data['savofc0'];
-                    window.document.frmScreening.savdte.value = decoded_data['savdte0'];
-                    window.document.frmScreening.updofc.value = decoded_data['updofc0'];
-                    window.document.frmScreening.upddte.value = decoded_data['upddte0'];
+                    window.document.frmScreening.recorded_by.value = decoded_data['recorded_by0'];
+                    window.document.frmScreening.recorded_date.value = decoded_data['recorded_date0'];
+                    window.document.frmScreening.modified_by.value = decoded_data['modified_by0'];
+                    window.document.frmScreening.modified_date	.value = decoded_data['modified_date	0'];
                     window.location.href = '?page=visit&function=update&id=' + decoded_data['qtn_visid0'];
                     alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                     // window.document.getElementById('showSql').innerHTML=xmlhttp.responseText;
