@@ -1,0 +1,20 @@
+.custom-input-group {
+    border: 1px solid #ccc; /* Add a border around the container */
+    display: flex; /* Make the container a flex container */
+    align-items: center; /* Align items vertically in the center */
+    padding: 5px; /* Add some padding for spacing */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+.custom-input-group input {
+    border: none; /* Remove border from the input element */
+    flex-grow: 1; /* Allow the input to grow and fill available space */
+    padding: 5px; /* Optional: Add padding for spacing */
+}
+
+.custom-input-group button {
+    border: none; /* Remove border from the button */
+    background: none; /* Remove background color */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    padding: 5px 10px; /* Optional: Add padding for spacing */
+}
